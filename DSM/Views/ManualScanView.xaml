@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="DSM.Views.ManualScanView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:local="clr-namespace:DSM.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="1200" Height="700" Background="#ccff99">
+    <Grid Margin="60,0,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <!--<RowDefinition Height="50"/>-->
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <!--<ColumnDefinition Width="310" />
+            <ColumnDefinition Width="310" />
+            <ColumnDefinition Width="310" />-->
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,20,0,0">
+            <TextBlock  HorizontalAlignment="Left"  Text="Quarantined Invoices" Foreground="#33331a" FontSize="25" ></TextBlock>
+        </StackPanel>
+        <Border Grid.Row="1" Grid.ColumnSpan="4" HorizontalAlignment="Left" Grid.Column="0">
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="4" Margin="0,0,0,32" Width="952">
+                <DataGrid x:Name="dgPending" Background="#FF63686E" Height="600" FontSize="14" ItemsSource="{Binding QtList}" SelectedItem="{Binding SelectedInv}" AutoGenerateColumns="False" CanUserAddRows="False"  Margin="0,5,-100,5"  RenderTransformOrigin="0.455,0.499" >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="INVOICE NO" IsReadOnly="True" Binding="{Binding InvNumber}" Width="145"/>
+                        <!--<DataGridTextColumn Header="SCAN DATA"  Width="190" Binding="{Binding Path=ScanData, Mode=TwoWay}" >
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                            <DataGridTextColumn.EditingElementStyle>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="TextWrapping" Value="Wrap" />
+                                    <Setter Property="AcceptsReturn" Value="true" />
+                                </Style>
+                            </DataGridTextColumn.EditingElementStyle>
+                        </DataGridTextColumn>-->
+                        <DataGridTemplateColumn Header="SCAN DATA" Width="700">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox x:Name="txtScanData" TextWrapping="Wrap" AcceptsReturn="True" Width="750" Height="80" Text="{Binding ScanData, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="ACTION"  Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="btnPOSTinvoice" Content="POST" Margin="18,0,0,0" FontSize="12" Width="60" Height="30"
+                                            Command="{Binding DataContext.PostInvoiceCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

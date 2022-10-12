@@ -1,0 +1,1809 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="DSMdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ClientMaster">
+          <Key>
+            <PropertyRef Name="ClientLineId" />
+          </Key>
+          <Property Name="ClientLineId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClientId" Type="varchar" MaxLength="200" />
+          <Property Name="ClientName" Type="varchar" MaxLength="200" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="UpdatedDate" Type="datetime" />
+          <Property Name="IsDigitalSign" Type="bit" />
+          <Property Name="IsAPIpost" Type="bit" />
+          <Property Name="APIUrl" Type="varchar" MaxLength="500" />
+          <Property Name="APItype" Type="bit" />
+          <Property Name="PDFtype" Type="bit" />
+          <Property Name="PrintType" Type="bit" />
+          <Property Name="PrintCopies" Type="varchar" MaxLength="100" />
+          <Property Name="VendorCode" Type="varchar" MaxLength="100" />
+          <Property Name="TemplateName" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="DigitalSignDetails">
+          <Key>
+            <PropertyRef Name="DSDetailsId" />
+          </Key>
+          <Property Name="DSDetailsId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClientLineId" Type="int" />
+          <Property Name="ClientId" Type="varchar" MaxLength="200" />
+          <Property Name="KeyName" Type="varchar(max)" />
+          <Property Name="KeyPinNo" Type="varchar" MaxLength="100" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="UpdatedDate" Type="datetime" />
+          <Property Name="UpdatedBy" Type="int" />
+          <Property Name="IsActive" Type="bit" />
+        </EntityType>
+        <EntityType Name="DSMaster">
+          <Key>
+            <PropertyRef Name="DSMasterId" />
+          </Key>
+          <Property Name="DSMasterId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="KeyName" Type="varchar(max)" />
+          <Property Name="KeyPinNo" Type="varchar" MaxLength="100" />
+          <Property Name="Department" Type="varchar" MaxLength="100" />
+          <Property Name="Designation" Type="varchar" MaxLength="100" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="UpdatedDate" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="SignName" Type="varchar" MaxLength="100" />
+          <Property Name="IssuerName" Type="varchar(max)" />
+          <Property Name="SerialNo" Type="varchar" MaxLength="100" />
+          <Property Name="ThumbPrint" Type="varchar(max)" />
+          <Property Name="CertificateName" Type="varchar(max)" />
+          <Property Name="STATUS" Type="varchar" MaxLength="100" />
+          <Property Name="ContainerName" Type="varchar" MaxLength="100" />
+          <Property Name="ProviderName" Type="varchar" MaxLength="100" />
+          <Property Name="ValidityBefore" Type="datetime" />
+          <Property Name="ValidityAfter" Type="datetime" />
+        </EntityType>
+        <EntityType Name="EDIConfiguration">
+          <Key>
+            <PropertyRef Name="EdiId" />
+          </Key>
+          <Property Name="EdiId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClientLineId" Type="int" />
+          <Property Name="ClientId" Type="varchar" MaxLength="200" />
+          <Property Name="IsEdi" Type="bit" />
+          <Property Name="EdiLink" Type="varchar" MaxLength="500" />
+          <Property Name="IsEmail" Type="bit" />
+          <Property Name="Email" Type="varchar" MaxLength="200" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="UpdatedDate" Type="datetime" />
+          <Property Name="Host" Type="varchar" MaxLength="200" />
+          <Property Name="Port" Type="varchar" MaxLength="200" />
+          <Property Name="FromEmail" Type="varchar" MaxLength="200" />
+          <Property Name="FromPwd" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Invoice">
+          <Key>
+            <PropertyRef Name="InvoiceId" />
+          </Key>
+          <Property Name="InvoiceId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerName" Type="varchar" MaxLength="200" />
+          <Property Name="VehicleNumber" Type="varchar" MaxLength="200" />
+          <Property Name="VendorCode" Type="varchar" MaxLength="100" />
+          <Property Name="ShopCode" Type="varchar" MaxLength="5" />
+          <Property Name="PONumber" Type="varchar" MaxLength="20" />
+          <Property Name="PartNumber" Type="varchar" MaxLength="30" />
+          <Property Name="InvNumber" Type="varchar" MaxLength="30" />
+          <Property Name="InvDate" Type="datetime" />
+          <Property Name="InvQuantity" Type="varchar" MaxLength="15" />
+          <Property Name="InvValue" Type="varchar" MaxLength="30" />
+          <Property Name="TarrifNumber" Type="varchar" MaxLength="20" />
+          <Property Name="BedAmount" Type="varchar" MaxLength="30" />
+          <Property Name="SGST" Type="varchar" MaxLength="30" />
+          <Property Name="IGST" Type="varchar" MaxLength="30" />
+          <Property Name="VatAmount" Type="varchar" MaxLength="30" />
+          <Property Name="UnitPrice" Type="varchar" MaxLength="30" />
+          <Property Name="MaterialCost" Type="varchar" MaxLength="40" />
+          <Property Name="CGST" Type="varchar" MaxLength="30" />
+          <Property Name="ConsigneePartCost" Type="varchar" MaxLength="30" />
+          <Property Name="ExciseDutyCost" Type="varchar" MaxLength="30" />
+          <Property Name="AssessableValue" Type="varchar" MaxLength="40" />
+          <Property Name="CSTAmount" Type="varchar" MaxLength="30" />
+          <Property Name="ToolCost" Type="varchar" MaxLength="30" />
+          <Property Name="ConsigneeMatlCost" Type="varchar" MaxLength="30" />
+          <Property Name="GSTN" Type="varchar" MaxLength="40" />
+          <Property Name="BatchNumber" Type="varchar" MaxLength="200" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="DSStatus" Type="varchar" MaxLength="20" />
+          <Property Name="OriginalPDF" Type="varbinary(max)" />
+          <Property Name="DuplicatePDF" Type="varbinary(max)" />
+          <Property Name="QuadraplicatePDF" Type="varbinary(max)" />
+          <Property Name="ExtraPDF" Type="varbinary(max)" />
+          <Property Name="PrintStatus" Type="varchar" MaxLength="10" />
+          <Property Name="APIStatus" Type="varchar" MaxLength="10" />
+          <Property Name="APIMessage" Type="varchar" MaxLength="500" />
+          <Property Name="UpdatedDate" Type="datetime" />
+          <Property Name="IsEmailSend" Type="bit" />
+          <Property Name="Finyear" Type="int" />
+          <Property Name="SystemName" Type="varchar" MaxLength="100" />
+          <Property Name="ItemCode" Type="varchar" MaxLength="100" />
+          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="GateNo" Type="varchar" MaxLength="50" />
+          <Property Name="ContentType" Type="varchar" MaxLength="50" />
+          <Property Name="UOM" Type="varchar" MaxLength="50" />
+          <Property Name="CGSTrate" Type="varchar" MaxLength="50" />
+          <Property Name="SGSTrate" Type="varchar" MaxLength="50" />
+          <Property Name="IGSTrate" Type="varchar" MaxLength="50" />
+          <Property Name="TotalAmnt" Type="varchar" MaxLength="50" />
+          <Property Name="TotalGSTvalue" Type="varchar" MaxLength="50" />
+          <Property Name="TotalAmntwords" Type="varchar(max)" />
+          <Property Name="TotalGSTvaluewords" Type="varchar(max)" />
+          <Property Name="BillToCustomer" Type="varchar(max)" />
+          <Property Name="BTaddress" Type="varchar(max)" />
+          <Property Name="BTstate" Type="varchar(max)" />
+          <Property Name="BTstatecode" Type="varchar" MaxLength="50" />
+          <Property Name="BTgst" Type="varchar" MaxLength="50" />
+          <Property Name="BTpan" Type="varchar" MaxLength="50" />
+          <Property Name="ShipToCustomer" Type="varchar(max)" />
+          <Property Name="STaddress" Type="varchar(max)" />
+          <Property Name="STstate1" Type="varchar(max)" />
+          <Property Name="STstatecode1" Type="varchar" MaxLength="50" />
+          <Property Name="STgst1" Type="varchar" MaxLength="50" />
+          <Property Name="STpan1" Type="varchar" MaxLength="50" />
+          <Property Name="RR_GR" Type="varchar" MaxLength="50" />
+          <Property Name="Destination" Type="varchar" MaxLength="50" />
+          <Property Name="Currency" Type="varchar" MaxLength="50" />
+          <Property Name="Ewaybill_no" Type="varchar" MaxLength="50" />
+          <Property Name="Carrier" Type="varchar" MaxLength="50" />
+          <Property Name="PDF_Generation" Type="varchar" MaxLength="50" />
+          <Property Name="Case_no" Type="varchar" MaxLength="50" />
+          <Property Name="Qty_in_case" Type="varchar" MaxLength="50" />
+          <Property Name="TCS" Type="varchar" MaxLength="50" />
+          <Property Name="Lot_Code" Type="varchar" MaxLength="50" />
+          <Property Name="E_InvNo" Type="varchar" MaxLength="100" />
+          <Property Name="Manfac_Date" Type="datetime" />
+          <Property Name="EXTRA_NUM_1" Type="varchar" MaxLength="50" />
+          <Property Name="EXTRA_NUM_2" Type="varchar" MaxLength="50" />
+          <Property Name="EXTRA_NUM_3" Type="varchar" MaxLength="50" />
+          <Property Name="EXTRA_NUM_4" Type="varchar" MaxLength="50" />
+          <Property Name="EXTRA_NUM_5" Type="varchar" MaxLength="50" />
+          <Property Name="EXTRA_NUM_6" Type="varchar" MaxLength="50" />
+          <Property Name="EXTRA_NUM_7" Type="varchar" MaxLength="50" />
+          <Property Name="EXTRA_CHAR_1" Type="varchar" MaxLength="50" />
+          <Property Name="EXTRA_CHAR_2" Type="varchar" MaxLength="50" />
+          <Property Name="EXTRA_CHAR_3" Type="varchar" MaxLength="50" />
+          <Property Name="EXTRA_CHAR_4" Type="varchar" MaxLength="50" />
+          <Property Name="EXTRA_CHAR_5" Type="varchar" MaxLength="50" />
+          <Property Name="Date_1" Type="datetime" />
+          <Property Name="Date_2" Type="datetime" />
+          <Property Name="Date_3" Type="datetime" />
+          <Property Name="Date_4" Type="datetime" />
+          <Property Name="Date_5" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Test_API_DB.dbo.LICENCES' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="LICENCES">
+          <Key>
+            <PropertyRef Name="ID" />
+            <PropertyRef Name="LICENCE_ID" />
+            <PropertyRef Name="DATE_PURCHASED" />
+            <PropertyRef Name="SYSTEM_NAME" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LICENCE_ID" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="DATE_PURCHASED" Type="datetime" Nullable="false" />
+          <Property Name="SYSTEM_NAME" Type="varchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PART_MASTER">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PART_NAME" Type="varchar(max)" />
+          <Property Name="PART_ID" Type="varchar" MaxLength="50" />
+          <Property Name="PART_NO" Type="varchar" MaxLength="50" />
+          <Property Name="COIL_NO" Type="varchar" MaxLength="20" />
+          <Property Name="SPECIFICATION" Type="varchar" MaxLength="50" />
+          <Property Name="BASIC" Type="varchar" MaxLength="20" />
+          <Property Name="FREIGHT" Type="varchar" MaxLength="20" />
+          <Property Name="AMORTISATION" Type="varchar" MaxLength="20" />
+          <Property Name="UOM" Type="varchar" MaxLength="20" />
+          <Property Name="GATE_NO" Type="varchar" MaxLength="20" />
+          <Property Name="CHAPTER_HEADING" Type="varchar" MaxLength="20" />
+          <Property Name="DESCRIPTION" Type="varchar" MaxLength="50" />
+          <Property Name="CONTAINER" Type="varchar" MaxLength="20" />
+          <Property Name="STUFF_QTY" Type="varchar" MaxLength="20" />
+          <Property Name="LOCATION" Type="varchar" MaxLength="20" />
+          <Property Name="SHOP" Type="varchar" MaxLength="20" />
+          <Property Name="SHOP_CODE" Type="varchar" MaxLength="20" />
+          <Property Name="STD_WEIGHT" Type="varchar" MaxLength="20" />
+          <Property Name="THICKNESS" Type="varchar" MaxLength="20" />
+          <Property Name="WIDTH" Type="varchar" MaxLength="20" />
+          <Property Name="UNIT" Type="varchar" MaxLength="20" />
+          <Property Name="MODEL" Type="varchar" MaxLength="20" />
+          <Property Name="OP_STOCK" Type="varchar" MaxLength="20" />
+          <Property Name="OP_QTY" Type="varchar" MaxLength="20" />
+          <Property Name="CATOGORY" Type="varchar" MaxLength="20" />
+          <Property Name="SUB_CATOGORY" Type="varchar" MaxLength="20" />
+          <Property Name="ACTIVATE_STATE" Type="varchar" MaxLength="20" />
+          <Property Name="RM_COST" Type="varchar" MaxLength="20" />
+          <Property Name="noc" Type="varchar" MaxLength="20" />
+          <Property Name="vendor_code" Type="varchar" MaxLength="20" />
+          <Property Name="ex_duty" Type="varchar" MaxLength="5" />
+          <Property Name="cess_duty" Type="varchar" MaxLength="5" />
+          <Property Name="sh_duty" Type="varchar" MaxLength="5" />
+          <Property Name="cst_tax" Type="varchar" MaxLength="5" />
+          <Property Name="lst_tax" Type="varchar" MaxLength="5" />
+          <Property Name="vat" Type="varchar" MaxLength="5" />
+          <Property Name="ttcs" Type="varchar" MaxLength="5" />
+          <Property Name="surcharge" Type="varchar" MaxLength="5" />
+          <Property Name="type" Type="varchar" MaxLength="50" />
+          <Property Name="s_area" Type="varchar" MaxLength="50" />
+          <Property Name="plant" Type="varchar" MaxLength="50" />
+          <Property Name="USER_STAMP" Type="varchar" MaxLength="30" />
+          <Property Name="TIME_STAMP" Type="datetime" />
+          <Property Name="PLANT_" Type="varchar" MaxLength="50" />
+          <Property Name="GATE_NO_" Type="varchar" MaxLength="50" />
+          <Property Name="SHOP_CODE1" Type="varchar" MaxLength="50" />
+          <Property Name="SHOP1" Type="varchar" MaxLength="50" />
+          <Property Name="MATERIAL_CODE" Type="varchar" MaxLength="50" />
+          <Property Name="sgst" Type="varchar" MaxLength="50" />
+          <Property Name="cgst" Type="varchar" MaxLength="50" />
+          <Property Name="igst" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Quarantine">
+          <Key>
+            <PropertyRef Name="QId" />
+          </Key>
+          <Property Name="QId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InvNumber" Type="varchar" MaxLength="100" />
+          <Property Name="IsActive" Type="bit" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Test_API_DB.dbo.Server_trigger' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Server_trigger">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Triggered" Type="varchar" MaxLength="50" />
+          <Property Name="Type" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Settings">
+          <Key>
+            <PropertyRef Name="SettingsId" />
+          </Key>
+          <Property Name="SettingsId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SystemName" Type="varchar" MaxLength="100" />
+          <Property Name="PrinterName" Type="varchar" MaxLength="200" />
+          <Property Name="InputPath" Type="varchar" MaxLength="300" />
+          <Property Name="OutputPath" Type="varchar" MaxLength="300" />
+          <Property Name="InvoicePath" Type="varchar" MaxLength="300" />
+          <Property Name="APIUrl" Type="varchar" MaxLength="500" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="UpdatedDate" Type="datetime" />
+          <Property Name="Flatfilepath" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="Setup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Product_name" Type="varchar" MaxLength="50" />
+          <Property Name="Licensed_on" Type="varchar" MaxLength="50" />
+          <Property Name="Valid_upto" Type="varchar" MaxLength="50" />
+          <Property Name="SQL" Type="varchar" MaxLength="50" />
+          <Property Name="SAP_CR" Type="varchar" MaxLength="50" />
+          <Property Name="CR_Runtime" Type="varchar" MaxLength="50" />
+          <Property Name="Adobe_DC" Type="varchar" MaxLength="50" />
+          <Property Name="PStool" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="TemplateMaster">
+          <Key>
+            <PropertyRef Name="Temp_ID" />
+          </Key>
+          <Property Name="Temp_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Template_Name" Type="varchar" MaxLength="50" />
+          <Property Name="Inv_No_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Inv_Date_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Vendor_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Truck_No_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Client_Name_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="DS_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Po_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Part_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Qty_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Rate_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Ass_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Cgst_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Sgst_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Tot_Val_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Irn_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Tcs_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="Shopcd_Cord" Type="varchar" MaxLength="50" />
+          <Property Name="HSN_Cord" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Username" Type="varchar" MaxLength="50" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
+          <Property Name="UserType" Type="varchar" MaxLength="20" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="LoginStatus" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK__DigitalSi__Clien__25869641">
+          <End Role="ClientMaster" Type="Self.ClientMaster" Multiplicity="0..1" />
+          <End Role="DigitalSignDetails" Type="Self.DigitalSignDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ClientMaster">
+              <PropertyRef Name="ClientLineId" />
+            </Principal>
+            <Dependent Role="DigitalSignDetails">
+              <PropertyRef Name="ClientLineId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__EDIConfig__Clien__267ABA7A">
+          <End Role="ClientMaster" Type="Self.ClientMaster" Multiplicity="0..1" />
+          <End Role="EDIConfiguration" Type="Self.EDIConfiguration" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ClientMaster">
+              <PropertyRef Name="ClientLineId" />
+            </Principal>
+            <Dependent Role="EDIConfiguration">
+              <PropertyRef Name="ClientLineId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="SP_FILTER_INVOICE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="InvNumber" Type="varchar" Mode="In" />
+          <Parameter Name="FromDate" Type="varchar" Mode="In" />
+          <Parameter Name="ToDate" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_INVOICE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="SP_GET_QUARNINVOICE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="InvoiceNo" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_SEARCHINVOICE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="InvoiceNo" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SP_GET_SYSINVOICE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SystemName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="sp_search_Invoice" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="InvoiceNo" Type="varchar" Mode="In" />
+          <Parameter Name="FromDate" Type="datetime" Mode="In" />
+          <Parameter Name="ToDate" Type="datetime" Mode="In" />
+        </Function>
+        <EntityContainer Name="DSMdbModelStoreContainer">
+          <EntitySet Name="ClientMaster" EntityType="Self.ClientMaster" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DigitalSignDetails" EntityType="Self.DigitalSignDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DSMaster" EntityType="Self.DSMaster" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EDIConfiguration" EntityType="Self.EDIConfiguration" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Invoice" EntityType="Self.Invoice" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PART_MASTER" EntityType="Self.PART_MASTER" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Quarantine" EntityType="Self.Quarantine" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Settings" EntityType="Self.Settings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Setup" EntityType="Self.Setup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TemplateMaster" EntityType="Self.TemplateMaster" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LICENCES" EntityType="Self.LICENCES" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [LICENCES].[ID] AS [ID], 
+    [LICENCES].[LICENCE_ID] AS [LICENCE_ID], 
+    [LICENCES].[DATE_PURCHASED] AS [DATE_PURCHASED], 
+    [LICENCES].[SYSTEM_NAME] AS [SYSTEM_NAME]
+    FROM [dbo].[LICENCES] AS [LICENCES]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="Server_trigger" EntityType="Self.Server_trigger" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Server_trigger].[ID] AS [ID], 
+    [Server_trigger].[Triggered] AS [Triggered], 
+    [Server_trigger].[Type] AS [Type]
+    FROM [dbo].[Server_trigger] AS [Server_trigger]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK__DigitalSi__Clien__25869641" Association="Self.FK__DigitalSi__Clien__25869641">
+            <End Role="ClientMaster" EntitySet="ClientMaster" />
+            <End Role="DigitalSignDetails" EntitySet="DigitalSignDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK__EDIConfig__Clien__267ABA7A" Association="Self.FK__EDIConfig__Clien__267ABA7A">
+            <End Role="ClientMaster" EntitySet="ClientMaster" />
+            <End Role="EDIConfiguration" EntitySet="EDIConfiguration" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="DSMdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="DSMdbEntities" annotation:LazyLoadingEnabled="true" >
+          <EntitySet Name="Users" EntityType="DSMdbModel.User" />
+          <EntitySet Name="Settings" EntityType="DSMdbModel.Setting" />
+          <EntitySet Name="ClientMasters" EntityType="DSMdbModel.ClientMaster" />
+          <EntitySet Name="EDIConfigurations" EntityType="DSMdbModel.EDIConfiguration" />
+          <AssociationSet Name="FK__EDIConfig__Clien__182C9B23" Association="DSMdbModel.FK__EDIConfig__Clien__182C9B23">
+            <End Role="ClientMaster" EntitySet="ClientMasters" />
+            <End Role="EDIConfiguration" EntitySet="EDIConfigurations" />
+          </AssociationSet>
+          <EntitySet Name="DigitalSignDetails" EntityType="DSMdbModel.DigitalSignDetail" />
+          <AssociationSet Name="FK__DigitalSi__Clien__276EDEB3" Association="DSMdbModel.FK__DigitalSi__Clien__276EDEB3">
+            <End Role="ClientMaster" EntitySet="ClientMasters" />
+            <End Role="DigitalSignDetail" EntitySet="DigitalSignDetails" />
+          </AssociationSet>
+          <EntitySet Name="DSMasters" EntityType="DSMdbModel.DSMaster" />
+          <EntitySet Name="Invoices" EntityType="DSMdbModel.Invoice" />
+          <EntitySet Name="Quarantines" EntityType="DSMdbModel.Quarantine" />
+          <FunctionImport Name="SP_FILTER_INVOICE" ReturnType="Collection(DSMdbModel.SP_FILTER_INVOICE_Result)">
+            <Parameter Name="InvNumber" Mode="In" Type="String" />
+            <Parameter Name="FromDate" Mode="In" Type="String" />
+            <Parameter Name="ToDate" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_INVOICE" ReturnType="Collection(DSMdbModel.SP_GET_INVOICE_Result)" />
+          <FunctionImport Name="sp_search_Invoice" ReturnType="Collection(DSMdbModel.sp_search_Invoice_Result)">
+            <Parameter Name="InvoiceNo" Mode="In" Type="String" />
+            <Parameter Name="FromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ToDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_SYSINVOICE" ReturnType="Collection(DSMdbModel.SP_GET_SYSINVOICE_Result)">
+          <Parameter Name="SystemName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_GET_SEARCHINVOICE" ReturnType="Collection(DSMdbModel.SP_GET_SEARCHINVOICE_Result)">
+          <Parameter Name="InvoiceNo" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="TemplateMasters" EntityType="DSMdbModel.TemplateMaster" />
+          <FunctionImport Name="SP_GET_QUARNINVOICE" ReturnType="Collection(DSMdbModel.SP_GET_QUARNINVOICE_Result)">
+          <Parameter Name="InvoiceNo" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="PART_MASTER" EntityType="DSMdbModel.PART_MASTER" />
+          <EntitySet Name="Setups" EntityType="DSMdbModel.Setup" />
+          <EntitySet Name="LICENCES" EntityType="DSMdbModel.LICENCE" />
+          <EntitySet Name="Server_trigger" EntityType="DSMdbModel.Server_trigger" />
+        </EntityContainer>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UserType" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="LoginStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Setting">
+          <Key>
+            <PropertyRef Name="SettingsId" />
+          </Key>
+          <Property Name="SettingsId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SystemName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="PrinterName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="InputPath" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="OutputPath" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="InvoicePath" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="APIUrl" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+          <Property Name="Flatfilepath" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ClientMaster">
+          <Key>
+            <PropertyRef Name="ClientLineId" />
+          </Key>
+          <Property Name="ClientLineId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClientId" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="EDIConfigurations" Relationship="DSMdbModel.FK__EDIConfig__Clien__182C9B23" FromRole="ClientMaster" ToRole="EDIConfiguration" />
+          <Property Name="IsDigitalSign" Type="Boolean" />
+          <NavigationProperty Name="DigitalSignDetails" Relationship="DSMdbModel.FK__DigitalSi__Clien__276EDEB3" FromRole="ClientMaster" ToRole="DigitalSignDetail" />
+          <Property Name="IsAPIpost" Type="Boolean" />
+          <Property Name="APIUrl" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="APItype" Type="Boolean" />
+          <Property Name="PDFtype" Type="Boolean" />
+          <Property Name="PrintType" Type="Boolean" />
+          <Property Name="PrintCopies" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="VendorCode" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="TemplateName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="EDIConfiguration">
+          <Key>
+            <PropertyRef Name="EdiId" />
+          </Key>
+          <Property Name="EdiId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClientLineId" Type="Int32" />
+          <Property Name="ClientId" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="IsEdi" Type="Boolean" />
+          <Property Name="EdiLink" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="IsEmail" Type="Boolean" />
+          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ClientMaster" Relationship="DSMdbModel.FK__EDIConfig__Clien__182C9B23" FromRole="EDIConfiguration" ToRole="ClientMaster" />
+          <Property Name="Host" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Port" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="FromEmail" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="FromPwd" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK__EDIConfig__Clien__182C9B23">
+          <End Type="DSMdbModel.ClientMaster" Role="ClientMaster" Multiplicity="0..1" />
+          <End Type="DSMdbModel.EDIConfiguration" Role="EDIConfiguration" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ClientMaster">
+              <PropertyRef Name="ClientLineId" />
+            </Principal>
+            <Dependent Role="EDIConfiguration">
+              <PropertyRef Name="ClientLineId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="DigitalSignDetail">
+          <Key>
+            <PropertyRef Name="DSDetailsId" />
+          </Key>
+          <Property Name="DSDetailsId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClientLineId" Type="Int32" />
+          <Property Name="ClientId" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="KeyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="KeyPinNo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedBy" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <NavigationProperty Name="ClientMaster" Relationship="DSMdbModel.FK__DigitalSi__Clien__276EDEB3" FromRole="DigitalSignDetail" ToRole="ClientMaster" />
+        </EntityType>
+        <Association Name="FK__DigitalSi__Clien__276EDEB3">
+          <End Type="DSMdbModel.ClientMaster" Role="ClientMaster" Multiplicity="0..1" />
+          <End Type="DSMdbModel.DigitalSignDetail" Role="DigitalSignDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ClientMaster">
+              <PropertyRef Name="ClientLineId" />
+            </Principal>
+            <Dependent Role="DigitalSignDetail">
+              <PropertyRef Name="ClientLineId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="DSMaster">
+          <Key>
+            <PropertyRef Name="DSMasterId" />
+          </Key>
+          <Property Name="DSMasterId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="KeyName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="KeyPinNo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Department" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Designation" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="SignName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="IssuerName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="SerialNo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ThumbPrint" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CertificateName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="STATUS" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ContainerName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ProviderName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ValidityBefore" Type="DateTime" Precision="3" />
+          <Property Name="ValidityAfter" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Invoice">
+          <Key>
+            <PropertyRef Name="InvoiceId" />
+          </Key>
+          <Property Name="InvoiceId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="VehicleNumber" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="VendorCode" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ShopCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="PONumber" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="PartNumber" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="InvNumber" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="InvDate" Type="DateTime" Precision="3" />
+          <Property Name="InvQuantity" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="InvValue" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="TarrifNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="BedAmount" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="SGST" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="IGST" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="VatAmount" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="UnitPrice" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="MaterialCost" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Name="CGST" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="ConsigneePartCost" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="ExciseDutyCost" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="AssessableValue" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Name="CSTAmount" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="ToolCost" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="ConsigneeMatlCost" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="GSTN" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Name="BatchNumber" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="DSStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="OriginalPDF" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="DuplicatePDF" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="QuadraplicatePDF" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="ExtraPDF" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="PrintStatus" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="APIStatus" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="APIMessage" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+          <Property Name="IsEmailSend" Type="Boolean" />
+          <Property Name="Finyear" Type="Int32" />
+          <Property Name="SystemName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ItemCode" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="GateNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContentType" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="UOM" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CGSTrate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SGSTrate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IGSTrate" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TotalAmnt" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TotalGSTvalue" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TotalAmntwords" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="TotalGSTvaluewords" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="BillToCustomer" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="BTaddress" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="BTstate" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="BTstatecode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="BTgst" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="BTpan" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ShipToCustomer" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="STaddress" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="STstate1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="STstatecode1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="STgst1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="STpan1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="RR_GR" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Destination" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Currency" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Ewaybill_no" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Carrier" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PDF_Generation" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Case_no" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Qty_in_case" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TCS" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Lot_Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="E_InvNo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Manfac_Date" Type="DateTime" Precision="3" />
+          <Property Name="EXTRA_NUM_1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EXTRA_NUM_2" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EXTRA_NUM_3" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EXTRA_NUM_4" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EXTRA_NUM_5" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EXTRA_NUM_6" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EXTRA_NUM_7" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EXTRA_CHAR_1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EXTRA_CHAR_2" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EXTRA_CHAR_3" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EXTRA_CHAR_4" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EXTRA_CHAR_5" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Date_1" Type="DateTime" Precision="3" />
+          <Property Name="Date_2" Type="DateTime" Precision="3" />
+          <Property Name="Date_3" Type="DateTime" Precision="3" />
+          <Property Name="Date_4" Type="DateTime" Precision="3" />
+          <Property Name="Date_5" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Quarantine">
+          <Key>
+            <PropertyRef Name="QId" />
+          </Key>
+          <Property Name="QId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InvNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="Boolean" />
+        </EntityType>
+        <ComplexType Name="SP_FILTER_INVOICE_Result">
+          <Property Type="Int32" Name="InvoiceId" Nullable="false" />
+          <Property Type="String" Name="CustomerName" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="VehicleNumber" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="VendorCode" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ShopCode" Nullable="true" MaxLength="5" />
+          <Property Type="String" Name="PONumber" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="PartNumber" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="InvNumber" Nullable="true" MaxLength="30" />
+          <Property Type="DateTime" Name="InvDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="InvQuantity" Nullable="true" MaxLength="15" />
+          <Property Type="String" Name="InvValue" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="TarrifNumber" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="BedAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="SGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="IGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="VatAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="UnitPrice" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="MaterialCost" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="CGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ConsigneePartCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ExciseDutyCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="AssessableValue" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="CSTAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ToolCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ConsigneeMatlCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="GSTN" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="BatchNumber" Nullable="true" MaxLength="200" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DSStatus" Nullable="true" MaxLength="20" />
+          <Property Type="Binary" Name="OriginalPDF" Nullable="true" />
+          <Property Type="Binary" Name="DuplicatePDF" Nullable="true" />
+          <Property Type="Binary" Name="QuadraplicatePDF" Nullable="true" />
+          <Property Type="Binary" Name="ExtraPDF" Nullable="true" />
+          <Property Type="String" Name="PrintStatus" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="APIStatus" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="APIMessage" Nullable="true" MaxLength="500" />
+          <Property Type="DateTime" Name="UpdatedDate" Nullable="true" Precision="23" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_INVOICE_Result">
+          <Property Type="Int32" Name="InvoiceId" Nullable="false" />
+          <Property Type="String" Name="CustomerName" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="VehicleNumber" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="VendorCode" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ShopCode" Nullable="true" MaxLength="5" />
+          <Property Type="String" Name="PONumber" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="PartNumber" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="InvNumber" Nullable="true" MaxLength="30" />
+          <Property Type="DateTime" Name="InvDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="InvQuantity" Nullable="true" MaxLength="15" />
+          <Property Type="String" Name="InvValue" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="TarrifNumber" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="BedAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="SGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="IGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="VatAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="UnitPrice" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="MaterialCost" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="CGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ConsigneePartCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ExciseDutyCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="AssessableValue" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="CSTAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ToolCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ConsigneeMatlCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="GSTN" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="BatchNumber" Nullable="true" MaxLength="200" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DSStatus" Nullable="true" MaxLength="20" />
+          <Property Type="Binary" Name="OriginalPDF" Nullable="true" />
+          <Property Type="Binary" Name="DuplicatePDF" Nullable="true" />
+          <Property Type="Binary" Name="QuadraplicatePDF" Nullable="true" />
+          <Property Type="Binary" Name="ExtraPDF" Nullable="true" />
+          <Property Type="String" Name="PrintStatus" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="APIStatus" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="APIMessage" Nullable="true" MaxLength="500" />
+          <Property Type="DateTime" Name="UpdatedDate" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="IsEmailSend" Nullable="true" />
+          <Property Type="Int32" Name="Finyear" Nullable="true" />
+          <Property Type="String" Name="SystemName" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="sp_search_Invoice_Result">
+          <Property Type="Int32" Name="InvoiceId" Nullable="false" />
+          <Property Type="String" Name="CustomerName" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="VehicleNumber" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="VendorCode" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ShopCode" Nullable="true" MaxLength="5" />
+          <Property Type="String" Name="PONumber" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="PartNumber" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="InvNumber" Nullable="true" MaxLength="30" />
+          <Property Type="DateTime" Name="InvDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="InvQuantity" Nullable="true" MaxLength="15" />
+          <Property Type="String" Name="InvValue" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="TarrifNumber" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="BedAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="SGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="IGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="VatAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="UnitPrice" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="MaterialCost" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="CGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ConsigneePartCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ExciseDutyCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="AssessableValue" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="CSTAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ToolCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ConsigneeMatlCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="GSTN" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="BatchNumber" Nullable="true" MaxLength="200" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DSStatus" Nullable="true" MaxLength="20" />
+          <Property Type="Binary" Name="OriginalPDF" Nullable="true" />
+          <Property Type="Binary" Name="DuplicatePDF" Nullable="true" />
+          <Property Type="Binary" Name="QuadraplicatePDF" Nullable="true" />
+          <Property Type="Binary" Name="ExtraPDF" Nullable="true" />
+          <Property Type="String" Name="PrintStatus" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="APIStatus" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="APIMessage" Nullable="true" MaxLength="500" />
+          <Property Type="DateTime" Name="UpdatedDate" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="IsEmailSend" Nullable="true" />
+          <Property Type="Int32" Name="Finyear" Nullable="true" />
+          <Property Type="String" Name="SystemName" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_SYSINVOICE_Result">
+          <Property Type="Int32" Name="InvoiceId" Nullable="false" />
+          <Property Type="String" Name="CustomerName" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="VehicleNumber" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="VendorCode" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ShopCode" Nullable="true" MaxLength="5" />
+          <Property Type="String" Name="PONumber" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="PartNumber" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="InvNumber" Nullable="true" MaxLength="30" />
+          <Property Type="DateTime" Name="InvDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="InvQuantity" Nullable="true" MaxLength="15" />
+          <Property Type="String" Name="InvValue" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="TarrifNumber" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="BedAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="SGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="IGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="VatAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="UnitPrice" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="MaterialCost" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="CGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ConsigneePartCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ExciseDutyCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="AssessableValue" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="CSTAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ToolCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ConsigneeMatlCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="GSTN" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="BatchNumber" Nullable="true" MaxLength="200" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DSStatus" Nullable="true" MaxLength="20" />
+          <Property Type="Binary" Name="OriginalPDF" Nullable="true" />
+          <Property Type="Binary" Name="DuplicatePDF" Nullable="true" />
+          <Property Type="Binary" Name="QuadraplicatePDF" Nullable="true" />
+          <Property Type="Binary" Name="ExtraPDF" Nullable="true" />
+          <Property Type="String" Name="PrintStatus" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="APIStatus" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="APIMessage" Nullable="true" MaxLength="500" />
+          <Property Type="DateTime" Name="UpdatedDate" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="IsEmailSend" Nullable="true" />
+          <Property Type="Int32" Name="Finyear" Nullable="true" />
+          <Property Type="String" Name="SystemName" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="SP_GET_SEARCHINVOICE_Result">
+          <Property Type="Int32" Name="InvoiceId" Nullable="false" />
+          <Property Type="String" Name="CustomerName" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="VehicleNumber" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="VendorCode" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ShopCode" Nullable="true" MaxLength="5" />
+          <Property Type="String" Name="PONumber" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="PartNumber" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="InvNumber" Nullable="true" MaxLength="30" />
+          <Property Type="DateTime" Name="InvDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="InvQuantity" Nullable="true" MaxLength="15" />
+          <Property Type="String" Name="InvValue" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="TarrifNumber" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="BedAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="SGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="IGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="VatAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="UnitPrice" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="MaterialCost" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="CGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ConsigneePartCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ExciseDutyCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="AssessableValue" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="CSTAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ToolCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ConsigneeMatlCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="GSTN" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="BatchNumber" Nullable="true" MaxLength="200" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DSStatus" Nullable="true" MaxLength="20" />
+          <Property Type="Binary" Name="OriginalPDF" Nullable="true" />
+          <Property Type="Binary" Name="DuplicatePDF" Nullable="true" />
+          <Property Type="Binary" Name="QuadraplicatePDF" Nullable="true" />
+          <Property Type="Binary" Name="ExtraPDF" Nullable="true" />
+          <Property Type="String" Name="PrintStatus" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="APIStatus" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="APIMessage" Nullable="true" MaxLength="500" />
+          <Property Type="DateTime" Name="UpdatedDate" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="IsEmailSend" Nullable="true" />
+          <Property Type="Int32" Name="Finyear" Nullable="true" />
+          <Property Type="String" Name="SystemName" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <EntityType Name="TemplateMaster">
+          <Key>
+            <PropertyRef Name="Temp_ID" />
+          </Key>
+          <Property Name="Temp_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Template_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Inv_No_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Inv_Date_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Vendor_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Truck_No_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Client_Name_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DS_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Po_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Part_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Qty_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Rate_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Ass_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Cgst_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Sgst_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Tot_Val_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Irn_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Tcs_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Shopcd_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="HSN_Cord" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <ComplexType Name="SP_GET_QUARNINVOICE_Result">
+          <Property Type="Int32" Name="InvoiceId" Nullable="false" />
+          <Property Type="String" Name="CustomerName" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="VehicleNumber" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="VendorCode" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ShopCode" Nullable="true" MaxLength="5" />
+          <Property Type="String" Name="PONumber" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="PartNumber" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="InvNumber" Nullable="true" MaxLength="30" />
+          <Property Type="DateTime" Name="InvDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="InvQuantity" Nullable="true" MaxLength="15" />
+          <Property Type="String" Name="InvValue" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="TarrifNumber" Nullable="true" MaxLength="20" />
+          <Property Type="String" Name="BedAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="SGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="IGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="VatAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="UnitPrice" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="MaterialCost" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="CGST" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ConsigneePartCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ExciseDutyCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="AssessableValue" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="CSTAmount" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ToolCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="ConsigneeMatlCost" Nullable="true" MaxLength="30" />
+          <Property Type="String" Name="GSTN" Nullable="true" MaxLength="40" />
+          <Property Type="String" Name="BatchNumber" Nullable="true" MaxLength="200" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="DSStatus" Nullable="true" MaxLength="20" />
+          <Property Type="Binary" Name="OriginalPDF" Nullable="true" />
+          <Property Type="Binary" Name="DuplicatePDF" Nullable="true" />
+          <Property Type="Binary" Name="QuadraplicatePDF" Nullable="true" />
+          <Property Type="Binary" Name="ExtraPDF" Nullable="true" />
+          <Property Type="String" Name="PrintStatus" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="APIStatus" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="APIMessage" Nullable="true" MaxLength="500" />
+          <Property Type="DateTime" Name="UpdatedDate" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="IsEmailSend" Nullable="true" />
+          <Property Type="Int32" Name="Finyear" Nullable="true" />
+          <Property Type="String" Name="SystemName" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="ItemCode" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Description" Nullable="true" />
+          <Property Type="String" Name="GateNo" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ContentType" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="UOM" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="CGSTrate" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="SGSTrate" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="IGSTrate" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="TotalAmnt" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="TotalGSTvalue" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="TotalAmntwords" Nullable="true" />
+          <Property Type="String" Name="TotalGSTvaluewords" Nullable="true" />
+          <Property Type="String" Name="BillToCustomer" Nullable="true" />
+          <Property Type="String" Name="BTaddress" Nullable="true" />
+          <Property Type="String" Name="BTstate" Nullable="true" />
+          <Property Type="String" Name="BTstatecode" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="BTgst" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="BTpan" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ShipToCustomer" Nullable="true" />
+          <Property Type="String" Name="STaddress" Nullable="true" />
+          <Property Type="String" Name="STstate1" Nullable="true" />
+          <Property Type="String" Name="STstatecode1" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="STgst1" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="STpan1" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="RR_GR" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Destination" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Currency" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Ewaybill_no" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Carrier" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="PDF_Generation" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Case_no" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Qty_in_case" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="TCS" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Lot_Code" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="E_InvNo" Nullable="true" MaxLength="100" />
+          <Property Type="DateTime" Name="Manfac_Date" Nullable="true" Precision="23" />
+          <Property Type="String" Name="EXTRA_NUM_1" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="EXTRA_NUM_2" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="EXTRA_NUM_3" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="EXTRA_NUM_4" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="EXTRA_NUM_5" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="EXTRA_NUM_6" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="EXTRA_NUM_7" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="EXTRA_CHAR_1" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="EXTRA_CHAR_2" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="EXTRA_CHAR_3" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="EXTRA_CHAR_4" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="EXTRA_CHAR_5" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="Date_1" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="Date_2" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="Date_3" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="Date_4" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="Date_5" Nullable="true" Precision="23" />
+        </ComplexType>
+        <EntityType Name="PART_MASTER">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PART_NAME" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="PART_ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PART_NO" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="COIL_NO" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="SPECIFICATION" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="BASIC" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="FREIGHT" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="AMORTISATION" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="UOM" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="GATE_NO" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="CHAPTER_HEADING" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="DESCRIPTION" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CONTAINER" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="STUFF_QTY" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="LOCATION" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="SHOP" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="SHOP_CODE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="STD_WEIGHT" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="THICKNESS" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="WIDTH" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="UNIT" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="MODEL" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="OP_STOCK" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="OP_QTY" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="CATOGORY" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="SUB_CATOGORY" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ACTIVATE_STATE" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="RM_COST" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="noc" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="vendor_code" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ex_duty" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="cess_duty" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="sh_duty" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="cst_tax" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="lst_tax" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="vat" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="ttcs" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="surcharge" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="s_area" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="plant" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="USER_STAMP" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="TIME_STAMP" Type="DateTime" Precision="3" />
+          <Property Name="PLANT_" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="GATE_NO_" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SHOP_CODE1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SHOP1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="MATERIAL_CODE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="sgst" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="cgst" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="igst" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Setup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Product_name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Licensed_on" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Valid_upto" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SQL" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SAP_CR" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CR_Runtime" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Adobe_DC" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PStool" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="LICENCE">
+          <Key>
+            <PropertyRef Name="ID" />
+            <PropertyRef Name="LICENCE_ID" />
+            <PropertyRef Name="DATE_PURCHASED" />
+            <PropertyRef Name="SYSTEM_NAME" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LICENCE_ID" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="DATE_PURCHASED" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="SYSTEM_NAME" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Server_trigger">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Triggered" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="DSMdbModelStoreContainer" CdmEntityContainer="DSMdbEntities" >
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="DSMdbModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="LoginStatus" ColumnName="LoginStatus" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="UserType" ColumnName="UserType" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Settings">
+            <EntityTypeMapping TypeName="DSMdbModel.Setting">
+              <MappingFragment StoreEntitySet="Settings">
+                <ScalarProperty Name="Flatfilepath" ColumnName="Flatfilepath" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="APIUrl" ColumnName="APIUrl" />
+                <ScalarProperty Name="InvoicePath" ColumnName="InvoicePath" />
+                <ScalarProperty Name="OutputPath" ColumnName="OutputPath" />
+                <ScalarProperty Name="InputPath" ColumnName="InputPath" />
+                <ScalarProperty Name="PrinterName" ColumnName="PrinterName" />
+                <ScalarProperty Name="SystemName" ColumnName="SystemName" />
+                <ScalarProperty Name="SettingsId" ColumnName="SettingsId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ClientMasters">
+            <EntityTypeMapping TypeName="DSMdbModel.ClientMaster">
+              <MappingFragment StoreEntitySet="ClientMaster">
+                <ScalarProperty Name="TemplateName" ColumnName="TemplateName" />
+                <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
+                <ScalarProperty Name="PrintCopies" ColumnName="PrintCopies" />
+                <ScalarProperty Name="PrintType" ColumnName="PrintType" />
+                <ScalarProperty Name="PDFtype" ColumnName="PDFtype" />
+                <ScalarProperty Name="APItype" ColumnName="APItype" />
+                <ScalarProperty Name="APIUrl" ColumnName="APIUrl" />
+                <ScalarProperty Name="IsAPIpost" ColumnName="IsAPIpost" />
+                <ScalarProperty Name="IsDigitalSign" ColumnName="IsDigitalSign" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="ClientId" ColumnName="ClientId" />
+                <ScalarProperty Name="ClientLineId" ColumnName="ClientLineId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EDIConfigurations">
+            <EntityTypeMapping TypeName="DSMdbModel.EDIConfiguration">
+              <MappingFragment StoreEntitySet="EDIConfiguration">
+                <ScalarProperty Name="FromPwd" ColumnName="FromPwd" />
+                <ScalarProperty Name="FromEmail" ColumnName="FromEmail" />
+                <ScalarProperty Name="Port" ColumnName="Port" />
+                <ScalarProperty Name="Host" ColumnName="Host" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="IsEmail" ColumnName="IsEmail" />
+                <ScalarProperty Name="EdiLink" ColumnName="EdiLink" />
+                <ScalarProperty Name="IsEdi" ColumnName="IsEdi" />
+                <ScalarProperty Name="ClientId" ColumnName="ClientId" />
+                <ScalarProperty Name="ClientLineId" ColumnName="ClientLineId" />
+                <ScalarProperty Name="EdiId" ColumnName="EdiId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DigitalSignDetails">
+            <EntityTypeMapping TypeName="DSMdbModel.DigitalSignDetail">
+              <MappingFragment StoreEntitySet="DigitalSignDetails">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="KeyPinNo" ColumnName="KeyPinNo" />
+                <ScalarProperty Name="KeyName" ColumnName="KeyName" />
+                <ScalarProperty Name="ClientId" ColumnName="ClientId" />
+                <ScalarProperty Name="ClientLineId" ColumnName="ClientLineId" />
+                <ScalarProperty Name="DSDetailsId" ColumnName="DSDetailsId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DSMasters">
+            <EntityTypeMapping TypeName="DSMdbModel.DSMaster">
+              <MappingFragment StoreEntitySet="DSMaster">
+                <ScalarProperty Name="ValidityAfter" ColumnName="ValidityAfter" />
+                <ScalarProperty Name="ValidityBefore" ColumnName="ValidityBefore" />
+                <ScalarProperty Name="ProviderName" ColumnName="ProviderName" />
+                <ScalarProperty Name="ContainerName" ColumnName="ContainerName" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="CertificateName" ColumnName="CertificateName" />
+                <ScalarProperty Name="ThumbPrint" ColumnName="ThumbPrint" />
+                <ScalarProperty Name="SerialNo" ColumnName="SerialNo" />
+                <ScalarProperty Name="IssuerName" ColumnName="IssuerName" />
+                <ScalarProperty Name="SignName" ColumnName="SignName" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="Designation" ColumnName="Designation" />
+                <ScalarProperty Name="Department" ColumnName="Department" />
+                <ScalarProperty Name="KeyPinNo" ColumnName="KeyPinNo" />
+                <ScalarProperty Name="KeyName" ColumnName="KeyName" />
+                <ScalarProperty Name="DSMasterId" ColumnName="DSMasterId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Invoices">
+            <EntityTypeMapping TypeName="DSMdbModel.Invoice">
+              <MappingFragment StoreEntitySet="Invoice">
+                <ScalarProperty Name="Date_5" ColumnName="Date_5" />
+                <ScalarProperty Name="Date_4" ColumnName="Date_4" />
+                <ScalarProperty Name="Date_3" ColumnName="Date_3" />
+                <ScalarProperty Name="Date_2" ColumnName="Date_2" />
+                <ScalarProperty Name="Date_1" ColumnName="Date_1" />
+                <ScalarProperty Name="EXTRA_CHAR_5" ColumnName="EXTRA_CHAR_5" />
+                <ScalarProperty Name="EXTRA_CHAR_4" ColumnName="EXTRA_CHAR_4" />
+                <ScalarProperty Name="EXTRA_CHAR_3" ColumnName="EXTRA_CHAR_3" />
+                <ScalarProperty Name="EXTRA_CHAR_2" ColumnName="EXTRA_CHAR_2" />
+                <ScalarProperty Name="EXTRA_CHAR_1" ColumnName="EXTRA_CHAR_1" />
+                <ScalarProperty Name="EXTRA_NUM_7" ColumnName="EXTRA_NUM_7" />
+                <ScalarProperty Name="EXTRA_NUM_6" ColumnName="EXTRA_NUM_6" />
+                <ScalarProperty Name="EXTRA_NUM_5" ColumnName="EXTRA_NUM_5" />
+                <ScalarProperty Name="EXTRA_NUM_4" ColumnName="EXTRA_NUM_4" />
+                <ScalarProperty Name="EXTRA_NUM_3" ColumnName="EXTRA_NUM_3" />
+                <ScalarProperty Name="EXTRA_NUM_2" ColumnName="EXTRA_NUM_2" />
+                <ScalarProperty Name="EXTRA_NUM_1" ColumnName="EXTRA_NUM_1" />
+                <ScalarProperty Name="Manfac_Date" ColumnName="Manfac_Date" />
+                <ScalarProperty Name="E_InvNo" ColumnName="E_InvNo" />
+                <ScalarProperty Name="Lot_Code" ColumnName="Lot_Code" />
+                <ScalarProperty Name="TCS" ColumnName="TCS" />
+                <ScalarProperty Name="Qty_in_case" ColumnName="Qty_in_case" />
+                <ScalarProperty Name="Case_no" ColumnName="Case_no" />
+                <ScalarProperty Name="PDF_Generation" ColumnName="PDF_Generation" />
+                <ScalarProperty Name="Carrier" ColumnName="Carrier" />
+                <ScalarProperty Name="Ewaybill_no" ColumnName="Ewaybill_no" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="Destination" ColumnName="Destination" />
+                <ScalarProperty Name="RR_GR" ColumnName="RR_GR" />
+                <ScalarProperty Name="STpan1" ColumnName="STpan1" />
+                <ScalarProperty Name="STgst1" ColumnName="STgst1" />
+                <ScalarProperty Name="STstatecode1" ColumnName="STstatecode1" />
+                <ScalarProperty Name="STstate1" ColumnName="STstate1" />
+                <ScalarProperty Name="STaddress" ColumnName="STaddress" />
+                <ScalarProperty Name="ShipToCustomer" ColumnName="ShipToCustomer" />
+                <ScalarProperty Name="BTpan" ColumnName="BTpan" />
+                <ScalarProperty Name="BTgst" ColumnName="BTgst" />
+                <ScalarProperty Name="BTstatecode" ColumnName="BTstatecode" />
+                <ScalarProperty Name="BTstate" ColumnName="BTstate" />
+                <ScalarProperty Name="BTaddress" ColumnName="BTaddress" />
+                <ScalarProperty Name="BillToCustomer" ColumnName="BillToCustomer" />
+                <ScalarProperty Name="TotalGSTvaluewords" ColumnName="TotalGSTvaluewords" />
+                <ScalarProperty Name="TotalAmntwords" ColumnName="TotalAmntwords" />
+                <ScalarProperty Name="TotalGSTvalue" ColumnName="TotalGSTvalue" />
+                <ScalarProperty Name="TotalAmnt" ColumnName="TotalAmnt" />
+                <ScalarProperty Name="IGSTrate" ColumnName="IGSTrate" />
+                <ScalarProperty Name="SGSTrate" ColumnName="SGSTrate" />
+                <ScalarProperty Name="CGSTrate" ColumnName="CGSTrate" />
+                <ScalarProperty Name="UOM" ColumnName="UOM" />
+                <ScalarProperty Name="ContentType" ColumnName="ContentType" />
+                <ScalarProperty Name="GateNo" ColumnName="GateNo" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ItemCode" ColumnName="ItemCode" />
+                <ScalarProperty Name="SystemName" ColumnName="SystemName" />
+                <ScalarProperty Name="Finyear" ColumnName="Finyear" />
+                <ScalarProperty Name="IsEmailSend" ColumnName="IsEmailSend" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="APIMessage" ColumnName="APIMessage" />
+                <ScalarProperty Name="APIStatus" ColumnName="APIStatus" />
+                <ScalarProperty Name="PrintStatus" ColumnName="PrintStatus" />
+                <ScalarProperty Name="ExtraPDF" ColumnName="ExtraPDF" />
+                <ScalarProperty Name="QuadraplicatePDF" ColumnName="QuadraplicatePDF" />
+                <ScalarProperty Name="DuplicatePDF" ColumnName="DuplicatePDF" />
+                <ScalarProperty Name="OriginalPDF" ColumnName="OriginalPDF" />
+                <ScalarProperty Name="DSStatus" ColumnName="DSStatus" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="BatchNumber" ColumnName="BatchNumber" />
+                <ScalarProperty Name="GSTN" ColumnName="GSTN" />
+                <ScalarProperty Name="ConsigneeMatlCost" ColumnName="ConsigneeMatlCost" />
+                <ScalarProperty Name="ToolCost" ColumnName="ToolCost" />
+                <ScalarProperty Name="CSTAmount" ColumnName="CSTAmount" />
+                <ScalarProperty Name="AssessableValue" ColumnName="AssessableValue" />
+                <ScalarProperty Name="ExciseDutyCost" ColumnName="ExciseDutyCost" />
+                <ScalarProperty Name="ConsigneePartCost" ColumnName="ConsigneePartCost" />
+                <ScalarProperty Name="CGST" ColumnName="CGST" />
+                <ScalarProperty Name="MaterialCost" ColumnName="MaterialCost" />
+                <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+                <ScalarProperty Name="VatAmount" ColumnName="VatAmount" />
+                <ScalarProperty Name="IGST" ColumnName="IGST" />
+                <ScalarProperty Name="SGST" ColumnName="SGST" />
+                <ScalarProperty Name="BedAmount" ColumnName="BedAmount" />
+                <ScalarProperty Name="TarrifNumber" ColumnName="TarrifNumber" />
+                <ScalarProperty Name="InvValue" ColumnName="InvValue" />
+                <ScalarProperty Name="InvQuantity" ColumnName="InvQuantity" />
+                <ScalarProperty Name="InvDate" ColumnName="InvDate" />
+                <ScalarProperty Name="InvNumber" ColumnName="InvNumber" />
+                <ScalarProperty Name="PartNumber" ColumnName="PartNumber" />
+                <ScalarProperty Name="PONumber" ColumnName="PONumber" />
+                <ScalarProperty Name="ShopCode" ColumnName="ShopCode" />
+                <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
+                <ScalarProperty Name="VehicleNumber" ColumnName="VehicleNumber" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="InvoiceId" ColumnName="InvoiceId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Quarantines">
+            <EntityTypeMapping TypeName="DSMdbModel.Quarantine">
+              <MappingFragment StoreEntitySet="Quarantine">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="InvNumber" ColumnName="InvNumber" />
+                <ScalarProperty Name="QId" ColumnName="QId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_FILTER_INVOICE" FunctionName="DSMdbModel.Store.SP_FILTER_INVOICE">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DSMdbModel.SP_FILTER_INVOICE_Result">
+                <ScalarProperty Name="InvoiceId" ColumnName="InvoiceId" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="VehicleNumber" ColumnName="VehicleNumber" />
+                <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
+                <ScalarProperty Name="ShopCode" ColumnName="ShopCode" />
+                <ScalarProperty Name="PONumber" ColumnName="PONumber" />
+                <ScalarProperty Name="PartNumber" ColumnName="PartNumber" />
+                <ScalarProperty Name="InvNumber" ColumnName="InvNumber" />
+                <ScalarProperty Name="InvDate" ColumnName="InvDate" />
+                <ScalarProperty Name="InvQuantity" ColumnName="InvQuantity" />
+                <ScalarProperty Name="InvValue" ColumnName="InvValue" />
+                <ScalarProperty Name="TarrifNumber" ColumnName="TarrifNumber" />
+                <ScalarProperty Name="BedAmount" ColumnName="BedAmount" />
+                <ScalarProperty Name="SGST" ColumnName="SGST" />
+                <ScalarProperty Name="IGST" ColumnName="IGST" />
+                <ScalarProperty Name="VatAmount" ColumnName="VatAmount" />
+                <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+                <ScalarProperty Name="MaterialCost" ColumnName="MaterialCost" />
+                <ScalarProperty Name="CGST" ColumnName="CGST" />
+                <ScalarProperty Name="ConsigneePartCost" ColumnName="ConsigneePartCost" />
+                <ScalarProperty Name="ExciseDutyCost" ColumnName="ExciseDutyCost" />
+                <ScalarProperty Name="AssessableValue" ColumnName="AssessableValue" />
+                <ScalarProperty Name="CSTAmount" ColumnName="CSTAmount" />
+                <ScalarProperty Name="ToolCost" ColumnName="ToolCost" />
+                <ScalarProperty Name="ConsigneeMatlCost" ColumnName="ConsigneeMatlCost" />
+                <ScalarProperty Name="GSTN" ColumnName="GSTN" />
+                <ScalarProperty Name="BatchNumber" ColumnName="BatchNumber" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="DSStatus" ColumnName="DSStatus" />
+                <ScalarProperty Name="OriginalPDF" ColumnName="OriginalPDF" />
+                <ScalarProperty Name="DuplicatePDF" ColumnName="DuplicatePDF" />
+                <ScalarProperty Name="QuadraplicatePDF" ColumnName="QuadraplicatePDF" />
+                <ScalarProperty Name="ExtraPDF" ColumnName="ExtraPDF" />
+                <ScalarProperty Name="PrintStatus" ColumnName="PrintStatus" />
+                <ScalarProperty Name="APIStatus" ColumnName="APIStatus" />
+                <ScalarProperty Name="APIMessage" ColumnName="APIMessage" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_INVOICE" FunctionName="DSMdbModel.Store.SP_GET_INVOICE">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DSMdbModel.SP_GET_INVOICE_Result">
+                <ScalarProperty Name="InvoiceId" ColumnName="InvoiceId" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="VehicleNumber" ColumnName="VehicleNumber" />
+                <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
+                <ScalarProperty Name="ShopCode" ColumnName="ShopCode" />
+                <ScalarProperty Name="PONumber" ColumnName="PONumber" />
+                <ScalarProperty Name="PartNumber" ColumnName="PartNumber" />
+                <ScalarProperty Name="InvNumber" ColumnName="InvNumber" />
+                <ScalarProperty Name="InvDate" ColumnName="InvDate" />
+                <ScalarProperty Name="InvQuantity" ColumnName="InvQuantity" />
+                <ScalarProperty Name="InvValue" ColumnName="InvValue" />
+                <ScalarProperty Name="TarrifNumber" ColumnName="TarrifNumber" />
+                <ScalarProperty Name="BedAmount" ColumnName="BedAmount" />
+                <ScalarProperty Name="SGST" ColumnName="SGST" />
+                <ScalarProperty Name="IGST" ColumnName="IGST" />
+                <ScalarProperty Name="VatAmount" ColumnName="VatAmount" />
+                <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+                <ScalarProperty Name="MaterialCost" ColumnName="MaterialCost" />
+                <ScalarProperty Name="CGST" ColumnName="CGST" />
+                <ScalarProperty Name="ConsigneePartCost" ColumnName="ConsigneePartCost" />
+                <ScalarProperty Name="ExciseDutyCost" ColumnName="ExciseDutyCost" />
+                <ScalarProperty Name="AssessableValue" ColumnName="AssessableValue" />
+                <ScalarProperty Name="CSTAmount" ColumnName="CSTAmount" />
+                <ScalarProperty Name="ToolCost" ColumnName="ToolCost" />
+                <ScalarProperty Name="ConsigneeMatlCost" ColumnName="ConsigneeMatlCost" />
+                <ScalarProperty Name="GSTN" ColumnName="GSTN" />
+                <ScalarProperty Name="BatchNumber" ColumnName="BatchNumber" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="DSStatus" ColumnName="DSStatus" />
+                <ScalarProperty Name="OriginalPDF" ColumnName="OriginalPDF" />
+                <ScalarProperty Name="DuplicatePDF" ColumnName="DuplicatePDF" />
+                <ScalarProperty Name="QuadraplicatePDF" ColumnName="QuadraplicatePDF" />
+                <ScalarProperty Name="ExtraPDF" ColumnName="ExtraPDF" />
+                <ScalarProperty Name="PrintStatus" ColumnName="PrintStatus" />
+                <ScalarProperty Name="APIStatus" ColumnName="APIStatus" />
+                <ScalarProperty Name="APIMessage" ColumnName="APIMessage" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="IsEmailSend" ColumnName="IsEmailSend" />
+                <ScalarProperty Name="Finyear" ColumnName="Finyear" />
+                <ScalarProperty Name="SystemName" ColumnName="SystemName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_search_Invoice" FunctionName="DSMdbModel.Store.sp_search_Invoice">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DSMdbModel.sp_search_Invoice_Result">
+                <ScalarProperty Name="InvoiceId" ColumnName="InvoiceId" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="VehicleNumber" ColumnName="VehicleNumber" />
+                <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
+                <ScalarProperty Name="ShopCode" ColumnName="ShopCode" />
+                <ScalarProperty Name="PONumber" ColumnName="PONumber" />
+                <ScalarProperty Name="PartNumber" ColumnName="PartNumber" />
+                <ScalarProperty Name="InvNumber" ColumnName="InvNumber" />
+                <ScalarProperty Name="InvDate" ColumnName="InvDate" />
+                <ScalarProperty Name="InvQuantity" ColumnName="InvQuantity" />
+                <ScalarProperty Name="InvValue" ColumnName="InvValue" />
+                <ScalarProperty Name="TarrifNumber" ColumnName="TarrifNumber" />
+                <ScalarProperty Name="BedAmount" ColumnName="BedAmount" />
+                <ScalarProperty Name="SGST" ColumnName="SGST" />
+                <ScalarProperty Name="IGST" ColumnName="IGST" />
+                <ScalarProperty Name="VatAmount" ColumnName="VatAmount" />
+                <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+                <ScalarProperty Name="MaterialCost" ColumnName="MaterialCost" />
+                <ScalarProperty Name="CGST" ColumnName="CGST" />
+                <ScalarProperty Name="ConsigneePartCost" ColumnName="ConsigneePartCost" />
+                <ScalarProperty Name="ExciseDutyCost" ColumnName="ExciseDutyCost" />
+                <ScalarProperty Name="AssessableValue" ColumnName="AssessableValue" />
+                <ScalarProperty Name="CSTAmount" ColumnName="CSTAmount" />
+                <ScalarProperty Name="ToolCost" ColumnName="ToolCost" />
+                <ScalarProperty Name="ConsigneeMatlCost" ColumnName="ConsigneeMatlCost" />
+                <ScalarProperty Name="GSTN" ColumnName="GSTN" />
+                <ScalarProperty Name="BatchNumber" ColumnName="BatchNumber" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="DSStatus" ColumnName="DSStatus" />
+                <ScalarProperty Name="OriginalPDF" ColumnName="OriginalPDF" />
+                <ScalarProperty Name="DuplicatePDF" ColumnName="DuplicatePDF" />
+                <ScalarProperty Name="QuadraplicatePDF" ColumnName="QuadraplicatePDF" />
+                <ScalarProperty Name="ExtraPDF" ColumnName="ExtraPDF" />
+                <ScalarProperty Name="PrintStatus" ColumnName="PrintStatus" />
+                <ScalarProperty Name="APIStatus" ColumnName="APIStatus" />
+                <ScalarProperty Name="APIMessage" ColumnName="APIMessage" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="IsEmailSend" ColumnName="IsEmailSend" />
+                <ScalarProperty Name="Finyear" ColumnName="Finyear" />
+                <ScalarProperty Name="SystemName" ColumnName="SystemName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_SYSINVOICE" FunctionName="DSMdbModel.Store.SP_GET_SYSINVOICE">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DSMdbModel.SP_GET_SYSINVOICE_Result">
+                <ScalarProperty Name="InvoiceId" ColumnName="InvoiceId" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="VehicleNumber" ColumnName="VehicleNumber" />
+                <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
+                <ScalarProperty Name="ShopCode" ColumnName="ShopCode" />
+                <ScalarProperty Name="PONumber" ColumnName="PONumber" />
+                <ScalarProperty Name="PartNumber" ColumnName="PartNumber" />
+                <ScalarProperty Name="InvNumber" ColumnName="InvNumber" />
+                <ScalarProperty Name="InvDate" ColumnName="InvDate" />
+                <ScalarProperty Name="InvQuantity" ColumnName="InvQuantity" />
+                <ScalarProperty Name="InvValue" ColumnName="InvValue" />
+                <ScalarProperty Name="TarrifNumber" ColumnName="TarrifNumber" />
+                <ScalarProperty Name="BedAmount" ColumnName="BedAmount" />
+                <ScalarProperty Name="SGST" ColumnName="SGST" />
+                <ScalarProperty Name="IGST" ColumnName="IGST" />
+                <ScalarProperty Name="VatAmount" ColumnName="VatAmount" />
+                <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+                <ScalarProperty Name="MaterialCost" ColumnName="MaterialCost" />
+                <ScalarProperty Name="CGST" ColumnName="CGST" />
+                <ScalarProperty Name="ConsigneePartCost" ColumnName="ConsigneePartCost" />
+                <ScalarProperty Name="ExciseDutyCost" ColumnName="ExciseDutyCost" />
+                <ScalarProperty Name="AssessableValue" ColumnName="AssessableValue" />
+                <ScalarProperty Name="CSTAmount" ColumnName="CSTAmount" />
+                <ScalarProperty Name="ToolCost" ColumnName="ToolCost" />
+                <ScalarProperty Name="ConsigneeMatlCost" ColumnName="ConsigneeMatlCost" />
+                <ScalarProperty Name="GSTN" ColumnName="GSTN" />
+                <ScalarProperty Name="BatchNumber" ColumnName="BatchNumber" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="DSStatus" ColumnName="DSStatus" />
+                <ScalarProperty Name="OriginalPDF" ColumnName="OriginalPDF" />
+                <ScalarProperty Name="DuplicatePDF" ColumnName="DuplicatePDF" />
+                <ScalarProperty Name="QuadraplicatePDF" ColumnName="QuadraplicatePDF" />
+                <ScalarProperty Name="ExtraPDF" ColumnName="ExtraPDF" />
+                <ScalarProperty Name="PrintStatus" ColumnName="PrintStatus" />
+                <ScalarProperty Name="APIStatus" ColumnName="APIStatus" />
+                <ScalarProperty Name="APIMessage" ColumnName="APIMessage" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="IsEmailSend" ColumnName="IsEmailSend" />
+                <ScalarProperty Name="Finyear" ColumnName="Finyear" />
+                <ScalarProperty Name="SystemName" ColumnName="SystemName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_SEARCHINVOICE" FunctionName="DSMdbModel.Store.SP_GET_SEARCHINVOICE">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DSMdbModel.SP_GET_SEARCHINVOICE_Result">
+                <ScalarProperty Name="InvoiceId" ColumnName="InvoiceId" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="VehicleNumber" ColumnName="VehicleNumber" />
+                <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
+                <ScalarProperty Name="ShopCode" ColumnName="ShopCode" />
+                <ScalarProperty Name="PONumber" ColumnName="PONumber" />
+                <ScalarProperty Name="PartNumber" ColumnName="PartNumber" />
+                <ScalarProperty Name="InvNumber" ColumnName="InvNumber" />
+                <ScalarProperty Name="InvDate" ColumnName="InvDate" />
+                <ScalarProperty Name="InvQuantity" ColumnName="InvQuantity" />
+                <ScalarProperty Name="InvValue" ColumnName="InvValue" />
+                <ScalarProperty Name="TarrifNumber" ColumnName="TarrifNumber" />
+                <ScalarProperty Name="BedAmount" ColumnName="BedAmount" />
+                <ScalarProperty Name="SGST" ColumnName="SGST" />
+                <ScalarProperty Name="IGST" ColumnName="IGST" />
+                <ScalarProperty Name="VatAmount" ColumnName="VatAmount" />
+                <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+                <ScalarProperty Name="MaterialCost" ColumnName="MaterialCost" />
+                <ScalarProperty Name="CGST" ColumnName="CGST" />
+                <ScalarProperty Name="ConsigneePartCost" ColumnName="ConsigneePartCost" />
+                <ScalarProperty Name="ExciseDutyCost" ColumnName="ExciseDutyCost" />
+                <ScalarProperty Name="AssessableValue" ColumnName="AssessableValue" />
+                <ScalarProperty Name="CSTAmount" ColumnName="CSTAmount" />
+                <ScalarProperty Name="ToolCost" ColumnName="ToolCost" />
+                <ScalarProperty Name="ConsigneeMatlCost" ColumnName="ConsigneeMatlCost" />
+                <ScalarProperty Name="GSTN" ColumnName="GSTN" />
+                <ScalarProperty Name="BatchNumber" ColumnName="BatchNumber" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="DSStatus" ColumnName="DSStatus" />
+                <ScalarProperty Name="OriginalPDF" ColumnName="OriginalPDF" />
+                <ScalarProperty Name="DuplicatePDF" ColumnName="DuplicatePDF" />
+                <ScalarProperty Name="QuadraplicatePDF" ColumnName="QuadraplicatePDF" />
+                <ScalarProperty Name="ExtraPDF" ColumnName="ExtraPDF" />
+                <ScalarProperty Name="PrintStatus" ColumnName="PrintStatus" />
+                <ScalarProperty Name="APIStatus" ColumnName="APIStatus" />
+                <ScalarProperty Name="APIMessage" ColumnName="APIMessage" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="IsEmailSend" ColumnName="IsEmailSend" />
+                <ScalarProperty Name="Finyear" ColumnName="Finyear" />
+                <ScalarProperty Name="SystemName" ColumnName="SystemName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="TemplateMasters">
+            <EntityTypeMapping TypeName="DSMdbModel.TemplateMaster">
+              <MappingFragment StoreEntitySet="TemplateMaster">
+                <ScalarProperty Name="HSN_Cord" ColumnName="HSN_Cord" />
+                <ScalarProperty Name="Shopcd_Cord" ColumnName="Shopcd_Cord" />
+                <ScalarProperty Name="Tcs_Cord" ColumnName="Tcs_Cord" />
+                <ScalarProperty Name="Irn_Cord" ColumnName="Irn_Cord" />
+                <ScalarProperty Name="Tot_Val_Cord" ColumnName="Tot_Val_Cord" />
+                <ScalarProperty Name="Sgst_Cord" ColumnName="Sgst_Cord" />
+                <ScalarProperty Name="Cgst_Cord" ColumnName="Cgst_Cord" />
+                <ScalarProperty Name="Ass_Cord" ColumnName="Ass_Cord" />
+                <ScalarProperty Name="Rate_Cord" ColumnName="Rate_Cord" />
+                <ScalarProperty Name="Qty_Cord" ColumnName="Qty_Cord" />
+                <ScalarProperty Name="Part_Cord" ColumnName="Part_Cord" />
+                <ScalarProperty Name="Po_Cord" ColumnName="Po_Cord" />
+                <ScalarProperty Name="DS_Cord" ColumnName="DS_Cord" />
+                <ScalarProperty Name="Client_Name_Cord" ColumnName="Client_Name_Cord" />
+                <ScalarProperty Name="Truck_No_Cord" ColumnName="Truck_No_Cord" />
+                <ScalarProperty Name="Vendor_Cord" ColumnName="Vendor_Cord" />
+                <ScalarProperty Name="Inv_Date_Cord" ColumnName="Inv_Date_Cord" />
+                <ScalarProperty Name="Inv_No_Cord" ColumnName="Inv_No_Cord" />
+                <ScalarProperty Name="Template_Name" ColumnName="Template_Name" />
+                <ScalarProperty Name="Temp_ID" ColumnName="Temp_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_GET_QUARNINVOICE" FunctionName="DSMdbModel.Store.SP_GET_QUARNINVOICE">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="DSMdbModel.SP_GET_QUARNINVOICE_Result">
+                <ScalarProperty Name="InvoiceId" ColumnName="InvoiceId" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="VehicleNumber" ColumnName="VehicleNumber" />
+                <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
+                <ScalarProperty Name="ShopCode" ColumnName="ShopCode" />
+                <ScalarProperty Name="PONumber" ColumnName="PONumber" />
+                <ScalarProperty Name="PartNumber" ColumnName="PartNumber" />
+                <ScalarProperty Name="InvNumber" ColumnName="InvNumber" />
+                <ScalarProperty Name="InvDate" ColumnName="InvDate" />
+                <ScalarProperty Name="InvQuantity" ColumnName="InvQuantity" />
+                <ScalarProperty Name="InvValue" ColumnName="InvValue" />
+                <ScalarProperty Name="TarrifNumber" ColumnName="TarrifNumber" />
+                <ScalarProperty Name="BedAmount" ColumnName="BedAmount" />
+                <ScalarProperty Name="SGST" ColumnName="SGST" />
+                <ScalarProperty Name="IGST" ColumnName="IGST" />
+                <ScalarProperty Name="VatAmount" ColumnName="VatAmount" />
+                <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+                <ScalarProperty Name="MaterialCost" ColumnName="MaterialCost" />
+                <ScalarProperty Name="CGST" ColumnName="CGST" />
+                <ScalarProperty Name="ConsigneePartCost" ColumnName="ConsigneePartCost" />
+                <ScalarProperty Name="ExciseDutyCost" ColumnName="ExciseDutyCost" />
+                <ScalarProperty Name="AssessableValue" ColumnName="AssessableValue" />
+                <ScalarProperty Name="CSTAmount" ColumnName="CSTAmount" />
+                <ScalarProperty Name="ToolCost" ColumnName="ToolCost" />
+                <ScalarProperty Name="ConsigneeMatlCost" ColumnName="ConsigneeMatlCost" />
+                <ScalarProperty Name="GSTN" ColumnName="GSTN" />
+                <ScalarProperty Name="BatchNumber" ColumnName="BatchNumber" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="DSStatus" ColumnName="DSStatus" />
+                <ScalarProperty Name="OriginalPDF" ColumnName="OriginalPDF" />
+                <ScalarProperty Name="DuplicatePDF" ColumnName="DuplicatePDF" />
+                <ScalarProperty Name="QuadraplicatePDF" ColumnName="QuadraplicatePDF" />
+                <ScalarProperty Name="ExtraPDF" ColumnName="ExtraPDF" />
+                <ScalarProperty Name="PrintStatus" ColumnName="PrintStatus" />
+                <ScalarProperty Name="APIStatus" ColumnName="APIStatus" />
+                <ScalarProperty Name="APIMessage" ColumnName="APIMessage" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="IsEmailSend" ColumnName="IsEmailSend" />
+                <ScalarProperty Name="Finyear" ColumnName="Finyear" />
+                <ScalarProperty Name="SystemName" ColumnName="SystemName" />
+                <ScalarProperty Name="ItemCode" ColumnName="ItemCode" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="GateNo" ColumnName="GateNo" />
+                <ScalarProperty Name="ContentType" ColumnName="ContentType" />
+                <ScalarProperty Name="UOM" ColumnName="UOM" />
+                <ScalarProperty Name="CGSTrate" ColumnName="CGSTrate" />
+                <ScalarProperty Name="SGSTrate" ColumnName="SGSTrate" />
+                <ScalarProperty Name="IGSTrate" ColumnName="IGSTrate" />
+                <ScalarProperty Name="TotalAmnt" ColumnName="TotalAmnt" />
+                <ScalarProperty Name="TotalGSTvalue" ColumnName="TotalGSTvalue" />
+                <ScalarProperty Name="TotalAmntwords" ColumnName="TotalAmntwords" />
+                <ScalarProperty Name="TotalGSTvaluewords" ColumnName="TotalGSTvaluewords" />
+                <ScalarProperty Name="BillToCustomer" ColumnName="BillToCustomer" />
+                <ScalarProperty Name="BTaddress" ColumnName="BTaddress" />
+                <ScalarProperty Name="BTstate" ColumnName="BTstate" />
+                <ScalarProperty Name="BTstatecode" ColumnName="BTstatecode" />
+                <ScalarProperty Name="BTgst" ColumnName="BTgst" />
+                <ScalarProperty Name="BTpan" ColumnName="BTpan" />
+                <ScalarProperty Name="ShipToCustomer" ColumnName="ShipToCustomer" />
+                <ScalarProperty Name="STaddress" ColumnName="STaddress" />
+                <ScalarProperty Name="STstate1" ColumnName="STstate1" />
+                <ScalarProperty Name="STstatecode1" ColumnName="STstatecode1" />
+                <ScalarProperty Name="STgst1" ColumnName="STgst1" />
+                <ScalarProperty Name="STpan1" ColumnName="STpan1" />
+                <ScalarProperty Name="RR_GR" ColumnName="RR_GR" />
+                <ScalarProperty Name="Destination" ColumnName="Destination" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="Ewaybill_no" ColumnName="Ewaybill_no" />
+                <ScalarProperty Name="Carrier" ColumnName="Carrier" />
+                <ScalarProperty Name="PDF_Generation" ColumnName="PDF_Generation" />
+                <ScalarProperty Name="Case_no" ColumnName="Case_no" />
+                <ScalarProperty Name="Qty_in_case" ColumnName="Qty_in_case" />
+                <ScalarProperty Name="TCS" ColumnName="TCS" />
+                <ScalarProperty Name="Lot_Code" ColumnName="Lot_Code" />
+                <ScalarProperty Name="E_InvNo" ColumnName="E_InvNo" />
+                <ScalarProperty Name="Manfac_Date" ColumnName="Manfac_Date" />
+                <ScalarProperty Name="EXTRA_NUM_1" ColumnName="EXTRA_NUM_1" />
+                <ScalarProperty Name="EXTRA_NUM_2" ColumnName="EXTRA_NUM_2" />
+                <ScalarProperty Name="EXTRA_NUM_3" ColumnName="EXTRA_NUM_3" />
+                <ScalarProperty Name="EXTRA_NUM_4" ColumnName="EXTRA_NUM_4" />
+                <ScalarProperty Name="EXTRA_NUM_5" ColumnName="EXTRA_NUM_5" />
+                <ScalarProperty Name="EXTRA_NUM_6" ColumnName="EXTRA_NUM_6" />
+                <ScalarProperty Name="EXTRA_NUM_7" ColumnName="EXTRA_NUM_7" />
+                <ScalarProperty Name="EXTRA_CHAR_1" ColumnName="EXTRA_CHAR_1" />
+                <ScalarProperty Name="EXTRA_CHAR_2" ColumnName="EXTRA_CHAR_2" />
+                <ScalarProperty Name="EXTRA_CHAR_3" ColumnName="EXTRA_CHAR_3" />
+                <ScalarProperty Name="EXTRA_CHAR_4" ColumnName="EXTRA_CHAR_4" />
+                <ScalarProperty Name="EXTRA_CHAR_5" ColumnName="EXTRA_CHAR_5" />
+                <ScalarProperty Name="Date_1" ColumnName="Date_1" />
+                <ScalarProperty Name="Date_2" ColumnName="Date_2" />
+                <ScalarProperty Name="Date_3" ColumnName="Date_3" />
+                <ScalarProperty Name="Date_4" ColumnName="Date_4" />
+                <ScalarProperty Name="Date_5" ColumnName="Date_5" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="PART_MASTER">
+            <EntityTypeMapping TypeName="DSMdbModel.PART_MASTER">
+              <MappingFragment StoreEntitySet="PART_MASTER">
+                <ScalarProperty Name="igst" ColumnName="igst" />
+                <ScalarProperty Name="cgst" ColumnName="cgst" />
+                <ScalarProperty Name="sgst" ColumnName="sgst" />
+                <ScalarProperty Name="MATERIAL_CODE" ColumnName="MATERIAL_CODE" />
+                <ScalarProperty Name="SHOP1" ColumnName="SHOP1" />
+                <ScalarProperty Name="SHOP_CODE1" ColumnName="SHOP_CODE1" />
+                <ScalarProperty Name="GATE_NO_" ColumnName="GATE_NO_" />
+                <ScalarProperty Name="PLANT_" ColumnName="PLANT_" />
+                <ScalarProperty Name="TIME_STAMP" ColumnName="TIME_STAMP" />
+                <ScalarProperty Name="USER_STAMP" ColumnName="USER_STAMP" />
+                <ScalarProperty Name="plant" ColumnName="plant" />
+                <ScalarProperty Name="s_area" ColumnName="s_area" />
+                <ScalarProperty Name="type" ColumnName="type" />
+                <ScalarProperty Name="surcharge" ColumnName="surcharge" />
+                <ScalarProperty Name="ttcs" ColumnName="ttcs" />
+                <ScalarProperty Name="vat" ColumnName="vat" />
+                <ScalarProperty Name="lst_tax" ColumnName="lst_tax" />
+                <ScalarProperty Name="cst_tax" ColumnName="cst_tax" />
+                <ScalarProperty Name="sh_duty" ColumnName="sh_duty" />
+                <ScalarProperty Name="cess_duty" ColumnName="cess_duty" />
+                <ScalarProperty Name="ex_duty" ColumnName="ex_duty" />
+                <ScalarProperty Name="vendor_code" ColumnName="vendor_code" />
+                <ScalarProperty Name="noc" ColumnName="noc" />
+                <ScalarProperty Name="RM_COST" ColumnName="RM_COST" />
+                <ScalarProperty Name="ACTIVATE_STATE" ColumnName="ACTIVATE_STATE" />
+                <ScalarProperty Name="SUB_CATOGORY" ColumnName="SUB_CATOGORY" />
+                <ScalarProperty Name="CATOGORY" ColumnName="CATOGORY" />
+                <ScalarProperty Name="OP_QTY" ColumnName="OP_QTY" />
+                <ScalarProperty Name="OP_STOCK" ColumnName="OP_STOCK" />
+                <ScalarProperty Name="MODEL" ColumnName="MODEL" />
+                <ScalarProperty Name="UNIT" ColumnName="UNIT" />
+                <ScalarProperty Name="WIDTH" ColumnName="WIDTH" />
+                <ScalarProperty Name="THICKNESS" ColumnName="THICKNESS" />
+                <ScalarProperty Name="STD_WEIGHT" ColumnName="STD_WEIGHT" />
+                <ScalarProperty Name="SHOP_CODE" ColumnName="SHOP_CODE" />
+                <ScalarProperty Name="SHOP" ColumnName="SHOP" />
+                <ScalarProperty Name="LOCATION" ColumnName="LOCATION" />
+                <ScalarProperty Name="STUFF_QTY" ColumnName="STUFF_QTY" />
+                <ScalarProperty Name="CONTAINER" ColumnName="CONTAINER" />
+                <ScalarProperty Name="DESCRIPTION" ColumnName="DESCRIPTION" />
+                <ScalarProperty Name="CHAPTER_HEADING" ColumnName="CHAPTER_HEADING" />
+                <ScalarProperty Name="GATE_NO" ColumnName="GATE_NO" />
+                <ScalarProperty Name="UOM" ColumnName="UOM" />
+                <ScalarProperty Name="AMORTISATION" ColumnName="AMORTISATION" />
+                <ScalarProperty Name="FREIGHT" ColumnName="FREIGHT" />
+                <ScalarProperty Name="BASIC" ColumnName="BASIC" />
+                <ScalarProperty Name="SPECIFICATION" ColumnName="SPECIFICATION" />
+                <ScalarProperty Name="COIL_NO" ColumnName="COIL_NO" />
+                <ScalarProperty Name="PART_NO" ColumnName="PART_NO" />
+                <ScalarProperty Name="PART_ID" ColumnName="PART_ID" />
+                <ScalarProperty Name="PART_NAME" ColumnName="PART_NAME" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Setups">
+            <EntityTypeMapping TypeName="DSMdbModel.Setup">
+              <MappingFragment StoreEntitySet="Setup">
+                <ScalarProperty Name="PStool" ColumnName="PStool" />
+                <ScalarProperty Name="Adobe_DC" ColumnName="Adobe_DC" />
+                <ScalarProperty Name="CR_Runtime" ColumnName="CR_Runtime" />
+                <ScalarProperty Name="SAP_CR" ColumnName="SAP_CR" />
+                <ScalarProperty Name="SQL" ColumnName="SQL" />
+                <ScalarProperty Name="Valid_upto" ColumnName="Valid_upto" />
+                <ScalarProperty Name="Licensed_on" ColumnName="Licensed_on" />
+                <ScalarProperty Name="Product_name" ColumnName="Product_name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LICENCES">
+            <EntityTypeMapping TypeName="DSMdbModel.LICENCE">
+              <MappingFragment StoreEntitySet="LICENCES">
+                <ScalarProperty Name="SYSTEM_NAME" ColumnName="SYSTEM_NAME" />
+                <ScalarProperty Name="DATE_PURCHASED" ColumnName="DATE_PURCHASED" />
+                <ScalarProperty Name="LICENCE_ID" ColumnName="LICENCE_ID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Server_trigger">
+            <EntityTypeMapping TypeName="DSMdbModel.Server_trigger">
+              <MappingFragment StoreEntitySet="Server_trigger">
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Triggered" ColumnName="Triggered" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

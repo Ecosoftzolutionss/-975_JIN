@@ -1,0 +1,58 @@
+﻿<Window x:Class="DSM.Views.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:prism ="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        xmlns:local="clr-namespace:DSM.Views"
+        mc:Ignorable="d"
+        Title="Login Screen" Height="320" Width="300" ResizeMode="NoResize" WindowStyle="None" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+    <Grid>
+        <Border Background="#2E313A" Margin="10" CornerRadius="10,10,10,10" >
+            <Grid IsEnabled="{Binding EnableLogin}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50px"/>
+                    <RowDefinition Height="30px"/>
+                    <RowDefinition Height="30px"/>
+                    <RowDefinition Height="30px"/>
+                    <RowDefinition Height="30px"/>
+                    <RowDefinition Height="30px"/>                    
+                    <RowDefinition Height="40px"/>
+                </Grid.RowDefinitions>
+                <Button x:Name="btnClose" Foreground="White" Command="{Binding CloseCommand}" Margin="244,10,12,15" BorderBrush="Transparent">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/power-button-white.png"/>
+                    </Button.Background>
+                </Button>
+                <StackPanel Orientation="Vertical" Margin="5,15,5,5">
+                    <TextBlock Text="Login" HorizontalAlignment="Center" Foreground="White" FontWeight="Bold" FontSize="18"/>
+                    <Separator/>
+                </StackPanel>
+
+                <TextBlock Text="{Binding ErrorMsg}" Grid.Row="1" Margin="12,5" Foreground="Red"/>
+
+                <TextBlock Text="User Name" Grid.Row="2" Margin="12,5" Foreground="White" FontSize="14"/>
+                <TextBox x:Name="txtUserName" Text="{Binding UserName, Mode=TwoWay}" Grid.Row="3" Margin="10,5" Background="#545E6A" Foreground="White"/>
+
+                <TextBlock Text="Password" Grid.Row="4" Margin="12,5" Foreground="White" FontSize="14"/>
+                <PasswordBox x:Name="txtPassword" Grid.Row="5" Margin="10,5" Background="#545E6A" Foreground="White">
+                    <PasswordBox.InputBindings>
+                        <KeyBinding Key="Return" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=txtPassword}"/>
+                    </PasswordBox.InputBindings>
+                </PasswordBox>
+                <StackPanel Grid.Row="6" Margin="5" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button x:Name="btnLogin"  Margin="3" Width="80px" Content="Submit" Background="#545E6A" Foreground="White"
+                        Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=txtPassword}" Click="btnLogin_Click_1"/>
+                    <Button x:Name="btnCancel" Margin="3" Width="80px" Content="Reset" Background="#545E6A" Foreground="White" Command="{Binding CancelCommand}" CommandParameter="{Binding ElementName=txtPassword}"/>
+                    
+
+                </StackPanel>
+                <TextBlock x:Name="lblversion" Text="Version" Margin="14,55,196,-35" Foreground="White" FontSize="14"  Grid.Row="6"/>
+                <TextBlock x:Name="lblbuild"   Text="Build Time" Margin="112,55,12,-35" Foreground="White" FontSize="14"  Grid.Row="6" RenderTransformOrigin="0.312,0.386"/>
+
+            </Grid>
+        </Border>
+
+    </Grid>
+</Window>

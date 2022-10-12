@@ -1,0 +1,136 @@
+﻿<UserControl x:Class="DSM.Views.DSMasterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:local="clr-namespace:DSM.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="1000" Background="#ccff99" Height="700">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50px" />
+            <RowDefinition />
+            <RowDefinition Height="50px" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="550" />
+            <ColumnDefinition Width="620" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Digital Signature" FontSize="22px" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <DataGrid Grid.Row="1" Grid.Column="0" Width="500" Height="580" FontSize="12" ItemsSource="{Binding ListDS}" CanUserDeleteRows="False" SelectedItem="{Binding SelectedDS}" AutoGenerateColumns="False" CanUserAddRows="False"  Margin="0,5" VerticalScrollBarVisibility="Auto">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="SIGN NAME" IsReadOnly="True" Binding="{Binding Path = SignName}" Width="110"/>
+                <DataGridTextColumn Header="NICK NAME" IsReadOnly="True" Binding="{Binding Path = KeyName}" Width="110"/>
+                <DataGridTextColumn Header="VALIDITY FROM" IsReadOnly="True" Binding="{Binding Path = ValidityBefore, StringFormat=dd/MM/yyyy}" Width="100"/>
+                <DataGridTextColumn Header="VALIDITY TO" IsReadOnly="True" Binding="{Binding Path = ValidityAfter, StringFormat=dd/MM/yyyy}" Width="90"/>
+                <DataGridTemplateColumn Header="ACTION" Width="80">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="btnEditDS" Content="Edit" Margin="0,0,0,0" Width="30"
+                                            Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.EditDSKeyCommand}" />
+                                <Button x:Name="btnDeleteDS" Content="Delete" Margin="5,0,0,0" Width="40"
+                                            Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.RemoveDSKeyCommand}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Row="1" Grid.Column="1" Margin="10" Background="#FF8FA4AE">
+            <Grid.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="Padding" Value="10,5"/>
+                </Style>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition Width="320"/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Row="0" Grid.Column="0">
+                <TextBlock Text="Nick Name" Foreground="Black" FontSize="16" />
+            </Border>
+            <Border Grid.Row="0" HorizontalAlignment="Left" Grid.Column="1">
+                <TextBox x:Name="txtNickName" Text="{Binding DS.SignName, Mode=TwoWay}" Height="25" Width="300" TextChanged="txtNickName_TextChanged" KeyDown="onkeypressvalidate" />
+            </Border>
+            <Border Grid.Row="0" Grid.Column="2">
+                <TextBlock Text="*" Foreground="Red" FontSize="14" Visibility="Visible" Width="5" Margin="-15,10,180,0"/>
+            </Border>
+            <Border Grid.Row="0" Grid.Column="3">
+                
+                <TextBlock Text="{Binding ErrorNickName, Mode=TwoWay}" Foreground="Red" FontSize="14" />
+            </Border>
+            <Border Grid.Row="1" Grid.Column="0">
+                <TextBlock Text="Digital Signature" Foreground="Black" FontSize="16" />
+            </Border>
+            <Border Grid.Row="1" Grid.Column="1">
+                <StackPanel  Orientation="Horizontal" HorizontalAlignment="Left" IsEnabled="{Binding EnableKeySelection}">
+                    <TextBox Grid.Column="1" x:Name="txtDSkey" Text="{Binding DS.KeyName, Mode=TwoWay}" Height="25" Width="200" IsReadOnly="True" KeyDown="dsonpress"  />
+                    <Button x:Name="btnBrowse1" Width="100" Height="25" Content="Browse Key" FontSize="16" 
+                        Command="{Binding BrowseCommand}"/>
+                </StackPanel>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="2">
+                <TextBlock Text="*" Foreground="Red" FontSize="14" Visibility="Visible" Width="5" Margin="-15,10,180,0"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="3">
+                <TextBlock Text="{Binding ErrorKey, Mode=TwoWay}" Foreground="Red" FontSize="14" />
+            </Border>
+            <Border Grid.Row="2" Grid.Column="0">
+                <TextBlock Text="DS Key Pin No" Foreground="Black" FontSize="16" />
+            </Border>
+            <Border Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left">
+                <TextBox Grid.Column="1" x:Name="txtKeyPin" Text="{Binding DS.KeyPinNo, Mode=TwoWay}" Height="25" Width="300" KeyDown="pinonpress"  />
+            </Border>
+            <Border Grid.Row="2" Grid.Column="2">
+                <TextBlock Text="*" Foreground="Red" FontSize="14" Visibility="Visible" Width="5" Margin="-15,10,180,0"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="3">
+                <TextBlock Text="{Binding ErrorDSpin, Mode=TwoWay}" Foreground="Red" FontSize="14" />
+            </Border>
+            <Border Grid.Row="3" Grid.Column="0">
+                <TextBlock Text="Department" Foreground="Black" FontSize="16" />
+            </Border>
+            <Border Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left">
+                <TextBox Grid.Column="1" x:Name="txtDept" Text="{Binding DS.Department, Mode=TwoWay}" Height="25" Width="300" KeyDown="deptonpress"  />
+            </Border>
+            <Border Grid.Row="3" Grid.Column="2">
+                <TextBlock Text="*" Foreground="Red" FontSize="14" Visibility="Visible" Width="5" Margin="-15,10,180,0"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="3">
+                <TextBlock Text="{Binding ErrorDept, Mode=TwoWay}" Foreground="Red" FontSize="14" />
+            </Border>
+            <Border Grid.Row="4" Grid.Column="0">
+                <TextBlock Text="Designation" Foreground="Black" FontSize="16" />
+            </Border>
+            <Border Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left">
+                <TextBox Grid.Column="1" x:Name="txtDesgn" Text="{Binding DS.Designation, Mode=TwoWay}" Height="25" Width="300" KeyDown="designationonpress"  />
+            </Border>
+            <Border Grid.Row="4" Grid.Column="2">
+                <TextBlock Text="*" Foreground="Red" FontSize="14" Visibility="Visible" Width="5" Margin="-15,10,180,0"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="3">
+                <TextBlock Text="{Binding ErrorDesgn, Mode=TwoWay}" Foreground="Red" FontSize="14" />
+            </Border>
+            <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1"  HorizontalAlignment="Right" Margin="0,0,0,0">
+                <Button x:Name="btnCreateKey" Content="Save" FontSize="14" Width="100" Height="25"
+                        Command="{Binding AddKeyCommand}" />
+                <Button x:Name="btnReset" Content="Reset" Margin="5,0,8,0" FontSize="14" Width="100" Height="25"
+                        Command="{Binding ResetDSKeyCommand}" Click="btnReset_Click" />
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</UserControl>

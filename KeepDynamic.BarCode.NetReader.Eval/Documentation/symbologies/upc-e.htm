@@ -1,0 +1,245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html>
+<head>
+<title>
+.NET UPC-E barcode reader or scanner control component decodes UPC-E in .NET framework
+</title>
+<meta name="keywords" content="Read UPC-E .NET, .NET UPC-E barcode reader, scan .NET UPC-E" >
+<meta name="description" content="Decode UPC-E barcode images in .NET framework projects with this .NET UPC-E reader control component." >
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Language" content="en-us">
+<link href="main.css" rel="stylesheet" type="text/css">
+<script src="main.js" language="JavaScript1.2" type="text/javascript"></script>
+</head>
+<body>
+<div id="page_container" style="background-color: white;">
+	<div class="page_header">
+		<br/>
+		<table width="100%">
+		<tbody><tr>
+			<td width="300" style="padding-left:30px;">
+				<a href="http://www.keepdynamic.com/" title="Java Barcode Library, .NET Barcode SDK">
+				<img alt="Java Barcode Generator, .NET Barcode Generator, Barcode Recognition in Java and .NET" src="logo.jpg" width=197px height=55px border="0">
+				</a>
+			</td>
+			<td>
+				<ul class=headMenu>
+					
+				</ul>
+			</td>
+			
+		</tr>
+		</tbody></table>
+	</div>
+	
+	<div  class="page_header" id="primary-nav"> 
+  		<ul id="primarynav">
+<li style="width: 150px;">	
+	  			<a href="http://www.keepdynamic.com" title="Barcode Component, Barcode SDK">Home</a>	
+	  		</li>
+<li style="width: 218px;">
+	  			<a href="http://www.keepdynamic.com/dotnet-barcode-reader/" title=".NET Barcode Reader">.NET Barcode Reader</a></li>
+	  		</li>
+            <li>
+	  			<a href="../UserManual.htm" rel="nofollow">Developer Guide</a>
+	  		</li>
+<li>
+	  			<a href="http://www.keepdynamic.com/buy/" rel="nofollow">Purchase</a>
+	  		</li>
+            <li><a href="http://www.keepdynamic.com/about/" rel="nofollow">Corporation</a>
+            </li>
+		</ul>
+	</div>
+    
+        
+    
+    
+    
+
+<div class=thumb>
+<a href="../UserManual.htm" title=".NET Barcode Reader">User Manual on .NET Barcode Reader</a> &nbsp;>&nbsp;
+<b>Read UPC-E in .NET projects</b>
+</div>
+	
+<div style="padding-left: 40px; padding-right:38px; font-size:14px; line-height:22px">
+<br/>
+<br/>
+
+	        		
+<h1>GS1 Barcodes</h1>
+<div class="PMProductItemDiv" style="width:928px;"></div>
+
+
+
+
+
+
+<div class="kd_quickjump">
+	<a href="../symbologies/ean-8.htm" style="width:125px;">EAN-8</a><img src="line.jpg" width="2" height="43" border="0" alt="">
+	<a href="ean-13.htm" style="width:125px;">EAN-13</a><img src="line.jpg" width="2" height="43" border="0" alt="">
+	<a href="gs1-128.htm" style="width:125px;">EAN-128</a><img src="line.jpg" width="2" height="43" border="0" alt="">
+	<a href="upc-a.htm" style="width:125px;">UPC-A</a><img src="line.jpg" width="2" height="43" border="0" alt="">
+	<a href="upc-e.htm" style="width:125px;">UPC-E</a>
+</div>
+
+
+<div class="kd_quickjumpshawdow"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1> UPC-E .NET Barcode Reader </h1>
+<br/>
+<h2>UPC-E Barcode Symbology Overview</h2>
+<div class="BarcodeTypeInfo">
+<p>
+UPC-E, A.K.A. Universal Product Code version E
+<br/>
+<br/>
+UPC-E is a short form of the UPC-A symbol that encodes 6 data digits only and is used for labeling smaller packages where a UPC A symbol may not fit.
+<br/>
+<br/>
+Standards: ISO/IEC 15420, GS1 General Specifications
+</p>
+</div>
+
+
+
+
+<br/>
+<a name="BarcodeIntegration">&nbsp;</a>
+<h2>Install .NET Barcode Reader</h2>
+<div style="padding-left:22px; line-height: 22px; font-size:14px; list-style-position:inside">
+<div style="padding-left:28px; list-style-position:inside">
+<ol>
+<li>Create a project in your Visual Studio. </li>
+<li>Unzip the trial package and add "<strong>KeepDynamic.BarcodeReader.dll</strong>" to project reference.</li>
+</ol>
+</div>
+</div>
+
+
+
+<br/>
+<a name="BarcodeClass">&nbsp;</a>
+<h2>How to read UPC-E barcodes in .NET applications?</h2>
+<div>
+The following C# code illustrates how to read a UPC-E barcode in local file using .NET class:
+					<br/><br/>
+<div class="code">
+<span class="Keyword">using</span> KeepDynamic.BarcodeReader;
+<br/><br/>
+
+<span class="Keyword">string</span>[] barcodeValues  = BarcodeReader.read("c://kd-upce.gif", KeepDynamic.BarcodeReader.<span class="str">Type</span>.UPCE);
+
+</div>
+
+
+
+
+
+
+
+<br/>
+<br/>
+<a name="BarcodeProperty">&nbsp;</a>
+<h2>Change Properties of Barcode Type Symbologies</h2>
+
+<table width="100%">
+	<tr class="bPropRowOdd">
+		<td> 2D Barcodes </td>
+		<td> GS1 Barcodes </td>
+		<td> Postal Barcodes </td>
+		<td> AlphaNumeric Barcodes </td>
+		<td> Numeric Barcodes </td>
+	</tr>
+	<tr valign="top">
+		<td>
+			<a title="Data Matrix for Java" href="../symbologies/data-matrix.htm">Data Matrix</a>
+			<br>
+			<br>
+			<a title="PDF-417 for Java" href="../symbologies/pdf-417.htm">PDF-417</a>
+			<br>
+			<br>
+			<a title="QR Code for Java" href="../symbologies/qr-code.htm">QR Code</a>
+			<br>
+			<br>
+		</td>
+		<td>
+			<a title="EAN-8 for Java" href="../symbologies/ean-8.htm">EAN-8</a>
+			<br>
+			<br>
+			<a title="EAN-13 for Java" href="../symbologies/ean-13.htm">EAN-13</a>
+			<br>
+			<br>
+			<a title="EAN-128 for Java" href="../symbologies/gs1-128.htm">EAN-128</a>
+			<br>
+			<br>
+			<a title="UPC-A for Java" href="../symbologies/upc-a.htm">UPC-A</a>
+			<br>
+			<br>
+			<a title="UPC-E for Java" href="../symbologies/upc-e.htm">UPC-E</a>
+			<br>
+			<br>
+		</td>
+		<td>
+			<a title="Intelligent Mail for Java" href="../symbologies/usps-intelligent-mail-barcode.htm">Intelligent Mail (OneCode)</a>
+			<br>
+			<br>
+		</td>
+		<td>
+			<a title="Codabar for Java" href="../symbologies/codabar.htm">Codabar</a>
+			<br>
+			<br>
+			<a title="Code 39 for Java" href="../symbologies/code-39.htm">Code 39</a>
+			<br>
+			<br>
+			<a title="Code 39 Extension for Java">Code 39 Extension</a>
+			<br>
+			<br>
+			<a title="Code 128 for Java" href="../symbologies/code-128.htm">Code 128</a>
+			<br>
+			<br>
+		</td>
+		<td>
+			<a title="Interleaved 2 of 5 for Java" href="../symbologies/interleaved-2of5.htm">Interleaved 2 of 5</a>
+			<br>
+			<br>
+		</td>
+</table>
+
+
+
+			<br><br>
+			<br><br>
+			<br><br>
+
+
+
+
+
+
+
+</div>
+</div>
+
+<div class="page_footer" style="background-color:#9F9F9F;">Copyright <a href="http://www.keepdynamic.com/">KeepDynamic</a>. All rights reserved.
+<br/>
+<br/>
+<br/>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="DSM.Views.ManualApiView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:local="clr-namespace:DSM.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="1200" Height="700" Background="#ccff99">
+    <Grid Margin="60,0,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <!--<RowDefinition Height="50"/>-->
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <!--<ColumnDefinition Width="310" />
+            <ColumnDefinition Width="310" />
+            <ColumnDefinition Width="310" />-->
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,20,0,0">
+            <TextBlock  HorizontalAlignment="Left"  Text="Manual API Post" Foreground="#33331a" FontSize="25" ></TextBlock>
+        </StackPanel>
+        <Border Grid.Row="1" HorizontalAlignment="Left" Grid.Column="0">
+            <StackPanel Margin="0,0,0,0">
+                <DataGrid Name="dgPending"  Background="#FF63686E" Height="600" FontSize="14" ItemsSource="{Binding InvoiceList}" SelectedItem="{Binding SelectedAPI}" AutoGenerateColumns="False" CanUserAddRows="False"  Margin="0,5" VerticalScrollBarVisibility="Auto" Width="950">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="INVOICE NO" IsReadOnly="True" Binding="{Binding Path = InvNumber}" Width="145"/>
+                        <DataGridTextColumn Header="INVOICE DATE" IsReadOnly="True" Binding="{Binding Path = InvDate, StringFormat=dd/MM/yyyy}" Width="145"/>
+                        <DataGridTextColumn Header="REMARKS" IsReadOnly="True" Binding="{Binding Path = ApiMsg, StringFormat=dd/MM/yyyy}" Width="345"/>
+                        <!--<DataGridTextColumn Header="API STATUS" IsReadOnly="True" Binding="{Binding Path = ApiStatus}" Width="145"/>
+                        <DataGridTextColumn Header="API MESSAGE" IsReadOnly="True" Binding="{Binding Path = ApiMsg}" Width="350"/>-->
+                        <DataGridTemplateColumn Header="ACTION"  Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="btnPOSTapi" Content="POST" Margin="0,0,0,0" FontSize="12" Width="50"
+                                            Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.PostAPIKeyCommand}" />
+                                        <Button x:Name="btnDeleteCustomer" Content="Delete" Margin="5,0,0,0" FontSize="12" Width="40"
+                                            Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.DeleteCustomerKeyCommand}" />
+                                    
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

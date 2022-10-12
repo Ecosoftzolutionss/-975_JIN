@@ -1,0 +1,145 @@
+﻿<UserControl x:Class="DSM.Views.EDIView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:prism="http://prismlibrary.com/"
+        xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        xmlns:local="clr-namespace:DSM.Views"
+        mc:Ignorable="d" d:DesignHeight="450" d:DesignWidth="900" Height="700" Background="#ccff99">
+    <Grid Margin="0,20,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="130"/>
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition Width="400"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="5,5">
+            <TextBlock Text="Customer Name" Foreground="#33331a" FontSize="14"  Margin="0,5" />
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="5,5">
+            <!--<ComboBox x:Name="cbCustomers" VerticalAlignment="Center" Width="320" 
+                      ItemsSource="{Binding Path=Customers}"     
+                      SelectedValuePath="{Binding Customer, Mode=TwoWay}"
+                      SelectedValue="{Binding Customer, Mode=TwoWay}"
+                      DisplayMemberPath="CustomerName" IsSynchronizedWithCurrentItem="False"/>-->
+            <ComboBox x:Name="cbCustomers" VerticalAlignment="Center" Width="320" 
+                      ItemsSource="{Binding Path=Customers}"  
+                      SelectedItem="{Binding Customer, Mode=TwoWay}"
+                      SelectedValuePath="{Binding Customer, Mode=TwoWay}"
+                      DisplayMemberPath="CustomerName" Text="{Binding Customer}"
+              />
+
+
+
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="0" Margin="5,5" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
+            <TextBlock Text="Host" Foreground="#33331a" FontSize="14"  Margin="0,5" />
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="1" Margin="5,5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBox x:Name="txtHost" Text="{Binding EDI.Host, Mode=TwoWay}"  Height="25" Width="320" />
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="0" Margin="5,5" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
+            <TextBlock Text="Port" Foreground="#33331a" FontSize="14"  Margin="0,5" />
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="1" Margin="5,5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBox x:Name="txtport" Text="{Binding EDI.Port, Mode=TwoWay}"  Height="25" Width="320" />
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.Column="0" Margin="5,5" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <TextBlock Text="From Email-Id" Foreground="#33331a" FontSize="14"  Margin="0,5" />
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.Column="1" Margin="5,5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBox x:Name="txtFrom" Text="{Binding EDI.FromEmail, Mode=TwoWay}"  Height="25" Width="320" />
+        </StackPanel>
+        <StackPanel Grid.Row="4" Grid.Column="0" Margin="5,5" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <TextBlock Text="Password" Foreground="#33331a" FontSize="14"  Margin="0,5" />
+        </StackPanel>
+        <StackPanel Grid.Row="4" Grid.Column="1" Margin="5,5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBox x:Name="txtPassword"  Text="{Binding EDI.FromPwd, Mode=TwoWay}" Height="25" Width="320" TextChanged="TxtPassword_TextChanged" >
+
+            </TextBox>
+            <!--<PasswordBox x:Name="txtPassword" Password="" Grid.Row="5" Margin="10,5"  Height="25" Width="320">
+                <PasswordBox.InputBindings>
+                    <KeyBinding Key="Return" Command="{Binding Path=EDI.FromPwd, Mode=TwoWay}" CommandParameter="{Binding ElementName=txtPassword}"/>
+                </PasswordBox.InputBindings>
+            </PasswordBox>-->
+        </StackPanel>
+        <StackPanel Grid.Row="5"  Grid.Column="0" Margin="5,5">
+            <TextBlock Text="Choose" Foreground="#33331a" FontSize="14"  Margin="0,5" />
+        </StackPanel>
+        <StackPanel Grid.Row="5" Grid.Column="1" Margin="5,5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+            <CheckBox Name="chkEmail" Foreground="#33331a" Content="To Email" Command="{Binding CheckEmailCommand}" IsChecked="{Binding EDI.IsEmail, Mode=TwoWay}" Width="70"  Margin="5,5,0,0" ></CheckBox>
+            <TextBox x:Name="txtEmail" Text="{Binding EDI.VarFromEmail, Mode=TwoWay}" IsEnabled="{Binding EmailEnable}" Margin="10,0,0,0" Height="25" Width="208"/>
+            <Button x:Name="btnAdd"  Content="+" Margin="5,0,0,0" FontSize="10" FontWeight="Bold" Width="30" IsEnabled="{Binding EmailEnable}"
+                        Command="{Binding AddEmailCommand}" Click="btnAdd_Click" />
+        </StackPanel>
+        <StackPanel Grid.Row="6" Grid.Column="1" Margin="5,5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <CheckBox Name="chkEdi" Foreground="#33331a" Content="Edi Url" Command="{Binding CheckEDICommand}" IsChecked="{Binding EDI.IsEdi, Mode=TwoWay}" Width="70"  Margin="5,5,0,0"></CheckBox>
+            <TextBox x:Name="txtEdiLink" Text="{Binding EDI.EdiLink, Mode=TwoWay}" IsEnabled="{Binding EdiEnable}" Margin="10,0,0,0" Height="25" Width="238" TextChanged="TxtEdiLink_TextChanged"/>
+        </StackPanel>
+        <Border Grid.Row="5" Grid.Column="2" Grid.RowSpan="3" Margin="10,5,0,0">
+            <DataGrid Name="dgInvestm" Width="270" MaxHeight="100" HorizontalAlignment="Left" FontSize="12" ItemsSource="{Binding ListEmail}" CanUserDeleteRows="False" SelectedItem="{Binding SelectedEmail}" AutoGenerateColumns="False" CanUserAddRows="False"  Margin="0,5" VerticalScrollBarVisibility="Auto">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="EMAIL" IsReadOnly="True" Binding="{Binding Path = Mail}" Width="190"/>
+                    <DataGridTemplateColumn Header="ACTION"  Width="55">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button x:Name="btnRemove"  Content="-" Margin="5,0,0,0" FontSize="12" FontWeight="Bold" 
+                                                        Width="25" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.RemoveEmailCommand}"  />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+        <StackPanel Grid.Row="7" Margin="49,0,91,10" Grid.ColumnSpan="2">
+            <Button x:Name="btnSaveSettings"  Margin="254,3,34,3" Content="Add" FontSize="14"
+                        Command="{Binding EDISaveCommand}" Click="btnSaveSettings_Click" />
+        </StackPanel>
+        <Border Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="5" Margin="05,25,0,0" HorizontalAlignment="Left">
+            <StackPanel >
+                <DataGrid Name="dgCustomer" Width="1130" Height="300" MaxHeight="300" FontSize="12" ItemsSource="{Binding ListEDI}" CanUserDeleteRows="False" SelectedItem="{Binding SelectedEDI}" AutoGenerateColumns="False" CanUserAddRows="False"  Margin="0,5" VerticalScrollBarVisibility="Auto">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" IsReadOnly="True" Binding="{Binding Path = CustomerId}" Width="80"/>
+                        <DataGridTextColumn Header="CUSTOMER NAME" IsReadOnly="True" Binding="{Binding Path = CustomerName}" Width="110"/>
+                        <DataGridTextColumn Header="HOST" IsReadOnly="True" Binding="{Binding Path = Host}" Width="100"/>
+                        <DataGridTextColumn Header="PORT" IsReadOnly="True" Binding="{Binding Path = Port}" Width="50"/>
+                        <DataGridTextColumn Header="FROM EMAIL" IsReadOnly="True" Binding="{Binding Path = FromEmail}" Width="200"/>
+                        <DataGridTextColumn Header="TO EMAIL" IsReadOnly="True" Binding="{Binding Path = Email}" Width="330"/>
+                        <DataGridTextColumn Header="EDI LINK" IsReadOnly="True" Binding="{Binding Path = EdiLink}" Width="150"/>
+                        <DataGridTemplateColumn Header="ACTION"  Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="btnEditEDI" Content="Edit" Margin="0,0,0,0" FontSize="12" Width="45"
+                                            Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.EDIEditCommand}" />
+                                        <Button x:Name="btnDeleteEDI" Content="Delete" Margin="5,0,0,0" FontSize="12" Width="45"
+                                            Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=DataContext.EDIDeleteCommand}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+        <Label Content="*" Grid.Column="1" HorizontalAlignment="Left" Margin="365,5,0,0" VerticalAlignment="Top" Background="#00000000" Foreground="Red" FontWeight="Bold" Width="25" Height="21"/>
+        <Label Content="*" Grid.Column="1" HorizontalAlignment="Left" Margin="365,8,0,0" Grid.Row="1" VerticalAlignment="Top" Grid.ColumnSpan="2" Foreground="Red" FontWeight="Bold"/>
+        <Label Content="*" Grid.Column="1" HorizontalAlignment="Left" Margin="365,8,0,0" Grid.Row="2" VerticalAlignment="Top" FontWeight="Bold" Foreground="Red"/>
+        <Label Content="*" Grid.Column="1" HorizontalAlignment="Left" Margin="365,10,0,0" Grid.Row="3" VerticalAlignment="Top" Foreground="Red" FontWeight="Bold"/>
+        <Label Content="*" Grid.Column="1" HorizontalAlignment="Left" Margin="365,10,0,0" Grid.Row="4" VerticalAlignment="Top" Foreground="Red" FontWeight="Bold"/>
+        <Label Content="*" Grid.Column="1" HorizontalAlignment="Left" Margin="368,7,0,0" Grid.Row="5" VerticalAlignment="Top" Foreground="Red" FontWeight="Bold"/>
+    </Grid>
+</UserControl>

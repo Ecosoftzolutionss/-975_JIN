@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="3c4f03e3d66942c0a3922d558303c3c1" Name="Diagram1" ZoomLevel="100" >
+        <EntityTypeShape EntityType="DSMdbModel.User" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="DSMdbModel.Setting" Width="1.5" PointX="3.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DSMdbModel.ClientMaster" Width="1.5" PointX="0.75" PointY="5.375" />
+        <EntityTypeShape EntityType="DSMdbModel.EDIConfiguration" Width="1.5" PointX="3" PointY="5" />
+        <AssociationConnector Association="DSMdbModel.FK__EDIConfig__Clien__182C9B23" />
+        <EntityTypeShape EntityType="DSMdbModel.DigitalSignDetail" Width="1.5" PointX="3" PointY="8.75" />
+        <AssociationConnector Association="DSMdbModel.FK__DigitalSi__Clien__276EDEB3" />
+        <EntityTypeShape EntityType="DSMdbModel.DSMaster" Width="1.5" PointX="5.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DSMdbModel.Invoice" Width="1.5" PointX="5.375" PointY="6.75" />
+        <EntityTypeShape EntityType="DSMdbModel.Quarantine" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DSMdbModel.TemplateMaster" Width="1.5" PointX="7.375" PointY="3.75" />
+        <EntityTypeShape EntityType="DSMdbModel.PART_MASTER" Width="1.5" PointX="9.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DSMdbModel.Setup" Width="1.5" PointX="11.375" PointY="0.75" />
+        <EntityTypeShape EntityType="DSMdbModel.LICENCE" Width="1.5" PointX="11.375" PointY="4.75" />
+        <EntityTypeShape EntityType="DSMdbModel.Server_trigger" Width="1.5" PointX="11.375" PointY="7.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
