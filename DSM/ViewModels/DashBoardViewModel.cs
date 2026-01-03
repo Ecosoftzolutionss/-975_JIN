@@ -16,6 +16,7 @@ using Prism.Regions;
 using Spire.Barcode;
 using Spire.Pdf;
 using Spire.Pdf.Exporting;
+using Spire.Pdf.OPC;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,6 +37,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -262,7 +264,7 @@ namespace DSM.ViewModels
             set { SetProperty(ref _SearchInvoiceNo, value); }
         }
 
-        string  QRCodeString = "";
+        string QRCodeString = "";
 
         bool isAssignedcoord = true;
         bool iskeycheck = true;
@@ -515,6 +517,7 @@ namespace DSM.ViewModels
                             Global.InvoicePath = objSettings.InvoicePath;
                             Global.OutputPath = objSettings.OutputPath;
                             Global.PrinterName = objSettings.PrinterName;
+                            Global.Dscoord = objSettings.FlatFile.ToString();
 
                         }
 
@@ -692,6 +695,10 @@ namespace DSM.ViewModels
 
                 if (allInvoiceList[i].ApiStatus == "FALSE")
                     allInvoiceList[i].ApiStatus = "PENDING";
+
+
+                if (allInvoiceList[i].ApiMsg == null)
+                    allInvoiceList[i].ApiMsg = allInvoiceList[i].CustomerName + "- Invoice";
             }
             if (allInvoiceList.Count() > 0)
             {
@@ -730,6 +737,7 @@ namespace DSM.ViewModels
 
                 if (allInvoiceList[i].ApiStatus == "FALSE")
                     allInvoiceList[i].ApiStatus = "PENDING";
+
             }
             if (allInvoiceList.Count() > 0)
             {
@@ -946,7 +954,7 @@ namespace DSM.ViewModels
         private void CurrentRefreshPrintedLists()
         {
 
-            //timer.Stop();
+            //timer.Stop()
             DateTime invdate = DateTime.Now;
             //timer.Stop();
             if (Global.InvoiceDate.Contains("."))
@@ -997,10 +1005,13 @@ namespace DSM.ViewModels
             RefreshLists();
             CheckApiExeRunOrNot();
             ReadPDF1();
-            SignPDF();
+            SignPDF(Global.Dscoord);
+            RefreshLists();
             PrintFiles();
+            RefreshLists();
             APIPostFiles();
             CurrentRefreshLists();
+            RefreshLists();
             timer.Start();
         }
 
@@ -1174,33 +1185,6 @@ namespace DSM.ViewModels
                 //timerAPIPost.Start();
             }
         }
-
-        private void PickPDF(object sender, EventArgs e)
-        {
-            try
-            {
-                //timerPick.Stop();
-                //RefreshLists();
-                string[] invoicePathList = Directory.GetFiles(Global.InvoicePath, "*.pdf");
-                if (invoicePathList.Count() == 0)
-                {
-                    ProcessMsg = "";
-                }
-                PendingInvList = new ObservableCollection<InvoiceDisplayModel>();
-                for (int i = 0; i < invoicePathList.Length; i++)
-                {
-                    //AssignInvoiceNo_TruckNo(invoicePathList[i], "INV");
-                    SplitAndSave(invoicePathList[i], Global.InputPath, Global.InvoiceNumber, "INVOICE");
-                }
-                //timerPick.Start();
-            }
-            catch (Exception ex)
-            {
-                LogErrors(ex);
-                timerPick.Start();
-            }
-        }
-
         private static void GetImages(string filename)
         {
             int pageNum = 1;
@@ -1321,7 +1305,7 @@ namespace DSM.ViewModels
                             System.Drawing.Image[] images = page.ExtractImages();
                             string output = string.Format("{0}\\{1}{2}", directoryPath, System.IO.Path.GetFileNameWithoutExtension(input.Name), ".png");
                             converter.Convert(input.FullName, output);
-                            
+
                             int count = 0;
                             foreach (System.Drawing.Image image in images)
                             {
@@ -1364,8 +1348,8 @@ namespace DSM.ViewModels
                                     MoveFile(invPath[0], "INVALID_INVOICE");
                                     objDSMModelData = new DSMModelData();
 
-                                    
-                                   
+
+
 
                                 }
                             }
@@ -1386,195 +1370,13 @@ namespace DSM.ViewModels
                 timer.Start();
             }
         }
-        private void ReadPDF()
-        {
-            try
-            {
-                Global.VendorCode = "";
-                //string[] inputPath = Directory.GetFiles(Global.InputPath, "*.pdf");
-                //string[] outputPath = Directory.GetFiles(Global.OutputPath, "*.pdf");
-                string[] invPath = Directory.GetFiles(Global.InvoicePath, "*.pdf");
-                //for (int j = 0; j < invPath.Length; j++)
-                //{
-
-                if (invPath.Length > 0)
-                {
-                    String fileName = invPath[0];
-                  
-                    AssignInvoiceNo_TruckNo(invPath[0], "INV");
-                    //if (Global.CustomerCheck != null)
-                    //{
-                    //    if (Global.CustomerCheck.ToUpper().Contains(Global.CustomerName.ToUpper()))
-                    //    {
-                    //if (Global.InvoiceNumber != null)
-                    //{
-                    //AssignInvoiceNo_TruckNo(invPath[0], "TRUCK");
-
-                    //DateTime invdate = Convert.ToDateTime(Global.InvoiceDate.ToString().Trim());
-                    //DateTime invdate = DateTime.ParseExact(Global.InvoiceDate.ToString().Trim(), "d/M/yyyy", CultureInfo.InvariantCulture);
-                    string FinYear = GetFinancialYear(Global.InvoiceDate.ToString().Trim());
-                    Global.FinYear = Convert.ToInt32(FinYear.ToString().Trim());
-                    CurrentRefreshInvoiceLists();
-                    //CurrentInvoiceList.Items.Refresh();
-                    //EthernetConnectivityCheck();
-                  
-                    objDSMModelData = new DSMModelData();
-                    int inv_count_rec = objDSMModelData.GetInvoiceDetailsByInvoiceNumberFinYear(Global.InvoiceNumber, Convert.ToInt32(FinYear)).Count;
-                    if (inv_count_rec == 0)
-                    {
-                        if (Global.CustomerName == "HYUNDAI")
-                        {
-
-                            PDFConvert converter = new PDFConvert();
-                            //Setup the converter
-                            converter.RenderingThreads = -1;
-                            converter.TextAlphaBit = -1;
-                            converter.TextAlphaBit = -1;
-                            converter.OutputToMultipleFile = true;
-                            converter.FirstPageToConvert = -1;
-                            converter.LastPageToConvert = -1;
-                            converter.FitPage = false;
-                            converter.JPEGQuality = 10;
-                            converter.OutputFormat = "png256";
-                            converter.ResolutionX = 500;
-                            converter.ResolutionY = 500;
-                            System.IO.FileInfo input = new FileInfo(fileName);
-                            string directoryPath = System.IO.Path.GetDirectoryName(fileName) + "\\" + System.IO.Path.GetFileNameWithoutExtension(input.Name);
-                            if (!Directory.Exists(directoryPath))
-                                Directory.CreateDirectory(directoryPath);
-                            Spire.Pdf.PdfDocument doc = new Spire.Pdf.PdfDocument();
-                            doc.LoadFromFile(invPath[0]);
-                            Spire.Pdf.PdfPageBase page = doc.Pages[0];
-                            System.Drawing.Image[] images = page.ExtractImages();
-                            string output = string.Format("{0}\\{1}{2}", directoryPath, System.IO.Path.GetFileNameWithoutExtension(input.Name), ".png");
-                            converter.Convert(input.FullName, output);
-
-
-
-
-                            int count = 0;
-
-                            foreach (System.Drawing.Image image in images)
-                            {
-                                count++;
-                                try
-                                {
-                                    QRCodeString = "";
-                                    Global.InvoiceNumberchk = "";
-
-                                    try
-                                    {
-                                        QRCodeString = ScanQRPdf(image, output, directoryPath, invPath[0]);
-
-
-
-                                        CreateInvoiceChk(QRCodeString.ToString());
-
-                                        if (Global.InvoiceNumberchk != null)
-                                        {
-                                            if (Global.InvoiceNumberchk.Length <= 10)
-                                            {
-                                                CreateInvoice(QRCodeString.ToString());
-
-                                            }
-                                            else
-                                            {
-                                                continue;
-                                            }
-
-                                        }
-                                        else
-                                        {
-                                            continue;
-                                        }
-
-                                    }
-                                    catch (Exception ex)
-                                    {
-
-                                    }
-
-
-                                    Directory.Delete(directoryPath, true);
-
-                                    if (!string.IsNullOrEmpty(QRCodeString))
-                                    {
-                                        //CreateInvoice(QRCodeString);
-                                        SplitAndSave(invPath[0], Global.InputPath, Global.InvoiceNumber, "INVOICE");
-                                        //Global.InvoiceNumber = null;
-                                        if (Directory.Exists(directoryPath))
-                                            Directory.Delete(directoryPath, true);
-                                    }
-                                
-                                    else
-                                    {
-                                        MoveFile(invPath[0], "INVALID_INVOICE");
-                                        objDSMModelData = new DSMModelData();
-
-                                        if (Global.InvoiceNumber != null)
-                                        {
-                                            objDSMModelData.SaveQuarantine(Global.InvoiceNumber);
-                                            Global.InvoiceNumber = null;
-                                        }
-
-                                        timer.Start();
-                                    
-                                    }
-
-                                }
-                                catch (Exception i)
-                                {
-                                    LogErrors(i);
-
-                                    if (Directory.Exists(directoryPath))
-                                        Directory.Delete(directoryPath, true);
-
-                                    MoveFile(invPath[0], "INVALID_INVOICE");
-                                    objDSMModelData = new DSMModelData();
-
-                                    if (Global.InvoiceNumber != null)
-                                    {
-                                        objDSMModelData.SaveQuarantine(Global.InvoiceNumber);
-                                        Global.InvoiceNumber = null;
-                                    }
-
-                                    timer.Start();
-                                }
-                            }
-                        }
-
-                        else
-                        {
-                            try
-                            {
-                                SplitAndSave(invPath[0], Global.InputPath, Global.InvoiceNumber, "INVOICE");
-                            }
-                            catch (Exception i)
-                            {
-                                LogErrors(i);
-                                timer.Start();
-                            }
-                        }
-                       
-                    }
-                    else
-                    {
-                        MoveFile(invPath[0], "AlreadyExist");
-                        CurrentRefreshAlreadyInvoiceLists();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogErrors(ex);
-                timer.Start();
-            }
-        }
+        public bool oth_cus = false;
         private void ReadPDF1()
         {
             try
             {
-                
+                Global.InvoiceDate = null;
+                oth_cus = false;
                 string[] invPath = Directory.GetFiles(Global.InvoicePath, "*.pdf");
                 if (invPath.Length > 0)
                 {
@@ -1591,12 +1393,9 @@ namespace DSM.ViewModels
                         int inv_count_rec = objDSMModelData.GetInvoiceDetailsByInvoiceNumberFinYear(Global.InvoiceNumber, Convert.ToInt32(FinYear)).Count;
                         if (inv_count_rec == 0)
                         {
-                           
-
                             //spire
                             if (Global.CustomerName == "HYUNDAI")
                             {
-
                                 PDFConvert converter = new PDFConvert();
                                 //Setup the converter
                                 converter.RenderingThreads = -1;
@@ -1621,33 +1420,27 @@ namespace DSM.ViewModels
                                 string output = string.Format("{0}\\{1}{2}", directoryPath, System.IO.Path.GetFileNameWithoutExtension(input.Name), ".png");
                                 converter.Convert(input.FullName, output);
 
-
-
-
                                 int count = 0;
-                                
+
                                 foreach (System.Drawing.Image image in images)
                                 {
                                     count++;
                                     try
                                     {
-                                        
-
-                                            try
-                                            {
-                                         
-                                                QRCodeString = ScanQRPdf(image, output, directoryPath, invPath[0]);
+                                        try
+                                        {
+                                            QRCodeString = ScanQRPdf(image, output, directoryPath, invPath[0]);
 
                                             //MessageBox.Show(count.ToString());
                                             //SplitAndSave(invPath[0], Global.InputPath, Global.InvoiceNumber, "INVOICE");
                                             CreateInvoiceChk(QRCodeString.ToString());
-                                            
+
                                             if (Global.InvoiceNumberchk != null)
+                                            {
+                                                if (Global.InvoiceNumberchk.Length <= 13)
                                                 {
-                                                  if(Global.InvoiceNumberchk.Length<=13)
-                                                   {
                                                     CreateInvoice(QRCodeString.ToString());
-                                                    Global.InvoiceNumberchk =null;
+                                                    Global.InvoiceNumberchk = null;
                                                     Directory.Delete(directoryPath, true);
 
                                                     if (!string.IsNullOrEmpty(QRCodeString))
@@ -1671,53 +1464,42 @@ namespace DSM.ViewModels
 
 
                                                         timer.Start();
-                                                        
+
                                                     }
                                                     break;
 
                                                 }
-                                                    else
-                                                         {
-                                                             continue;
-                                                        }
-                                                
+                                                else
+                                                {
+                                                    continue;
                                                 }
+
+                                            }
                                             else
                                             {
                                                 continue;
                                             }
 
-                                            }
-                                            catch(Exception ex)
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            if (count == 2)
                                             {
 
+                                                MoveFile(invPath[0], "INVALID_INVOICE");
+                                                objDSMModelData = new DSMModelData();
+
+                                                if (Global.InvoiceNumber != null)
+                                                {
+                                                    objDSMModelData.SaveQuarantine(Global.InvoiceNumber);
+                                                    Global.InvoiceNumber = null;
+                                                }
+
+                                                timer.Start();
+                                                break;
                                             }
-
-                                       
-                                        //Directory.Delete(directoryPath, true);
-
-                                        //if (!string.IsNullOrEmpty(QRCodeString))
-                                        //{
-                                        //    //CreateInvoice(QRCodeString);
-                                        //    SplitAndSave(invPath[0], Global.InputPath, Global.InvoiceNumber, "INVOICE");
-                                        //    //Global.InvoiceNumber = null;
-                                        //    if (Directory.Exists(directoryPath))
-                                        //        Directory.Delete(directoryPath, true);
-                                        //}
-                                        //else
-                                        //{
-                                        //    MoveFile(invPath[0], "INVALID_INVOICE");
-                                        //    objDSMModelData = new DSMModelData();
-
-                                        //    if (Global.InvoiceNumber != null)
-                                        //    {
-                                        //        objDSMModelData.SaveQuarantine(Global.InvoiceNumber);
-                                        //        Global.InvoiceNumber = null;
-                                        //    }
-
-
-                                        //    timer.Start();
-                                        //}
+                                            LogErrors(ex);
+                                        }
                                     }
                                     catch (Exception i)
                                     {
@@ -1739,7 +1521,7 @@ namespace DSM.ViewModels
                                     }
 
                                 }
-                                
+
                             }
 
                             else
@@ -1773,13 +1555,13 @@ namespace DSM.ViewModels
                 timer.Start();
             }
         }
-        private string  ScanQRPdf(System.Drawing.Image img, string outPutPath, string directory, string pdfPath)
+        private string ScanQRPdf(System.Drawing.Image img, string outPutPath, string directory, string pdfPath)
         {
             string scaningResult = string.Empty;
             img.Save(outPutPath, System.Drawing.Imaging.ImageFormat.Png);
             System.Drawing.Image imgbmp = System.Drawing.Image.FromFile(outPutPath);
             Bitmap bmp = new Bitmap(imgbmp);
-          //  Qrcode(outPutPath);
+            //  Qrcode(outPutPath);
             try
             {
                 bmp = ResizeImage(bmp, 120, 120);
@@ -1897,22 +1679,76 @@ namespace DSM.ViewModels
             }
             return scaningResult;
         }
-
-        private void SignPDF()
+        private void SignPDF(string DScoord)
         {
+            string[] inputPathList = new string[0];
+
             try
             {
                 //timerSign.Stop();
                 //var lstSign = objDSMModelData.GetAllInvoiceStatusAll().Where(x => x.DSStatus == "FALSE").FirstOrDefault();
                 //var lstSign = objDSMModelData.GetAllInvoiceStatusAll().Where(x => x.DSStatus == "FALSE").FirstOrDefault();
                 CurrentRefreshSignedLists();
-                string[] inputPathList = Directory.GetFiles(Global.InputPath, "*.pdf");
+                //if (oth_cus)
+                //{
+                //    inputPathList = Directory.GetFiles(Global.InvoicePath + "OTHER INVOICE\\", "*.pdf");
+                //    string[] file_name = inputPathList[0].ToString().Split('\\');
+                //    int v = file_name.Length;
+                //    string[] file = file_name[v - 1].ToString().Split('.');
+                //    Global.InvoiceNumber = file[0].ToString();
+
+                //    SplitAndSave(inputPathList[0], Global.InputPath, Global.InvoiceNumber, "INVOICE");
+                //}
+
+                if (oth_cus)
+                {
+                    inputPathList = Directory.GetFiles(Global.InvoicePath + "OTHER INVOICE\\", "*.pdf");
+
+                    if (inputPathList.Length == 0)
+                        return;
+
+                    string[] file_name = inputPathList[0].ToString().Split('\\');
+                    int v = file_name.Length;
+                    string[] file = file_name[v - 1].ToString().Split('.');
+                    Global.InvoiceNumber = file[0].ToString();
+
+                    using (PdfReader reader = new PdfReader(inputPathList[0]))
+                    {
+                        string fullText = PdfTextExtractor.GetTextFromPage(reader, 1);
+                        string[] lines = fullText.Split('\n');
+
+                        foreach (var line in lines)
+                        {
+                            if (line.Trim().ToUpper().StartsWith("INV DATE"))
+                            {
+                                // Try to extract the date from the same line
+                                Match match = Regex.Match(line, @"INV\s*DATE\s*[:\-]?\s*(\d{2}[./-]\d{2}[./-]\d{4})", RegexOptions.IgnoreCase);
+                                if (match.Success)
+                                {
+                                    Global.InvoiceDate = match.Groups[1].Value.Trim();
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (string.IsNullOrWhiteSpace(Global.InvoiceDate))
+                        {
+                            Global.InvoiceDate = DateTime.Now.ToString("MM.dd.yyyy");
+                        }
+                    }
+
+
+                    SplitAndSave(inputPathList[0], Global.InputPath, Global.InvoiceNumber, "INVOICE");
+                }
+
+                else
+                {
+                    inputPathList = Directory.GetFiles(Global.InputPath, "*.pdf");
+                }
                 if (inputPathList.Count() == 0)
                 {
                     ProcessMsg = "";
                 }
-
-
                 //PendingInvList = new ObservableCollection<InvoiceDisplayModel>();
                 for (int i = 0; i < inputPathList.Length; i++)
                 {
@@ -1921,25 +1757,53 @@ namespace DSM.ViewModels
                     CurrentInvoice = "Invoice - " + Global.InvoiceNumber + " is Signing...";
                     //EthernetConnectivityCheck();
                     objDigitalSign = new DigitalSign();
-                    bool sign = objDigitalSign.FlatDigitalSignatureInitialize("Invoice", Global.InvoiceNumber, Global.CustomerName, Global.InvoiceNumber);
+                    if (Global.CustomerName == "")
+                    {
+                        Global.CustomerName = "OTHER CUSTOMER";
+                    }
+
+                    bool sign = objDigitalSign.FlatDigitalSignatureInitialize("Invoice", Global.InvoiceNumber, Global.CustomerName, Global.InvoiceNumber, DScoord);
                     if (sign)
                     {
+                        //if (!Global.CustomerName.ToUpper().Contains("HYUNDAI"))
+                        //{
+                        //    string ins_qry = "INSERT INTO Invoice (CustomerName, InvNumber, InvDate, DSStatus, CreatedDate) VALUES ('" + Global.CustomerName + "', '" + Global.InvoiceNumber + "', '" + DateTime.Now.ToString("yyyy-MM-dd 00:00:00.000") + "','TRUE', GETDATE())";
+                        //    bool ins = Utilities.executeNonQuery(ins_qry);
+                        //}
+                        //MessageBox.Show("Before Mail");
+
+                        if (!Global.CustomerName.ToUpper().Contains("HYUNDAI"))
+                        {
+                            string checkQry = "SELECT COUNT(*) FROM Invoice WHERE InvNumber = '" + Global.InvoiceNumber + "'";
+                            object result = Utilities.executeScalar(checkQry);
+
+                            int count = result != null ? Convert.ToInt32(result) : 0;
+                            if (count == 0)
+                            {
+                                string ins_qry = "INSERT INTO Invoice (CustomerName, InvNumber, InvDate, DSStatus, CreatedDate) " +
+                                                 "VALUES ('" + Global.CustomerName + "', '" + Global.InvoiceNumber + "', '" + DateTime.Now.ToString("yyyy-MM-dd 00:00:00.000") + "','TRUE', GETDATE())";
+                                bool ins = Utilities.executeNonQuery(ins_qry);
+                            }
+                        }
+
+
+                        if (!Global.CustomerName.ToUpper().Contains("HYUNDAI"))
+                        {
+                            objDigitalSign.SendEmail(Global.InvoiceNumber); 
+                        }
+                            
                         if (Global.CustomerName.ToString().Trim() == "HYUNDAI")
                         {
                             string PdfFilename = Global.OutputPath + Global.InvoiceNumber + "ORIGINALINVOICE.pdf";
                             //if (PdfFilename != null && File.Exists(PdfFilename))
                             if (PdfFilename != null && File.Exists(PdfFilename))
                             {
-
                                 //if (!string.IsNullOrEmpty(QRCodeString))
                                 //{
-
-
                                 //    CreateInvoice(QRCodeString);
 
                                 //}
                             }
-
                         }
                         else
                         {
@@ -1949,7 +1813,6 @@ namespace DSM.ViewModels
                             {
                                 OthercustInv();
                             }
-
                         }
                     }
                     CurrentRefreshSignedLists();
@@ -2275,7 +2138,7 @@ namespace DSM.ViewModels
                     DateTime dateInv = DateTime.ParseExact(dateString, new string[] { "MM.dd.yyyy", "MM-dd-yyyy", "MM/dd/yyyy" }, provider, DateTimeStyles.None);
 
                     objInvoice.InvNumber = arr1[0];
-                   
+
                     Global.InvoiceNumber = Global.InvoiceNumber == null ? objInvoice.InvNumber : Global.InvoiceNumber;
 
                     objInvoice.InvDate = dateInv;
@@ -2332,7 +2195,7 @@ namespace DSM.ViewModels
                     objInvoice.ShopCode = Global.Shopcode;
                     objInvoice.PONumber = arr[i].Substring(2, 10);
                     objInvoice.PartNumber = arr[i].Substring(12);
-                    Global.InvoiceNumberchk =arr[i].Substring(12);
+                    Global.InvoiceNumberchk = arr[i].Substring(12);
                     objInvoice.Finyear = Global.FinYear;
                     objInvoice.SystemName = System.Environment.MachineName;
                     objInvoice.OriginalPDF = Global.OriginalPDFFile;
@@ -2340,7 +2203,7 @@ namespace DSM.ViewModels
                 count++;
             }
 
-           objDSMModelData.SaveInvoice(lstInvoice);
+            objDSMModelData.SaveInvoice(lstInvoice);
         }
 
         public void AssignInvoiceNo_TruckNo(string src, string type)
@@ -2372,15 +2235,23 @@ namespace DSM.ViewModels
                     for (int k = 0; k < Customers.Count; k++)
                     {
 
-                        var custsearchResult = res.Where(p => p.Text.ToUpper().Contains(Customers[k].CustomerName)).OrderBy(p => p.Y).Reverse().ToList();
+                        var custsearchResult = res.Where(p => p.Text.ToUpper().Contains(Customers[k].CustomerName.ToUpper())).OrderBy(p => p.Y).Reverse().ToList();
                         //var custsearchResult = res.Where(p => p.Text.Contains("Mobis")).OrderBy(p => p.Y).Reverse().ToList();
                         if (custsearchResult.Count > 0)
                         {
                             custcount++;
                             Global.CustomerName = Customers[k].CustomerName.ToString().Trim();
                             Global.CustomerId = Customers[k].CustomerId.ToString().Trim();
+
+                            if (!Global.CustomerName.ToUpper().Contains("HYUNDAI"))
+                            {
+                                MoveFile(pathToPdf, "OTHER INVOICE");
+                                othercustomer("Other Customer Invoice");
+                                oth_cus = true;
+                                return;
+                            }       
                             break;
-                        }
+                        }   
 
 
                     }
@@ -2388,9 +2259,11 @@ namespace DSM.ViewModels
                     {
                         MoveFile(pathToPdf, "OTHER INVOICE");
                         othercustomer("Other Customer Invoice");
+                        oth_cus = true;
                         return;
                     }
                 }
+
                 SettingsDisplayModel objSettings = new SettingsDisplayModel();
                 CustomerDisplayModel objCustomer = new CustomerDisplayModel();
                 objSettings = objDSMModelData.GetSettingsData(System.Environment.MachineName);
@@ -2498,7 +2371,11 @@ namespace DSM.ViewModels
                         //Global.InvoiceNumber = invno[invind-1].ToString().Trim();
                         else
                         {
-                            Global.InvoiceNumber = invresult;
+                            invno = invresult.Split(' ');
+                            int invind = invno.GetLength(0);
+                            Global.InvoiceNumber = invno[invind - 1].ToString().Trim();
+
+                            //Global.InvoiceNumber = invresult.Trim();
                         }
                     }
 
@@ -2856,7 +2733,15 @@ namespace DSM.ViewModels
             {
                 System.IO.Directory.CreateDirectory(Global.InvoicePath + "\\" + location + "\\");
             }
+            if (!System.IO.Directory.Exists(Global.InvoicePath + "\\OTHER INVOICE\\" + location + "\\"))
+            {
+                System.IO.Directory.CreateDirectory(Global.InvoicePath + "\\OTHER INVOICE\\" + location + "\\");
+            }
             string _DestFile = Global.InvoicePath + "\\" + location + "\\" + System.IO.Path.GetFileName(source);
+            if (oth_cus)
+            {
+                _DestFile = Global.InvoicePath + "\\OTHER INVOICE\\" + location + "\\" + System.IO.Path.GetFileName(source);
+            }
             fileMove.Close();
             fileMove.Dispose();
 

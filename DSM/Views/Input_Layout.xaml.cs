@@ -40,7 +40,7 @@ namespace DSM.Views
     {
         public Input_Layout()
         {
-           
+
             InitializeComponent();
         }
 
@@ -64,7 +64,7 @@ namespace DSM.Views
                 _Template = value;
                 //NotifyPropertyChanged("Customer");
                 NotifyPropertyChanged("Template");
-                
+
             }
         }
 
@@ -76,118 +76,125 @@ namespace DSM.Views
 
         private async void Save_btn_Click(object sender, RoutedEventArgs e)
         {
-
-            //pdfviewer.Dispose();
-            pdfviewer.Refresh();
-            //pdfviewer.Navigate("about:blank");
-            pdfviewer.Navigate(FilePath.Text);
-            //Process proc = new Process();
-            //proc.StartInfo.FileName = System.IO.Path.GetFullPath(FilePath.Text);
-            //proc.Start();
-            //proc.WaitForExit(12000);
-
-            await Task.Delay(3000);
             try
             {
-                System.IO.DirectoryInfo di = new DirectoryInfo(System.IO.Path.GetDirectoryName(outputFile));
-                var pdffile = System.IO.Path.GetDirectoryName(FilePath.Text) + "Output" + "\\" + Filename + ".pdf";
 
-                //if (File.Exists(System.IO.Path.GetDirectoryName(FilePath.Text) + "Output" + "\\" + Filename + ".pdf"))
-                    
-                foreach (FileInfo file in di.GetFiles())
-                {
-                    
-                    file.Delete();
-
-                }
-                // save co ord to database
-                //count = 5;
-                //count++;
-                Temp_name.IsEnabled = false;
-                if (Inv_no_chk.IsChecked==true)
-                {
-                    objDSMModelData = new DSMModelData();
-                    string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
-                    string TemplateName = ComboBoxZone.SelectedItem.ToString();
-                    objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 1);
-                    MessageBox.Show("Invoice Number Co-Ordinates Saved successfully");
-                    reset();
-                    //txtHintPassword.Text = "Enter Invoice Date";
-                }
-                else if (Inv_date_chk.IsChecked == true)
-                {
-                    objDSMModelData = new DSMModelData();
-                    string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
-                    string TemplateName = ComboBoxZone.SelectedItem.ToString();
-                    objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 2);
-                    MessageBox.Show("Invoice Date Co-Ordinates Saved successfully");
-                    reset();
-                    //txtHintPassword.Text = "Enter Vendor Code";
-
-                }
-                else if (Vendor_chk.IsChecked == true)
-                {
-                    objDSMModelData = new DSMModelData();
-                    string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
-                    string TemplateName = ComboBoxZone.SelectedItem.ToString();
-                    objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 3);
-                    MessageBox.Show("Vendor code Co-Ordinates Saved successfully");
-                    reset();
-                    //txtHintPassword.Text = "Enter Truck Number";
-                }
-                else if (Truck_chk.IsChecked == true)
-                {
-                    objDSMModelData = new DSMModelData();
-                    string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
-                    string TemplateName = ComboBoxZone.SelectedItem.ToString();
-                    objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 4);
-                    MessageBox.Show("Truck Number Co-Ordinates Saved successfully");
-                    reset();
-                    //txtHintPassword.Text = "Enter Client Name";
-                }
-                else if (Client_chk.IsChecked == true)
-                {
-                    objDSMModelData = new DSMModelData();
-                    string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
-                    string TemplateName = ComboBoxZone.SelectedItem.ToString();
-                    objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 5);
-                    MessageBox.Show("Client Name Co-Ordinates Saved successfully");
-                    reset();
-                    //txtHintPassword.Text = "Enter DS Authorized signatory";
-                }
-                else if ( DS_chk.IsChecked == true)
-                {
-                    objDSMModelData = new DSMModelData();
-                    string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
-                    string TemplateName = ComboBoxZone.SelectedItem.ToString();
-                    objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 6);
-                    MessageBox.Show("DS Co-Ordinates Saved successfully");
-                    reset();
-                    //count = 0;
-                    //MessageBox.Show("Completed Successfuly");
-                    txtHintPassword.Text = "";
-
-                }
-                else if (shop_cd_chk.IsChecked == true)
-                {
-                    objDSMModelData = new DSMModelData();
-                    string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
-                    string TemplateName = ComboBoxZone.SelectedItem.ToString();
-                    objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 7);
-                    MessageBox.Show("Shop Code Co-Ordinates Saved successfully");
-                    reset();
-                    //count = 0;
-                    //MessageBox.Show("Completed Successfuly");
-                    txtHintPassword.Text = "";
-
-                }
+                //pdfviewer.Dispose();
+                pdfviewer.Refresh();
                 //pdfviewer.Navigate("about:blank");
-                //FilePath.Text = "";
-                //ComboBoxZone.Text = "";
+                pdfviewer.Navigate(FilePath.Text);
+                //Process proc = new Process();
+                //proc.StartInfo.FileName = System.IO.Path.GetFullPath(FilePath.Text);
+                //proc.Start();
+                //proc.WaitForExit(12000);
+
+                await Task.Delay(3000);
+                try
+                {
+                    System.IO.DirectoryInfo di = new DirectoryInfo(System.IO.Path.GetDirectoryName(outputFile));
+                    var pdffile = System.IO.Path.GetDirectoryName(FilePath.Text) + "Output" + "\\" + Filename + ".pdf";
+
+                    //if (File.Exists(System.IO.Path.GetDirectoryName(FilePath.Text) + "Output" + "\\" + Filename + ".pdf"))
+
+                    foreach (FileInfo file in di.GetFiles())
+                    {
+
+                        file.Delete();
+
+                    }
+                    // save co ord to database
+                    //count = 5;
+                    //count++;
+                    Temp_name.IsEnabled = false;
+                    if (Inv_no_chk.IsChecked == true)
+                    {
+                        objDSMModelData = new DSMModelData();
+                        string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
+                        string TemplateName = ComboBoxZone.SelectedItem.ToString();
+                        objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 1);
+                        MessageBox.Show("Invoice Number Co-Ordinates Saved successfully");
+                        reset();
+                        //txtHintPassword.Text = "Enter Invoice Date";
+                    }
+                    else if (Inv_date_chk.IsChecked == true)
+                    {
+                        objDSMModelData = new DSMModelData();
+                        string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
+                        string TemplateName = ComboBoxZone.SelectedItem.ToString();
+                        objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 2);
+                        MessageBox.Show("Invoice Date Co-Ordinates Saved successfully");
+                        reset();
+                        //txtHintPassword.Text = "Enter Vendor Code";
+
+                    }
+                    else if (Vendor_chk.IsChecked == true)
+                    {
+                        objDSMModelData = new DSMModelData();
+                        string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
+                        string TemplateName = ComboBoxZone.SelectedItem.ToString();
+                        objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 3);
+                        MessageBox.Show("Vendor code Co-Ordinates Saved successfully");
+                        reset();
+                        //txtHintPassword.Text = "Enter Truck Number";
+                    }
+                    else if (Truck_chk.IsChecked == true)
+                    {
+                        objDSMModelData = new DSMModelData();
+                        string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
+                        string TemplateName = ComboBoxZone.SelectedItem.ToString();
+                        objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 4);
+                        MessageBox.Show("Truck Number Co-Ordinates Saved successfully");
+                        reset();
+                        //txtHintPassword.Text = "Enter Client Name";
+                    }
+                    else if (Client_chk.IsChecked == true)
+                    {
+                        objDSMModelData = new DSMModelData();
+                        string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
+                        string TemplateName = ComboBoxZone.SelectedItem.ToString();
+                        objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 5);
+                        MessageBox.Show("Client Name Co-Ordinates Saved successfully");
+                        reset();
+                        //txtHintPassword.Text = "Enter DS Authorized signatory";
+                    }
+                    else if (DS_chk.IsChecked == true)
+                    {
+                        objDSMModelData = new DSMModelData();
+                        string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
+                        string TemplateName = ComboBoxZone.SelectedItem.ToString();
+                        objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 6);
+                        MessageBox.Show("DS Co-Ordinates Saved successfully");
+                        reset();
+                        //count = 0;
+                        //MessageBox.Show("Completed Successfuly");
+                        txtHintPassword.Text = "";
+
+                    }
+                    else if (shop_cd_chk.IsChecked == true)
+                    {
+                        objDSMModelData = new DSMModelData();
+                        string coordinate = Left_txt.Text + "," + Bott_txt.Text + "," + Right_txt.Text + "," + Top_txt.Text;
+                        string TemplateName = ComboBoxZone.SelectedItem.ToString();
+                        objDSMModelData.UpdateClientCoordinates(coordinate, TemplateName, 7);
+                        MessageBox.Show("Shop Code Co-Ordinates Saved successfully");
+                        reset();
+                        //count = 0;
+                        //MessageBox.Show("Completed Successfuly");
+                        txtHintPassword.Text = "";
+
+                    }
+                    //pdfviewer.Navigate("about:blank");
+                    //FilePath.Text = "";
+                    //ComboBoxZone.Text = "";
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
             }
-            catch(Exception)
+            catch(Exception ex)
             {
-                MessageBox.Show("Retry");
+                Global.LogErrors(ex);
             }
 
         }
@@ -200,7 +207,7 @@ namespace DSM.Views
                 {
                     if (ComboBoxZone.Text != "")
                     {
-                        if (Inv_no_chk.IsChecked == true || Inv_date_chk.IsChecked == true || Vendor_chk.IsChecked == true || Truck_chk.IsChecked == true || Client_chk.IsChecked == true || DS_chk.IsChecked == true || shop_cd_chk.IsChecked == true )
+                        if (Inv_no_chk.IsChecked == true || Inv_date_chk.IsChecked == true || Vendor_chk.IsChecked == true || Truck_chk.IsChecked == true || Client_chk.IsChecked == true || DS_chk.IsChecked == true || shop_cd_chk.IsChecked == true)
                         {
                             if (Search_txt.Text != "")
                             {
@@ -217,7 +224,7 @@ namespace DSM.Views
 
                                     var searchResult = res.Where(p => p.Text.Contains(Search_txt.Text)).OrderBy(p => p.Y).Reverse().ToList();
 
-                                  //  var searchResult = res.Where(p => p.Text.Contains(Search_txt.Text)).OrderBy(p => p.Y).Reverse().ToList();
+                                    //  var searchResult = res.Where(p => p.Text.Contains(Search_txt.Text)).OrderBy(p => p.Y).Reverse().ToList();
 
                                     double x = Math.Round((double)searchResult[0].X);
                                     double X_cord = Math.Round((double)searchResult[0].X1);
@@ -276,7 +283,7 @@ namespace DSM.Views
                     FilePath.Text = openFileDialog.FileName;
                     pdfviewer.Navigate("about:blank");
                     pdfviewer.Navigate(FilePath.Text);
-                   
+
                 }
 
             }
@@ -301,46 +308,54 @@ namespace DSM.Views
             shop_cd_chk.IsChecked = false;
             //FilePath.Text = "";
         }
-        
+
         private void Locate_btn_Click(object sender, RoutedEventArgs e)
         {
-            Random rnd = new Random();
-            Filename = rnd.Next(1000,9999).ToString();
-            string inputFile = FilePath.Text;
-            if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(FilePath.Text) +  "Output" + "\\"))
-            {
-
-                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(FilePath.Text)  + "Output" + "\\");
-            }
-
-            outputFile = System.IO.Path.GetDirectoryName(FilePath.Text)  + "Output" + "\\" + Filename + ".pdf";
             try
             {
-                PdfReader pdfReader = new PdfReader(inputFile);
-                using (FileStream fs = new FileStream(outputFile, FileMode.Create, FileAccess.Write, FileShare.None))
+
+                Random rnd = new Random();
+                Filename = rnd.Next(1000, 9999).ToString();
+                string inputFile = FilePath.Text;
+                if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(FilePath.Text) + "Output" + "\\"))
                 {
-                    using (PdfStamper stamper = new PdfStamper(pdfReader, fs))
-                    {
-                        int PageCount = pdfReader.NumberOfPages;
-                        for (int x = 1; x <= PageCount; x++)
-                        {
-                            PdfContentByte cb = stamper.GetOverContent(x);
-                            iTextSharp.text.Rectangle rectangle = new iTextSharp.text.Rectangle(int.Parse(Left_txt.Text), int.Parse(Bott_txt.Text), int.Parse(Right_txt.Text), int.Parse(Top_txt.Text));
-                            //rectangle.BackgroundColor = BaseColor.BLACK;
-                            rectangle.Border = iTextSharp.text.Rectangle.BOX;
-                            rectangle.BorderWidth = 1;
-                            rectangle.BorderColor = new BaseColor(255,0,0);
-                            cb.Rectangle(rectangle);
-                        }
-                    }
-                    fs.Close();
+
+                    System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(FilePath.Text) + "Output" + "\\");
                 }
 
-                pdfviewer.Navigate(outputFile);
+                outputFile = System.IO.Path.GetDirectoryName(FilePath.Text) + "Output" + "\\" + Filename + ".pdf";
+                try
+                {
+                    PdfReader pdfReader = new PdfReader(inputFile);
+                    using (FileStream fs = new FileStream(outputFile, FileMode.Create, FileAccess.Write, FileShare.None))
+                    {
+                        using (PdfStamper stamper = new PdfStamper(pdfReader, fs))
+                        {
+                            int PageCount = pdfReader.NumberOfPages;
+                            for (int x = 1; x <= PageCount; x++)
+                            {
+                                PdfContentByte cb = stamper.GetOverContent(x);
+                                iTextSharp.text.Rectangle rectangle = new iTextSharp.text.Rectangle(int.Parse(Left_txt.Text), int.Parse(Bott_txt.Text), int.Parse(Right_txt.Text), int.Parse(Top_txt.Text));
+                                //rectangle.BackgroundColor = BaseColor.BLACK;
+                                rectangle.Border = iTextSharp.text.Rectangle.BOX;
+                                rectangle.BorderWidth = 1;
+                                rectangle.BorderColor = new BaseColor(255, 0, 0);
+                                cb.Rectangle(rectangle);
+                            }
+                        }
+                        fs.Close();
+                    }
+
+                    pdfviewer.Navigate(outputFile);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
             }
-            catch(Exception)
+            catch(Exception ex)
             {
-                MessageBox.Show("Loading...");
+                Global.LogErrors(ex);
             }
         }
 
@@ -351,7 +366,7 @@ namespace DSM.Views
             Bott_txt.IsEnabled = true;
             Top_txt.IsEnabled = true;
         }
-        
+
         private void Search_txt_TextChanged(object sender, TextChangedEventArgs e)
         {
             txtHintPassword.Visibility = Visibility.Visible;
@@ -360,7 +375,7 @@ namespace DSM.Views
                 txtHintPassword.Visibility = Visibility.Hidden;
             }
         }
-         
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
 
@@ -377,7 +392,7 @@ namespace DSM.Views
             //view_btn.Visibility = Visibility.Hidden;
             //Coord_btn.Visibility = Visibility.Hidden;
             BindComboBox(ComboBoxZone);
-            
+
         }
 
         public void BindComboBox(ComboBox comboBoxName)
@@ -390,12 +405,12 @@ namespace DSM.Views
             objDSMModelData = new DSMModelData();
             Template = new CustomerDisplayModel();
             Templates = new ObservableCollection<CustomerDisplayModel>(objDSMModelData.GetAllTemplates());
-            
+
             foreach (var template in Templates)
             {
                 ComboBoxZone.Items.Add(template.Tempname);
             }
-           
+
         }
 
         private void view_btn_Click(object sender, RoutedEventArgs e)
@@ -406,8 +421,8 @@ namespace DSM.Views
                 {
 
 
-                  
-                    if (Inv_no_chk.IsChecked == true || Inv_date_chk.IsChecked == true || Vendor_chk.IsChecked == true || Truck_chk.IsChecked == true || Client_chk.IsChecked == true || DS_chk.IsChecked == true|| shop_cd_chk.IsChecked == true)
+
+                    if (Inv_no_chk.IsChecked == true || Inv_date_chk.IsChecked == true || Vendor_chk.IsChecked == true || Truck_chk.IsChecked == true || Client_chk.IsChecked == true || DS_chk.IsChecked == true || shop_cd_chk.IsChecked == true)
                     {
                         Random rnd = new Random();
                         Filename = rnd.Next(1000, 9999).ToString();
@@ -426,7 +441,7 @@ namespace DSM.Views
 
                         for (int i = 0; i < dscoordinate.Count; i++)
                         {
-                            if (dscoordinate[i].Invnocoord != null && dscoordinate[i].Invdatecoord != null && dscoordinate[i].Vendorcoord != null && dscoordinate[i].Trucknocoord != null && dscoordinate[i].Clientnamecoord != null && dscoordinate[i].Dscoord != null && dscoordinate[i].Shopcdcoord !=null)
+                            if (dscoordinate[i].Invnocoord != null && dscoordinate[i].Invdatecoord != null && dscoordinate[i].Vendorcoord != null && dscoordinate[i].Trucknocoord != null && dscoordinate[i].Clientnamecoord != null && dscoordinate[i].Dscoord != null && dscoordinate[i].Shopcdcoord != null)
                             {
                                 if (Inv_no_chk.IsChecked == true)
                                 {
@@ -457,6 +472,17 @@ namespace DSM.Views
                                     coord = dscoordinate[i].Shopcdcoord.ToString().Trim();
                                 }
 
+                            }
+                            else if(dscoordinate[i].Clientnamecoord != null)
+                            {
+                                if (Client_chk.IsChecked == true)
+                                {
+                                    coord = dscoordinate[i].Clientnamecoord.ToString().Trim();
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Select the Client Field..!");
+                                }
                             }
                             else
                             {
@@ -518,30 +544,26 @@ namespace DSM.Views
             }
             else
             {
-                MessageBox.Show("Please select Client ID");
+                MessageBox.Show("Please select Template Name!");
             }
         }
 
         private void Add_btn_Click(object sender, RoutedEventArgs e)
         {
-            //choose_lbl.Visibility = Visibility.Visible;
-            //available_lbl.Visibility = Visibility.Visible;
-            //find_lbl.Visibility = Visibility.Visible;
-            //Search_txt.Visibility = Visibility.Visible;
-            //FilePath.Visibility = Visibility.Visible;
-            //ComboBoxZone.Visibility = Visibility.Visible;
-            //Browse_btn.Visibility = Visibility.Visible;
-            //view_btn.Visibility = Visibility.Visible;
-            //Coord_btn.Visibility = Visibility.Visible;
-            //Add_btn.Visibility = Visibility.Hidden;
-            //Temp_name.IsEnabled = false;
-          
-            objDSMModelData = new DSMModelData();
-            objDSMModelData.SaveTemplateName(Temp_name.Text);
-            ComboBoxZone.Items.Clear();
-            BindComboBox(ComboBoxZone);
-            MessageBox.Show("Template Added Successfully");
-            Temp_name.Text = "";
+            if (Temp_name.Text.Trim() != "")
+            {
+                objDSMModelData = new DSMModelData();
+                objDSMModelData.SaveTemplateName(Temp_name.Text);
+                ComboBoxZone.Items.Clear();
+                BindComboBox(ComboBoxZone);
+                MessageBox.Show("Template Added Successfully");
+                Temp_name.Text = "";
+            }
+            else
+            {
+                MessageBox.Show("Template Field is required!");
+                Temp_name.Focus();
+            }
         }
 
         private void Inv_no_chk_Checked(object sender, RoutedEventArgs e)
@@ -551,15 +573,22 @@ namespace DSM.Views
 
         private void Extract_btn_Click(object sender, RoutedEventArgs e)
         {
-            PdfReader reader = new PdfReader(FilePath.Text);
-            RenderFilter[] filters = new RenderFilter[1];
-            LocationTextExtractionStrategy regionFilter = new LocationTextExtractionStrategy();
-            filters[0] = new RegionTextRenderFilter(new iTextSharp.text.Rectangle(int.Parse(Left_txt.Text), int.Parse(Bott_txt.Text), int.Parse(Right_txt.Text), int.Parse(Top_txt.Text)));
-            FilteredTextRenderListener strategy = new FilteredTextRenderListener(regionFilter, filters);
+            try
+            {
+                PdfReader reader = new PdfReader(FilePath.Text);
+                RenderFilter[] filters = new RenderFilter[1];
+                LocationTextExtractionStrategy regionFilter = new LocationTextExtractionStrategy();
+                filters[0] = new RegionTextRenderFilter(new iTextSharp.text.Rectangle(int.Parse(Left_txt.Text), int.Parse(Bott_txt.Text), int.Parse(Right_txt.Text), int.Parse(Top_txt.Text)));
+                FilteredTextRenderListener strategy = new FilteredTextRenderListener(regionFilter, filters);
 
-            String result = PdfTextExtractor.GetTextFromPage(reader, 1, strategy);
-            MessageBox.Show("Data:" + result);
-          
+                String result = PdfTextExtractor.GetTextFromPage(reader, 1, strategy);
+                MessageBox.Show("Data:" + result);
+            }
+            catch(Exception ex)
+            {
+                Global.LogErrors(ex);
+            }
+
         }
     }
 }

@@ -375,7 +375,7 @@ namespace DSM.ViewModels
                 if (lstDS != null)
                 {
                     DigitalSign objDigitalSign = new DigitalSign();
-                    bool sign = objDigitalSign.FlatDigitalSignatureInitialize("Invoice", SelectedInv.InvNumber, Global.CustomerName, SelectedInv.InvNumber);
+                    bool sign = objDigitalSign.FlatDigitalSignatureInitialize("Invoice", SelectedInv.InvNumber, Global.CustomerName, SelectedInv.InvNumber,Global.Dscoord);
                     if (sign)
                     {
                         PrintFiles();
@@ -708,7 +708,9 @@ namespace DSM.ViewModels
                     //Global.InvoiceNumber = invno[invind-1].ToString().Trim();
                     else
                     {
-                        Global.InvoiceNumber = invresult;
+                        invno = invresult.Split(' ');
+                        int invind = invno.GetLength(0);
+                        Global.InvoiceNumber = invno[invind - 1].ToString().Trim();
                     }
                 }
 

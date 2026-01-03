@@ -19,6 +19,12 @@ using DSMData;
 using DSM;
 using System.Net.Mail;
 using System.Net;
+using Spire.Pdf.General.Find;
+using Spire.Pdf.OPC;
+using Spire.Pdf;
+using System.Drawing;
+using System.Linq;
+using System.Text;
 
 namespace DSM
 {
@@ -31,7 +37,7 @@ namespace DSM
         Print objPrint = new Print();
 
 
-        public bool FlatDigitalSignatureInitialize(string invtype, string invNo, string DS_comp_id, string t_inv_no)
+        public bool FlatDigitalSignatureInitialize(string invtype, string invNo, string DS_comp_id, string t_inv_no, string DScoord)
         {
             try
             {
@@ -125,10 +131,11 @@ namespace DSM
                             }
                             if (certfound == 1)
                             {
-                                bool _resSign = SignWithThisCert(cert, DSSignName.ToString().Trim().ToUpper(), invtype.ToString().Trim(), invNo.ToString().Trim(), t_inv_no.ToString().Trim());
+                                bool _resSign = SignWithThisCert(cert, DSSignName.ToString().Trim().ToUpper(), invtype.ToString().Trim(), invNo.ToString().Trim(), t_inv_no.ToString().Trim(), DScoord);
                                 if (_resSign)
                                 {
-                                    rescount++;
+                                   rescount++;
+                                    //rescount = '1';
                                     break;
                                 }
                             }
@@ -227,10 +234,11 @@ namespace DSM
 
                                 if (certfound == 1)
                                 {
-                                    bool _resSign = SignWithThisCert(cert, DSSignName.ToString().Trim().ToUpper(), invtype.ToString().Trim(), invNo.ToString().Trim(), t_inv_no.ToString().Trim());
+                                    bool _resSign = SignWithThisCert(cert, DSSignName.ToString().Trim().ToUpper(), invtype.ToString().Trim(), invNo.ToString().Trim(), t_inv_no.ToString().Trim(), DScoord);
                                     if (_resSign)
                                     {
                                         dssigncount++;
+                                        //dssigncount='1';
                                         break;
                                     }
                                 }
@@ -345,7 +353,7 @@ namespace DSM
                                 //MessageBox.Show("Certificate not found");
                                 //return false;
                             }
-                            if(certfound == 1)
+                            if (certfound == 1)
                             {
                                 keycheck = true;
                             }
@@ -441,7 +449,7 @@ namespace DSM
                                 //{
                                 //    keycheck = true;
                                 //}
-                                if(certfound == 1)
+                                if (certfound == 1)
                                 {
                                     keycheck = true;
                                 }
@@ -467,7 +475,7 @@ namespace DSM
             return pwd;
         }
 
-        private Boolean SignWithThisCert(X509Certificate2 cert, string DSSignName, string InvoiceType, string InvoiceNo, string t_inv_no)
+        private Boolean SignWithThisCert(X509Certificate2 cert, string DSSignName, string InvoiceType, string InvoiceNo, string t_inv_no, string DScoord)
         {
             string outputFilepath;
             int nooffiles = 0;
@@ -506,7 +514,10 @@ namespace DSM
                         //   "Signature");
 
                         var template = objDSMModelData.GetTemplates(Global.CustomerId);
-                        Global.Templatename = template[0].Tempname.ToString();
+                        if(template.Count>0)
+                        {
+                            Global.Templatename = template[0].Tempname.ToString();
+                        }
                         var dscoordinate = objDSMModelData.GetTemplatesCord(Global.Templatename, Global.CustomerId);
                         string coord = "";
 
@@ -523,17 +534,17 @@ namespace DSM
                               reader.NumberOfPages,
                               "Signature");
 
-                        MakeSignature.SignDetached(appearance, externalSignature, chain, null, null, null, 0, CryptoStandard.CMS);
+                            MakeSignature.SignDetached(appearance, externalSignature, chain, null, null, null, 0, CryptoStandard.CMS);
 
-                        // MakeSignature.si
-                        nooffiles++;
+                            // MakeSignature.si
+                            nooffiles++;
 
-                        string fileName = Global.InputPath + @"\" + Path.GetFileName(src);
-                        if (fileName != null || fileName != string.Empty)
-                        {
-                            if ((System.IO.File.Exists(fileName)))
-                                System.IO.File.Delete(fileName);
-                        }
+                            string fileName = Global.InputPath + @"\" + Path.GetFileName(src);
+                            if (fileName != null || fileName != string.Empty)
+                            {
+                                if ((System.IO.File.Exists(fileName)))
+                                    System.IO.File.Delete(fileName);
+                            }
 
                             byte[] file;
                             string OutputfileName = outputFilepath;
@@ -556,7 +567,7 @@ namespace DSM
                                     }
                                     else if (pdffilename.ToString().Trim().Contains("DUPLICATE"))
                                     {
-                                       // objDSMModelData.UpdateHXValueByInvoiceNo("DUPLICATE", file, t_inv_no.ToString().Trim());
+                                        // objDSMModelData.UpdateHXValueByInvoiceNo("DUPLICATE", file, t_inv_no.ToString().Trim());
                                     }
                                     else if (pdffilename.ToString().Trim().Contains("QUADRAPLICATE") || pdffilename.ToString().Trim().Contains("TRIPLICATE"))
                                     {
@@ -564,12 +575,70 @@ namespace DSM
                                     }
                                     else if (pdffilename.ToString().Trim().Contains("EXTRA"))
                                     {
-                                       // objDSMModelData.UpdateHXValueByInvoiceNo("EXTRA", file, t_inv_no.ToString().Trim());
+                                        // objDSMModelData.UpdateHXValueByInvoiceNo("EXTRA", file, t_inv_no.ToString().Trim());
                                     }
                                 }
                             }
                         }
-                        
+                        else
+                        {
+
+                            string[] invPath = Directory.GetFiles(Global.InputPath, "*.pdf");
+                            Check_coor(invPath[0], DScoord);
+
+                            string[] arrcoord1 = coord1.Split(',');
+                            appearance.SetVisibleSignature(
+                              new iTextSharp.text.Rectangle(int.Parse(arrcoord1[0]), int.Parse(arrcoord1[1]), int.Parse(arrcoord1[2]), int.Parse(arrcoord1[3])),
+                              reader.NumberOfPages,
+                              "Signature");
+
+                            MakeSignature.SignDetached(appearance, externalSignature, chain, null, null, null, 0, CryptoStandard.CMS);
+
+                            // MakeSignature.si
+                            nooffiles++;
+
+                            string fileName = Global.InputPath + @"\" + Path.GetFileName(src);
+                            if (fileName != null || fileName != string.Empty)
+                            {
+                                if ((System.IO.File.Exists(fileName)))
+                                    System.IO.File.Delete(fileName);
+                            }
+
+                            byte[] file;
+                            string OutputfileName = outputFilepath;
+                            if (OutputfileName != null || OutputfileName != string.Empty)
+                            {
+                                if ((System.IO.File.Exists(OutputfileName)))
+                                {
+                                    using (var stream = new FileStream(OutputfileName, FileMode.Open, FileAccess.Read))
+                                    {
+                                        using (var DSreader = new BinaryReader(stream))
+                                        {
+                                            file = DSreader.ReadBytes((int)stream.Length);
+                                        }
+                                    }
+                                    string pdffilename = Path.GetFileName(OutputfileName);
+                                    if (pdffilename.ToString().Trim().Contains("ORIGINAL"))
+                                    {
+                                        Global.OriginalPDFFile = file;
+                                        objDSMModelData.UpdateHXValueByInvoiceNo("ORIGINAL", file, t_inv_no.ToString().Trim());
+                                    }
+                                    else if (pdffilename.ToString().Trim().Contains("DUPLICATE"))
+                                    {
+                                        // objDSMModelData.UpdateHXValueByInvoiceNo("DUPLICATE", file, t_inv_no.ToString().Trim());
+                                    }
+                                    else if (pdffilename.ToString().Trim().Contains("QUADRAPLICATE") || pdffilename.ToString().Trim().Contains("TRIPLICATE"))
+                                    {
+                                        //objDSMModelData.UpdateHXValueByInvoiceNo("TRIPLICATE", file, t_inv_no.ToString().Trim());
+                                    }
+                                    else if (pdffilename.ToString().Trim().Contains("EXTRA"))
+                                    {
+                                        // objDSMModelData.UpdateHXValueByInvoiceNo("EXTRA", file, t_inv_no.ToString().Trim());
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 }
                 if (nooffiles > 0)
@@ -599,78 +668,242 @@ namespace DSM
                     //}
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                LogErrors(ex);
                 MessageBox.Show("Please Insert Digital Signature Token !");
                 return false;
             }
             return true;
         }
+        private void Check_coor(string path, string DScoord)
+        {
+            Spire.Pdf.PdfDocument doc = new Spire.Pdf.PdfDocument();
+            doc.LoadFromFile(path);
+            PdfTextFind[] results = null;
+            int i = 0;
+
+            foreach (PdfPageBase page in doc.Pages)
+            {
+                string[] do1 = DScoord.Split(',');
+                //results = page.FindText("AUTHORISED SIGNATORY").Finds;
+                for (int x = 0; x < do1.Count(); x++)
+                {
+
+                    results = page.FindText(do1[x]).Finds;
+                    int e = results.Count();
+                    if (e == 1)
+                    {
+                        results = page.FindText(do1[x]).Finds;
+                        break;
+                    }
+                    //string txt = results.ToString();
+                }
+                int chk = 0;
+
+                foreach (PdfTextFind text in results)
+                {
+
+                    i++;
+                    chk++;
+                    PointF p = text.Position;
+                    string A = p.ToString().Trim();
+                    string[] A1 = p.ToString().Split(',');
+                    string pno = "Page No " + i.ToString();
+                    //LogSignedDetails(Global.InvoiceNumber + pno + A.ToString());
+                    string x = A1[0].ToString().Substring(3, 3);
+                    string y = A1[1].ToString().Substring(3, 3);
+
+                    double L, B, R, T, R1, T1;
+                    double x1 = Convert.ToDouble(x);
+                    double y1 = Convert.ToDouble(y);
+
+                    L = x1;
+                    R = x1 + 90;
+                    B = 792 - y1 + 50;
+                    T = B + 45;
+                    string s = "" + L + "," + B + "," + R + "," + T + "";
+                    coord1 = s;
+
+                    //L = x1;
+                    //R = x1 + 100;
+                    //B = 792 - y1 + 30;
+                    //T = B + 45;
+                    //string s = "" + L + "," + B + "," + R + "," + T + "";
+                    //coord1 = s;
+
+                    //L = x1;
+                    //R = Convert.ToInt32(x1 * 0.2);
+                    //R1 = R + x1;
+                    //B = y1;
+                    //T = Convert.ToInt32(0.2* y1);
+                    //T1 = y1 + T;
+
+
+                    Console.WriteLine(coord1);
+                }
+                if (chk == 0)
+                {
+                    coord1 = "350,90,500,160";
+                    Console.WriteLine(coord1);
+                }
+            }
+        }
+
+        string coord1 = "";
+        //public bool SendEmail(string printInvNo)
+        //{
+        //    try
+        //    {
+        //        Utilities.LogQuery(printInvNo);
+        //        //MessageBox.Show("inside Mail");
+        //        //*************************************************MAIL ALERT********************************
+        //        objDSMModelData = new DSMModelData();
+        //        var edi = objDSMModelData.GetEdiByClientName(Global.CustomerName);
+
+        //        if (edi.FromEmail != null)
+        //        {
+        //            string DSmailpdf = Global.OutputPath + @"\\" + printInvNo + "ORIGINALInvoice.pdf";
+        //            string DSmailprintpdf = Global.OutputPath + @"\\PRINT\\" + printInvNo + "ORIGINALInvoice.pdf";
+        //            if ((System.IO.File.Exists(DSmailpdf)) || (System.IO.File.Exists(DSmailprintpdf)))
+        //            {
+        //                try
+        //                {
+        //                    //MessageBox.Show("settings Mail");
+        //                    string attachPath = string.Empty;
+        //                    if ((System.IO.File.Exists(DSmailpdf)))
+        //                    {
+        //                        attachPath = DSmailpdf;
+        //                    }
+        //                    else
+        //                    {
+        //                        attachPath = DSmailprintpdf;
+        //                    }
+
+        //                    System.Net.Mail.MailMessage DSmessage = new System.Net.Mail.MailMessage();
+        //                    System.Net.Mail.SmtpClient DSsmtp = new SmtpClient();
+        //                    DSmessage.From = new MailAddress(edi.FromEmail);
+        //                    Utilities.LogQuery(edi.FromEmail);
+
+        //                    string[] arrToMail = edi.Email.Split(',');
+        //                    for (int i = 0; i < arrToMail.Length; i++)
+        //                    {
+        //                        DSmessage.To.Add(arrToMail[i]);
+        //                        Utilities.LogQuery(arrToMail[i]);
+        //                    }
+
+        //                    DSmessage.Subject = Global.CustomerName + "- DS INVOICE";
+        //                    DSmessage.Body = "Kindly, Find the DS Invoice for your reference";
+        //                    System.Net.Mail.Attachment DSattachment;
+        //                    DSattachment = new System.Net.Mail.Attachment(attachPath);
+        //                    DSmessage.Attachments.Add(DSattachment);
+        //                    DSmessage.IsBodyHtml = true;
+        //                    DSsmtp.Port = int.Parse(edi.Port);
+        //                    DSsmtp.Host = edi.Host;
+        //                    DSsmtp.EnableSsl = true;  
+        //                   // DSsmtp.EnableSsl = false;
+        //                    DSsmtp.UseDefaultCredentials = false;
+        //                    DSsmtp.Credentials = new NetworkCredential(edi.FromEmail, edi.FromPwd);
+        //                    DSsmtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+        //                    //MessageBox.Show("complete Mail");
+        //                    DSsmtp.Send(DSmessage);
+
+        //                    //MessageBox.Show("sent Mail");
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    //MessageBox.Show("error Mail");
+        //                    Global.LogErrors(ex);
+        //                    return false;
+        //                }
+        //            }
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        Global.LogErrors(ex);
+        //        return false;
+        //    }
+        //}
 
         public bool SendEmail(string printInvNo)
         {
-
-            //*************************************************MAIL ALERT********************************
-            objDSMModelData = new DSMModelData();
-            var edi = objDSMModelData.GetEdiByClientName(Global.CustomerName);
-
-            if (edi.FromEmail != null)
+            try
             {
-                string DSmailpdf = Global.OutputPath + @"\\" + printInvNo + "ORIGINALInvoice.pdf";
-                string DSmailprintpdf = Global.OutputPath + @"\\PRINT\\" + printInvNo + "ORIGINALInvoice.pdf";
-                if ((System.IO.File.Exists(DSmailpdf)) || (System.IO.File.Exists(DSmailprintpdf)))
+                Utilities.LogQuery("Checking if already sent: " + printInvNo);
+
+                objDSMModelData = new DSMModelData();
+
+                // ✅ STEP 1: Check if already sent
+                if (objDSMModelData.IsEmailAlreadySent(printInvNo))
                 {
-                    try
-                    {
-                        string attachPath = string.Empty;
-                        if ((System.IO.File.Exists(DSmailpdf)))
-                        {
-                            attachPath = DSmailpdf;
-                        }
-                        else
-                        {
-                            attachPath = DSmailprintpdf;
-                        }
-
-                        System.Net.Mail.MailMessage DSmessage = new System.Net.Mail.MailMessage();
-                        System.Net.Mail.SmtpClient DSsmtp = new SmtpClient();
-
-                        DSmessage.From = new MailAddress(edi.FromEmail);
-
-                        string[] arrToMail = edi.Email.Split(',');
-                        for (int i = 0; i < arrToMail.Length; i++)
-                        {
-                            DSmessage.To.Add(arrToMail[i]);
-                        }
-
-                        DSmessage.Subject = "DS INVOICE";
-
-
-                        DSmessage.Body = "Kindly Find the DS Invoice for your reference";
-
-                        System.Net.Mail.Attachment DSattachment;
-                        DSattachment = new System.Net.Mail.Attachment(attachPath);
-
-                        DSmessage.Attachments.Add(DSattachment);
-
-                        DSmessage.IsBodyHtml = true;
-                        DSsmtp.Port = int.Parse(edi.Port);
-                        DSsmtp.Host = edi.Host;
-                        DSsmtp.EnableSsl = true;
-                        DSsmtp.UseDefaultCredentials = false;
-                        DSsmtp.Credentials = new NetworkCredential(edi.FromEmail, edi.FromPwd);
-                        DSsmtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        DSsmtp.Send(DSmessage);
-                    }
-                    catch (Exception ex)
-                    {
-                        return false;
-                    }
+                    Utilities.LogQuery("Already sent: " + printInvNo);
+                    return true;
                 }
-                return true;
+
+                // ✅ STEP 2: Get EDI config
+                var edi = objDSMModelData.GetEdiByClientName(Global.CustomerName);
+
+                if (edi.FromEmail != null)
+                {
+                    string DSmailpdf = Global.OutputPath + @"\\" + printInvNo + "ORIGINALInvoice.pdf";
+                    string DSmailprintpdf = Global.OutputPath + @"\\PRINT\\" + printInvNo + "ORIGINALInvoice.pdf";
+                    if ((File.Exists(DSmailpdf)) || (File.Exists(DSmailprintpdf)))
+                    {
+                        try
+                        {
+                            string attachPath = File.Exists(DSmailpdf) ? DSmailpdf : DSmailprintpdf;
+
+                            MailMessage DSmessage = new MailMessage();
+                            SmtpClient DSsmtp = new SmtpClient();
+
+                            DSmessage.From = new MailAddress(edi.FromEmail);
+                            string[] arrToMail = edi.Email.Split(',');
+                            foreach (string to in arrToMail)
+                                DSmessage.To.Add(to);
+
+                            DSmessage.Subject = Global.CustomerName + "- DS INVOICE";
+                            DSmessage.Body = "Kindly, Find the DS Invoice for your reference";
+                            DSmessage.Attachments.Add(new Attachment(attachPath));
+                            DSmessage.IsBodyHtml = true;
+
+                            DSsmtp.Port = int.Parse(edi.Port);
+                            DSsmtp.Host = edi.Host;
+                            DSsmtp.EnableSsl = true;
+                            DSsmtp.UseDefaultCredentials = false;
+                            DSsmtp.Credentials = new NetworkCredential(edi.FromEmail, edi.FromPwd);
+                            DSsmtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+                            DSsmtp.Send(DSmessage);
+
+                            // ✅ STEP 3: Mark as sent
+                            if (!Global.CustomerName.ToUpper().Contains("HYUNDAI"))
+                            { 
+                                objDSMModelData.MarkEmailAsSent(printInvNo);
+                            }
+                                
+                        }
+                        catch (Exception ex)
+                        {
+                            Global.LogErrors(ex);
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            else
+            catch (Exception ex)
             {
+                Global.LogErrors(ex);
                 return false;
             }
         }
@@ -739,7 +972,7 @@ namespace DSM
                         return false;
                     }
                 }
-                
+
                 return true;
             }
             else
@@ -747,7 +980,31 @@ namespace DSM
                 return false;
             }
         }
+        public void LogErrors(Exception ex)
+        {
+            StringBuilder sb = new StringBuilder();
+            string path = AppDomain.CurrentDomain.BaseDirectory + "LogError.txt";
+            // flush every 20 seconds as you do it
 
+            sb.AppendLine();
+            sb.Append("Log Time: " + DateTime.Now);
+            sb.AppendLine();
+            sb.Append("--------------------------------------------------");
+            sb.AppendLine();
+            if (ex != null)
+            {
+                sb.Append("Exception: " + ex.ToString());
+                if (ex.InnerException != null)
+                {
+                    sb.Append("Inner Exception: " + ex.InnerException.ToString());
+                }
+            }
+            sb.AppendLine();
+            sb.Append("--------------------------------------------------");
+            sb.AppendLine();
 
+            File.AppendAllText(path, sb.ToString());
+            sb.Clear();
+        }
     }
 }

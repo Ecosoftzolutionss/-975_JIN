@@ -43,7 +43,12 @@ namespace DSMData.Model
             get { return printerName; }
             set { printerName = value; }
         }
-
+        private string _fltfle;
+        public string FlatFile
+        {
+            get { return _fltfle; }
+            set { _fltfle = value; }
+        }
         private string systemName;
         public string SystemName
         {

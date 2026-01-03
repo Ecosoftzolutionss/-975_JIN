@@ -28,6 +28,7 @@ namespace DSM.ViewModels
         public ICommand EDIDeleteCommand { get; set; }
         public ICommand AddEmailCommand { get; set; }
         public ICommand RemoveEmailCommand { get; set; }
+        public ICommand EDIClearCommand { get; set; }
 
         DSMModelData objDSMModelData;
 
@@ -43,7 +44,9 @@ namespace DSM.ViewModels
         public ObservableCollection<CustomerDisplayModel> Customers
         {
             get { return _Customers; }
-            set { SetProperty(ref _Customers, value);
+            set
+            {
+                SetProperty(ref _Customers, value);
                 //this.OnPropertyChanged("customer");
             }
         }
@@ -132,6 +135,7 @@ namespace DSM.ViewModels
             //EDISaveCommand = new DelegateCommand(EDISave);
             EDISaveCommand = new DelegateCommand<object>(EDISave);
             EDIEditCommand = new DelegateCommand(EDIEdit);
+            EDIClearCommand = new DelegateCommand(EDIClear);
             //EDIEditCommand = new DelegateCommand<object>(EDIEdit);
             EDIDeleteCommand = new DelegateCommand(EDIDelete);
             AddEmailCommand = new DelegateCommand(AddEmail);
@@ -148,7 +152,7 @@ namespace DSM.ViewModels
         {
             if (EDI.VarFromEmail != null)
             {
-                if (Regex.IsMatch(EDI.VarFromEmail, @"^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$") )
+                if (Regex.IsMatch(EDI.VarFromEmail, @"^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"))
                 {
                     if (EDI.VarFromEmail.Trim() != "")
                     {
@@ -158,7 +162,7 @@ namespace DSM.ViewModels
                             EmailDisplayModel objEmail = new EmailDisplayModel();
                             objEmail.Mail = EDI.VarFromEmail.Trim();
                             ListEmail.Add(objEmail);
-                          
+
                         }
                         else
                         {
@@ -201,7 +205,6 @@ namespace DSM.ViewModels
 
         public void EDIEdit()
         {
-            
 
             if (SelectedEDI.IsEmail)
                 EmailEnable = "True";
@@ -214,7 +217,7 @@ namespace DSM.ViewModels
                 EdiEnable = "False";
 
             EDI = SelectedEDI;
-            
+
 
             ListEmail = new ObservableCollection<EmailDisplayModel>();
             string[] arrEmail = EDI.Email.Split(',');
@@ -247,9 +250,9 @@ namespace DSM.ViewModels
             //Customers.Add(Customers[0].CustomerName);
             //Customer = Customers.FirstOrDefault();
             Customers.Add(Customer);
-            
+
             //Customers.cont
-            
+
             //Customer.se
             //Customers.Select(;
             //Customers = new ObservableCollection<CustomerDisplayModel>(objDSMModelData.GetAllCustomers());
@@ -259,17 +262,19 @@ namespace DSM.ViewModels
         {
             try
             {
-
-             
                 MessageBoxResult result = MessageBox.Show("Would you like to delete the customer", "EDI", MessageBoxButton.YesNo);
                 switch (result)
                 {
                     case MessageBoxResult.Yes:
-                        objDSMModelData.DeleteEDI(SelectedEDI.EdiId);
+                        //objDSMModelData.DeleteEDI(SelectedEDI.EdiId);
+
+                        string del_qry = "DELETE EDIConfiguration WHERE EdiId=" + SelectedEDI.EdiId + "";
+                        bool del = Utilities.executeNonQuery(del_qry);
+
                         ListEDI = new ObservableCollection<EdiDisplayModel>(objDSMModelData.GetAllEdi());
                         break;
-                 }
-               
+                }
+
             }
             catch (Exception ex)
             {
@@ -279,37 +284,39 @@ namespace DSM.ViewModels
 
         public void EDISave(object sender)
         {
-            if (sender == null) return;
-
-            var passwordBox = sender as PasswordBox;
-            EDI.FromPwd = passwordBox.Password;
+            //if (sender == null) return;
+            //var passwordBox = sender as PasswordBox;
+            //EDI.FromPwd = passwordBox.Password;
             try
             {
                 if (!string.IsNullOrEmpty(EDI.Host) && !string.IsNullOrEmpty(EDI.Port) && !string.IsNullOrEmpty(EDI.FromEmail) && !string.IsNullOrEmpty(EDI.FromPwd))
                 {
                     if (Regex.IsMatch(EDI.FromEmail, @"^[a-zA-Z][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"))
                     {
-                        if (ListEmail.Count!=0)
+                        if (ListEmail.Count != 0)
                         {
                             EDI.ClientLineId = Customer.ClientLineId;
                             EDI.CustomerId = Customer.CustomerId;
                             EDI.Email = "";
 
-                for (int i = 0; i < ListEmail.Count; i++)
-                {
-                    EDI.Email += ListEmail[i].Mail.ToString() + ",";
-                }
+                            for (int i = 0; i < ListEmail.Count; i++)
+                            {
+                                EDI.Email += ListEmail[i].Mail.ToString() + ",";
+                            }
 
-                if (EDI.Email != "")
-                {
-                    EDI.Email = EDI.Email.Remove(EDI.Email.Length - 1, 1);
-                }
+                            if (EDI.Email != "")
+                            {
+                                EDI.Email = EDI.Email.Remove(EDI.Email.Length - 1, 1);
+                            }
 
                             objDSMModelData.SaveEDI(EDI);
                             ListEDI = new ObservableCollection<EdiDisplayModel>(objDSMModelData.GetAllEdi());
                             ListEmail = new ObservableCollection<EmailDisplayModel>();
                             SelectedEDI = new EdiDisplayModel();
                             MessageBox.Show("Saved Successfully");
+                            EDIClear();
+
+
                         }
                         else
                         {
@@ -330,6 +337,14 @@ namespace DSM.ViewModels
             {
                 MessageBox.Show("Error: " + ex.ToString());
             }
+        }
+        public void EDIClear()
+        {
+            EDI.Host = "";
+            EDI.Port = "";
+            EDI.FromEmail = "";
+            EDI.FromPwd = "";
+            EDI.VarFromEmail = "";
         }
     }
 }

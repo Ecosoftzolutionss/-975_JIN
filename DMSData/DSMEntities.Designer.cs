@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'D:\Shruthi\Reference\scl\EnSi - Version 1.10 APITag change\DSM\DMSData\DSMEntities.edmx'. 
+﻿// T4 code generation is enabled for model '\\192.168.1.198\it server\EZ PROJECTS\EnSi\LS Auto\ENSI-Version-1.2 inv_not_processing_issuefix(Leewon_method)\DSM\DMSData\DSMEntities.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

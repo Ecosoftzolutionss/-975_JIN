@@ -1,12 +1,17 @@
 ﻿using DSMData.Model;
 using System;
+using System.IO;
+
 using System.Collections.Generic;
 using System.Data.Entity.Core;
+using System.Data.Entity.Core.Metadata.Edm;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
+using System.Configuration;
 
 namespace DSMData
 {
@@ -389,6 +394,7 @@ namespace DSMData
                 objSettings.InputPath = settings.InputPath;
                 objSettings.OutputPath = settings.OutputPath;
                 objSettings.InvoicePath = settings.InvoicePath;
+                objSettings.FlatFile = settings.Flatfilepath;
                 //objSettings.ApiUrl = settings.APIUrl;
             }
             return objSettings;
@@ -406,6 +412,7 @@ namespace DSMData
                     settings.InputPath = settingsData.InputPath;
                     settings.OutputPath = settingsData.OutputPath;
                     settings.InvoicePath = settingsData.InvoicePath;
+                    settings.Flatfilepath = settingsData.FlatFile;
                     settings.UpdatedDate = DateTime.Now;
                     context.SaveChanges();
                 }
@@ -417,6 +424,7 @@ namespace DSMData
                     entSettings.InputPath = settingsData.InputPath;
                     entSettings.OutputPath = settingsData.OutputPath;
                     entSettings.InvoicePath = settingsData.InvoicePath;
+                    entSettings.Flatfilepath = settingsData.FlatFile;
                     entSettings.CreatedDate = DateTime.Now;
                     context.Settings.Add(entSettings);
                     context.SaveChanges();
@@ -887,42 +895,107 @@ namespace DSMData
             return lstInv;
         }
 
+        //public void saveOtherInvoice(List<InvoiceDisplayModel> invDataList)
+        //{
+        //    using(var context = new DSMdbEntities())
+        //    {
+        //        var dd = invDataList.FirstOrDefault().InvNumber;
+        //        var ss = context.Invoices.Where(x => x.InvNumber == dd).FirstOrDefault();
+        //        //var ds = context.Invoices.Where(y => y.InvNumber == ss.InvNumber).ToList();
+        //        List<Invoice> lstInvoice = new List<Invoice>();
+        //        foreach (var invData in invDataList)
+        //        {
+        //            Invoice entInvoice = new Invoice();
+
+        //            entInvoice.InvNumber = invData.InvNumber;
+        //            entInvoice.InvDate = invData.InvDate;
+
+        //            entInvoice.CustomerName = invData.CustomerName;
+        //            entInvoice.VehicleNumber = invData.VehicleNumber;
+        //            entInvoice.VendorCode = invData.VendorCode;
+        //            //entInvoice.DSStatus = "FALSE";
+        //            //entInvoice.PrintStatus = "FALSE";
+        //            entInvoice.DSStatus = "TRUE";
+        //            entInvoice.PrintStatus = "TRUE";
+        //            entInvoice.APIStatus = "N/A";
+        //            entInvoice.APIMessage = "N/A";
+        //            //entInvoice.IsEmailSend = false;
+        //            entInvoice.IsEmailSend = invData.isEmailSend;
+        //            entInvoice.CreatedDate = DateTime.Now;
+        //            entInvoice.OriginalPDF = invData.OriginalPDF;
+        //            entInvoice.Finyear = invData.Finyear;
+        //            entInvoice.SystemName = invData.SystemName;
+        //            lstInvoice.Add(entInvoice);
+        //        }
+        //        context.Invoices.AddRange(lstInvoice);
+        //        context.SaveChanges();
+        //    }
+        //}
+
         public void saveOtherInvoice(List<InvoiceDisplayModel> invDataList)
         {
-            using(var context = new DSMdbEntities())
+            try
             {
-                var dd = invDataList.FirstOrDefault().InvNumber;
-                var ss = context.Invoices.Where(x => x.InvNumber == dd).FirstOrDefault();
-                //var ds = context.Invoices.Where(y => y.InvNumber == ss.InvNumber).ToList();
-            List<Invoice> lstInvoice = new List<Invoice>();
-                foreach (var invData in invDataList)
+                using (var context = new DSMdbEntities())
                 {
-                    Invoice entInvoice = new Invoice();
-                   
-                    entInvoice.InvNumber = invData.InvNumber;
-                    entInvoice.InvDate = invData.InvDate;
-                   
-                    entInvoice.CustomerName = invData.CustomerName;
-                    entInvoice.VehicleNumber = invData.VehicleNumber;
-                    entInvoice.VendorCode = invData.VendorCode;
-                    //entInvoice.DSStatus = "FALSE";
-                    //entInvoice.PrintStatus = "FALSE";
-                    entInvoice.DSStatus = "TRUE";
-                    entInvoice.PrintStatus = "TRUE";
-                    entInvoice.APIStatus = "N/A";
-                    entInvoice.APIMessage = "N/A";
-                    //entInvoice.IsEmailSend = false;
-                    entInvoice.IsEmailSend = invData.isEmailSend;
-                    entInvoice.CreatedDate = DateTime.Now;
-                    entInvoice.OriginalPDF = invData.OriginalPDF;
-                    entInvoice.Finyear = invData.Finyear;
-                    entInvoice.SystemName = invData.SystemName;
-                    lstInvoice.Add(entInvoice);
+                    foreach (var invData in invDataList)
+                    {
+                        // Try to find existing invoice
+                        var existingInvoice = context.Invoices
+                            .FirstOrDefault(x => x.InvNumber == invData.InvNumber);
+
+                        if (existingInvoice != null)
+                        {
+                            // ✅ UPDATE existing record
+                            existingInvoice.InvDate = invData.InvDate;
+                            existingInvoice.CustomerName = invData.CustomerName;
+                            existingInvoice.VehicleNumber = invData.VehicleNumber;
+                            existingInvoice.VendorCode = invData.VendorCode;
+                            existingInvoice.DSStatus = "TRUE";
+                            existingInvoice.PrintStatus = "TRUE";
+                            //existingInvoice.APIStatus = "N/A";
+                            existingInvoice.APIMessage = "N/A";
+                            existingInvoice.IsEmailSend = invData.isEmailSend;
+                            existingInvoice.OriginalPDF = invData.OriginalPDF;
+                            existingInvoice.Finyear = invData.Finyear;
+                            existingInvoice.SystemName = invData.SystemName;
+                            existingInvoice.UpdatedDate = DateTime.Now;
+                        }
+                        else
+                        {
+                            // ✅ INSERT new record
+                            Invoice entInvoice = new Invoice
+                            {
+                                InvNumber = invData.InvNumber,
+                                InvDate = invData.InvDate,
+                                CustomerName = invData.CustomerName,
+                                VehicleNumber = invData.VehicleNumber,
+                                VendorCode = invData.VendorCode,
+                                DSStatus = "TRUE",
+                                PrintStatus = "TRUE",
+                                //APIStatus = "N/A",
+                                APIMessage = "N/A",
+                                IsEmailSend = invData.isEmailSend,
+                                CreatedDate = DateTime.Now,
+                                OriginalPDF = invData.OriginalPDF,
+                                Finyear = invData.Finyear,
+                                SystemName = invData.SystemName
+                            };
+
+                            context.Invoices.Add(entInvoice);
+                        }
+                    }
+
+                    // Save both insert/update
+                    context.SaveChanges();
                 }
-                context.Invoices.AddRange(lstInvoice);
-                context.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+                LogErrors(ex);
             }
         }
+
         public void SaveInvoice(List<InvoiceDisplayModel> invDataList)
         {
             
@@ -1583,24 +1656,32 @@ namespace DSMData
         //public void DeleteCustomerDSDet(string ClientId,int DSDetId)
         public void DeleteCustomerDSDet(string ClientId, string KeyName)
         {
-            using (var context = new DSMdbEntities())
+            try
             {
-                var customer = context.ClientMasters.Where(x => x.ClientId == ClientId).FirstOrDefault();
-                //if (customer != null)
-                //{
-                //    customer.IsActive = false;
-                //    context.SaveChanges();
-                //}
 
-                var dsdetail = context.DigitalSignDetails.Where(x => x.ClientLineId == customer.ClientLineId && x.KeyName == KeyName).ToList();
-                if (dsdetail.Count > 0)
+                using (var context = new DSMdbEntities())
                 {
-                    foreach (var ds in dsdetail)
+                    var customer = context.ClientMasters.Where(x => x.ClientId == ClientId).FirstOrDefault();
+                    //if (customer != null)
+                    //{
+                    //    customer.IsActive = false;
+                    //    context.SaveChanges();
+                    //}
+
+                    var dsdetail = context.DigitalSignDetails.Where(x => x.ClientLineId == customer.ClientLineId && x.KeyName == KeyName).ToList();
+                    if (dsdetail.Count > 0)
                     {
-                        ds.IsActive = false;
+                        foreach (var ds in dsdetail)
+                        {
+                            ds.IsActive = false;
+                        }
+                        context.SaveChanges();
                     }
-                    context.SaveChanges();
                 }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
             }
         }
 
@@ -1915,7 +1996,8 @@ namespace DSMData
             using (var context = new DSMdbEntities())
             {
                 //.Where(x => !string.IsNullOrEmpty(x.Inv_No_Cord))
-                lstTemplate = context.TemplateMasters.Where(x => !string.IsNullOrEmpty(x.Inv_No_Cord) && !string.IsNullOrEmpty(x.Inv_Date_Cord) && !string.IsNullOrEmpty(x.Vendor_Cord) && !string.IsNullOrEmpty(x.Truck_No_Cord) && !string.IsNullOrEmpty(x.Client_Name_Cord) && !string.IsNullOrEmpty(x.DS_Cord)).Select(x => new CustomerDisplayModel()
+                //lstTemplate = context.TemplateMasters.Where(x => !string.IsNullOrEmpty(x.Inv_No_Cord) && !string.IsNullOrEmpty(x.Inv_Date_Cord) && !string.IsNullOrEmpty(x.Vendor_Cord) && !string.IsNullOrEmpty(x.Truck_No_Cord) && !string.IsNullOrEmpty(x.Client_Name_Cord) && !string.IsNullOrEmpty(x.DS_Cord)).Select(x => new CustomerDisplayModel()
+                lstTemplate = context.TemplateMasters.Select(x => new CustomerDisplayModel()
                 {
 
 
@@ -2039,6 +2121,78 @@ namespace DSMData
 
             return lstClientMaster;
         }
+        public bool IsEmailAlreadySent(string invoiceNo)
+        {
+            bool sent = false;
+            string conStr = ConfigurationManager.ConnectionStrings["strcon"].ConnectionString;
 
+            using (SqlConnection _objCon = new SqlConnection(conStr))
+            {
+                string query = "SELECT [APIStatus] FROM [Invoice] WHERE [InvNumber] = @InvoiceNo";
+                using (SqlCommand cmd = new SqlCommand(query, _objCon))
+                {
+                    cmd.Parameters.AddWithValue("@InvoiceNo", invoiceNo);
+                    _objCon.Open();
+                    var result = cmd.ExecuteScalar();
+
+                    if (result != null && result != DBNull.Value)
+                    {
+                        string status = result.ToString().Trim().ToUpper();
+
+                        // Check if it equals "MAIL SENT"
+                        if (status == "MAIL SENT")
+                        {
+                            sent = true;
+                        }
+                    }
+                }
+            }
+            return sent;
+        }
+
+
+        public void MarkEmailAsSent(string invoiceNo)
+        {
+            string conStr = ConfigurationManager.ConnectionStrings["strcon"].ConnectionString;
+
+            string apistatus = "MAIL SENT";
+
+            using (SqlConnection _objCon = new SqlConnection(conStr))
+            {
+                string query = "UPDATE [Invoice] SET APIStatus ='"+ apistatus.ToString().Trim() + "' WHERE [InvNumber] = @InvoiceNo";
+                using (SqlCommand cmd = new SqlCommand(query, _objCon))
+                {
+                    cmd.Parameters.AddWithValue("@InvoiceNo", invoiceNo);
+                    _objCon.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        public void LogErrors(Exception ex)
+        {
+            StringBuilder sb = new StringBuilder();
+            string path = AppDomain.CurrentDomain.BaseDirectory + "LogError.txt";
+            // flush every 20 seconds as you do it
+
+            sb.AppendLine();
+            sb.Append("Log Time: " + DateTime.Now);
+            sb.AppendLine();
+            sb.Append("--------------------------------------------------");
+            sb.AppendLine();
+            if (ex != null)
+            {
+                sb.Append("Exception: " + ex.ToString());
+                if (ex.InnerException != null)
+                {
+                    sb.Append("Inner Exception: " + ex.InnerException.ToString());
+                }
+            }
+            sb.AppendLine();
+            sb.Append("--------------------------------------------------");
+            sb.AppendLine();
+
+            File.AppendAllText(path, sb.ToString());
+            sb.Clear();
+        }
     }
 }

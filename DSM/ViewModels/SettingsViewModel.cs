@@ -46,7 +46,12 @@ namespace DSM.ViewModels
             get { return invoicePath; }
             set { SetProperty(ref invoicePath, value); }
         }
-
+        private string _flatfile;
+        public string FlatFile
+        {
+            get { return _flatfile; }
+            set { SetProperty(ref _flatfile, value); }
+        }
         private string apiUrl;
         public string APIUrl
         {
@@ -145,6 +150,7 @@ namespace DSM.ViewModels
                 InputPath = objSettings.InputPath;
                 OutputPath = objSettings.OutputPath;
                 InvoicePath = objSettings.InvoicePath;
+                FlatFile = objSettings.FlatFile;
                 Printers.Add(Printer);
                 //APIUrl = objSettings.ApiUrl;
                 BtnSettings = "Update";
@@ -167,6 +173,7 @@ namespace DSM.ViewModels
                     objSettings.InputPath = InputPath + "\\";
                     objSettings.OutputPath = OutputPath + "\\";
                     objSettings.InvoicePath = InvoicePath + "\\";
+                    objSettings.FlatFile = FlatFile;
                     //objSettings.ApiUrl = APIUrl;
                     objDSMModelData.SaveSettings(objSettings);
 
@@ -180,7 +187,8 @@ namespace DSM.ViewModels
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                Global.LogErrors(ex);
+                MessageBox.Show("All fields are required");
             }
         }
     }

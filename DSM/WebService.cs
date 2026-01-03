@@ -2381,20 +2381,12 @@ namespace DSM
                         soapStr = soapStr.Replace("{0}", hexvalue.ToString().Trim());
                         LogSoapFormat("Coming Soap Generation : ");
                         LogSoapFormat(soapStr);
-                        //MessageBox.Show(soapStr);
-                        //MessageBox.Show(Url.ToString());
                         HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Url);
-                        //req.Headers.Add("SOAPAction", "http://tempuri.org/IWebService/GetMessage");
                         req.ProtocolVersion = HttpVersion.Version11;
                         req.ContentType = "text/xml;charset=\"utf-8\"";
                         req.Accept = "text/xml";
                         req.KeepAlive = true;
                         req.Method = "POST";
-
-                        //MessageBox.Show("URL : " + Url.ToString().Trim());
-                        //MessageBox.Show("MethodName : " + methodName.ToString().Trim());
-                        //LogSoapFormat(soapStr);
-
                         int hitCount = 0;
                         APIhit:
                         try
@@ -2407,22 +2399,15 @@ namespace DSM
                                 {
                                     stmw.Write(soapStr);
                                     stmw.Close();
-                                    //MessageBox.Show("Site Reached");
                                 }
-                                //MessageBox.Show("After Getrequest");
                             }
                             using (StreamReader responseReader = new StreamReader(req.GetResponse().GetResponseStream()))
                             {
-                                //MessageBox.Show("Coming Response");
                                 string result = responseReader.ReadToEnd();
                                 ResultXML = XDocument.Parse(result);
                                 ResultString = result;
                                 LogSoapFormat(ResultString);
-
-                                //MessageBox.Show("Result :" + ResultString.ToString().Trim());
-
                                 XmlDocument xmlDoc = new XmlDocument();
-                                //xmlDoc.LoadXml(strReturnStatus);
                                 xmlDoc.LoadXml(ResultString);
 
                                 XmlNamespaceManager xmlnsManager = new System.Xml.XmlNamespaceManager(xmlDoc.NameTable);
@@ -2430,18 +2415,7 @@ namespace DSM
                                 xmlnsManager.AddNamespace("soap", "http://schemas.xmlsoap.org/soap/envelope/");
                                 xmlnsManager.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
                                 xmlnsManager.AddNamespace("xsd", "http://www.w3.org/2001/XMLSchema");
-                                //xmlnsManager.AddNamespace("si", "http://example.com/SystemIntegration");
                                 xmlnsManager.AddNamespace("si", Global.APIPosturl);
-
-
-                                // You'd access the full path like this
-                                //XmlNode node = xmlDoc.SelectSingleNode("/soap:Envelope/soap:Body/si:LoginResponse/si:FirstName", xmlnsManager);
-                                //XmlNode node = xmlDoc.SelectSingleNode("/soap:Envelope/soap:Body/si:getDataResponse/si:getDataResult/si:GET_DATA_01/si:TAB_DATA/si:IFRESULT", xmlnsManager);
-
-                                //string firstname = node.InnerText;
-                                //string Result = node.InnerText;
-                                // string Result = "";
-
                                 int successcount = 0;
                                 int errorcount = 0;
                                 string failedMsg = "";
@@ -2449,47 +2423,37 @@ namespace DSM
                                 XmlNodeList xNodelst = xmlDoc.DocumentElement.SelectNodes("/soap:Envelope/soap:Body/si:getDataResponse/si:getDataResult/si:GET_DATA_01/si:TAB_DATA", xmlnsManager);
                                 foreach (XmlNode xn in xNodelst)
                                 {
-                                    //string fbc = xn["ns1:FBC"].Attributes["Destination"].Value;
                                     string xmlResult = xn["IFRESULT"].InnerText;
-                                    //MessageBox.Show(xmlResult);
                                     failedMsg = xn["IFFFAILMSG"].InnerText;
                                     string InvoiceNo = xn["IVNUM"].InnerText;
                                     LogSoapFormat(xmlResult.ToString().Trim());
                                     if (xmlResult.ToString().Trim() != "E")
                                     {
                                         successcount++;
-                                        //MessageBox.Show("XMLRESULT");
                                         objDSMModelData.UpdateInvoiceAPIstatusByInvoiceNoFinYear(InvoiceNo.ToString().Trim(), xmlResult.ToString().Trim(), failedMsg.ToString().Trim(), Finyear);
                                         objDSMModelData.UpdateInvoiceAPIstatusByInvoiceNo(InvoiceNo.ToString().Trim(), xmlResult.ToString().Trim(), failedMsg.ToString().Trim());
-                                       // Update(InvoiceNo.ToString().Trim(), xmlResult.ToString().Trim(), failedMsg.ToString().Trim());
+
                                     }
                                     else
                                     {
                                         objDSMModelData.UpdateInvoiceAPIstatusByInvoiceNoFinYear(InvoiceNo.ToString().Trim(), xmlResult.ToString().Trim(), failedMsg.ToString().Trim(), Finyear);
                                         objDSMModelData.UpdateInvoiceAPIstatusByInvoiceNo(InvoiceNo.ToString().Trim(), xmlResult.ToString().Trim(), failedMsg.ToString().Trim());
-                                        //Update(InvoiceNo.ToString().Trim(), xmlResult.ToString().Trim(), failedMsg.ToString().Trim());
-
                                         if (failedMsg.ToString().Trim() == "I/F Success, ASN Not cerated,Create Manual ASN")
                                         {
                                             successcount++;
-                                            //MessageBox.Show("Invoice Successfully Posted");
                                         }
                                         else if (failedMsg.ToString().Trim() == "I/F Success, ASN Not created,Create Manual ASN")
                                         {
                                             successcount++;
-                                            // MessageBox.Show("Invoice Successfully Posted");
                                         }
                                         else
                                         {
                                             errorcount++;
-                                            //MessageBox.Show("Invoice Not Successfully Posted." + failedMsg.ToString().Trim());
                                         }
 
                                         break;
                                     }
                                 }
-
-                                //MoveFile(Global.InvoicePath + Global.APIInvoiceNumber + ".pdf","PROCESSED");
                                 if (Global.APIpostType == "MANUAL" || Global.UserType == "admin")
                                 {
                                     if (errorcount > 0)
@@ -2503,11 +2467,9 @@ namespace DSM
                                         Global.MailAlert("Invoice - " + Global.APIInvoiceNumber + " Not Successfully Posted. " + failedMsg.ToString().Trim());
                                 }
                             }
-                            //End Correct Code
                         }
                         catch (Exception exs)
                         {
-                            //LogSoapFormat("Got exception at :" + exs.ToString());
                             LogAPIErrors(exs);
                             if (hitCount <= 3)
                             {
@@ -2517,7 +2479,6 @@ namespace DSM
                             {
                                 objDSMModelData.UpdateInvoiceAPIstatusByInvoiceNoFinYear(Global.APIInvoiceNumber, "MANUAL", exs.Message,Finyear);
                                 objDSMModelData.UpdateInvoiceAPIstatusByInvoiceNo(Global.APIInvoiceNumber, "MANUAL", exs.Message);
-                                //Update(Global.APIInvoiceNumber, "MANUAL", exs.Message);
                                 if (Global.APIpostType == "MANUAL" || Global.UserType == "admin")
                                 {
                                     MessageBox.Show("API site cannot be reached");
@@ -2526,7 +2487,6 @@ namespace DSM
                             }
 
                         }
-                        //End Correct Code
                     }
                     else
                     {

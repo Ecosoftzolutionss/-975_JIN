@@ -167,6 +167,7 @@ namespace DSM
             }
             catch (Exception ex)
             {
+                Global.LogErrors(ex);
                 return false;
             }
         }
@@ -479,6 +480,7 @@ namespace DSM
             }
             catch (Exception ex)
             {
+                Global.LogErrors(ex);
                 return false;
             }
         }

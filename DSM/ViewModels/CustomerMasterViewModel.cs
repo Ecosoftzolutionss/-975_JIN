@@ -216,22 +216,34 @@ namespace DSM.ViewModels
 
         private void AddDSKey()
         {
-            var checkDS = ListDS.Where(x => x.KeyName == DSKey.KeyName).FirstOrDefault();
-            if (checkDS == null)
+            try
             {
-                //ListDS.Add(DSKey);
-                //ListDS.Add(checkDS.KeyName);
-                //objDSMModelData.DeleteCustomerDSDet(SelectedDS.ClientId);
-                //ListDS.Remove(SelectedDS);
-                //objDSMModelData.DeleteDSKey(SelectedDS.DSMasterId);
-                //ListDS = new ObservableCollection<DigitalSignDetailDisplayModel>(objDSMModelData.GetAllDSKeys());
-                //ListDS = new ObservableCollection<DigitalSignDetailDisplayModel>(objDSMModelData.GetDSdetailbyClientLineId(SelectedCustomer.ClientLineId));
-                ListDS.Add(DSKey);
-                //ListDS.Add()
+                if(DSKey.KeyName.ToString()=="")
+                {
+
+                }
+                var checkDS = ListDS.Where(x => x.KeyName == DSKey.KeyName).FirstOrDefault();
+                if (checkDS == null)
+                {
+                    //ListDS.Add(DSKey);
+                    //ListDS.Add(checkDS.KeyName);
+                    //objDSMModelData.DeleteCustomerDSDet(SelectedDS.ClientId);
+                    //ListDS.Remove(SelectedDS);
+                    //objDSMModelData.DeleteDSKey(SelectedDS.DSMasterId);
+                    //ListDS = new ObservableCollection<DigitalSignDetailDisplayModel>(objDSMModelData.GetAllDSKeys());
+                    //ListDS = new ObservableCollection<DigitalSignDetailDisplayModel>(objDSMModelData.GetDSdetailbyClientLineId(SelectedCustomer.ClientLineId));
+                    ListDS.Add(DSKey);
+                    //ListDS.Add()
+                }
+                else
+                {
+                    MessageBox.Show("Key already added");
+                }
             }
-            else
+            catch(Exception ex)
             {
-                MessageBox.Show("Key already added");
+                MessageBox.Show(ex.ToString());
+                Global.LogErrors(ex);
             }
         }
 

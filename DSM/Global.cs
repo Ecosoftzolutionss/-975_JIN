@@ -22,7 +22,12 @@ namespace DSM
             get { return _userName; }
             set { _userName = value; }
         }
-
+        private static string _dscoord;
+        public static string Dscoord
+        {
+            get { return _dscoord; }
+            set { _dscoord = value; }
+        }
         private static int _userId;
         public static int UserId
         {

@@ -41,7 +41,7 @@ namespace DSM.Views
 
         private void TxtPassword_TextChanged(object sender, TextChangedEventArgs e)
         {
-       
+
         }
 
         private void btnSaveSettings_Click(object sender, RoutedEventArgs e)

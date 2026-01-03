@@ -24,5 +24,10 @@ namespace DSM.Views
         {
             InitializeComponent();
         }
+
+        private void btnSaveSettings_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

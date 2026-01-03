@@ -337,5 +337,42 @@ namespace DSM
             File.AppendAllText(path, sb.ToString());
             sb.Clear();
         }
+
+        public static void LogQuery(string pdfname)
+        {
+            StringBuilder sb = new StringBuilder();
+            string path = AppDomain.CurrentDomain.BaseDirectory + "LogQuery.txt";
+            // flush every 20 seconds as you do it
+
+            sb.AppendLine();
+            sb.Append("Log Time: " + DateTime.Now);
+            sb.AppendLine();
+            sb.Append("--------------------------------------------------");
+            sb.AppendLine();
+            if (pdfname != null)
+            {
+                sb.Append(pdfname);
+            }
+            sb.AppendLine();
+            sb.Append("--------------------------------------------------");
+
+            File.AppendAllText(path, sb.ToString());
+            sb.Clear();
+        }
+
+        public static object executeScalar(string query)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["strcon"].ConnectionString;
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    conn.Open();
+                    return cmd.ExecuteScalar();
+                }
+            }
+        }
+
     }
 }

@@ -1500,7 +1500,7 @@ namespace DSM.ViewModels
                     CurrentInvoice = "Invoice - " + Global.InvoiceNumber + " is Signing...";
                     //EthernetConnectivityCheck();
                     objDigitalSign = new DigitalSign();
-                    bool sign = objDigitalSign.FlatDigitalSignatureInitialize("Invoice", Global.InvoiceNumber, Global.CustomerName, Global.InvoiceNumber);
+                    bool sign = objDigitalSign.FlatDigitalSignatureInitialize("Invoice", Global.InvoiceNumber, Global.CustomerName, Global.InvoiceNumber, Global.Dscoord);
                     if (sign)
                     {
                         if (Global.CustomerName.ToString().Trim() == "HYUNDAI")

@@ -26,6 +26,19 @@ namespace DSM
             {
                 regionManager.RegisterViewWithRegion("MainRegion", typeof(Views.DashBoardView));
             }
+            // Determine which view to show based on user type
+            else if (Global.UserType.ToUpper() == "ADMIN")
+            {
+                // Register views for Admin
+                regionManager.RegisterViewWithRegion("MainRegion", typeof(Views.MasterView));
+                regionManager.RegisterViewWithRegion("ChildRegion", typeof(Views.DSMasterView));
+            }
+            else if (Global.UserType.ToUpper() == "REPORT")
+            {
+                // Register views for Report
+                regionManager.RegisterViewWithRegion("MainRegion", typeof(Views.MasterView));
+                regionManager.RegisterViewWithRegion("ChildRegion", typeof(Views.ReportView));
+            }
             else
             {
                 regionManager.RegisterViewWithRegion("MainRegion", typeof(Views.MasterView));

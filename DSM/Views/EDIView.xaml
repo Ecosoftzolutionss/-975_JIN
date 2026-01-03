@@ -86,8 +86,8 @@
                         Command="{Binding AddEmailCommand}" Click="btnAdd_Click" />
         </StackPanel>
         <StackPanel Grid.Row="6" Grid.Column="1" Margin="5,5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <CheckBox Name="chkEdi" Foreground="#33331a" Content="Edi Url" Command="{Binding CheckEDICommand}" IsChecked="{Binding EDI.IsEdi, Mode=TwoWay}" Width="70"  Margin="5,5,0,0"></CheckBox>
-            <TextBox x:Name="txtEdiLink" Text="{Binding EDI.EdiLink, Mode=TwoWay}" IsEnabled="{Binding EdiEnable}" Margin="10,0,0,0" Height="25" Width="238" TextChanged="TxtEdiLink_TextChanged"/>
+            <!--<CheckBox Name="chkEdi" Foreground="#33331a" Content="Edi Url" Command="{Binding CheckEDICommand}" IsChecked="{Binding EDI.IsEdi, Mode=TwoWay}" Width="70"  Margin="5,5,0,0"></CheckBox>
+            <TextBox x:Name="txtEdiLink" Text="{Binding EDI.EdiLink, Mode=TwoWay}" IsEnabled="{Binding EdiEnable}" Margin="10,0,0,0" Height="25" Width="238" TextChanged="TxtEdiLink_TextChanged"/>-->
         </StackPanel>
         <Border Grid.Row="5" Grid.Column="2" Grid.RowSpan="3" Margin="10,5,0,0">
             <DataGrid Name="dgInvestm" Width="270" MaxHeight="100" HorizontalAlignment="Left" FontSize="12" ItemsSource="{Binding ListEmail}" CanUserDeleteRows="False" SelectedItem="{Binding SelectedEmail}" AutoGenerateColumns="False" CanUserAddRows="False"  Margin="0,5" VerticalScrollBarVisibility="Auto">
