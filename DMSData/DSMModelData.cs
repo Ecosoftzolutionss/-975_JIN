@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Configuration;
+using System.Globalization;
+using System.Data;
+
 
 namespace DSMData
 {
@@ -155,7 +158,7 @@ namespace DSMData
                     foreach (var inv in lstinvoice)
                     {
                         inv.DSStatus = "TRUE";
-                       
+
                         inv.UpdatedDate = DateTime.Now;
                     }
                     context.SaveChanges();
@@ -313,7 +316,7 @@ namespace DSMData
                 objUser.UserId = user.UserId;
                 objUser.UserName = user.Username;
                 objUser.UserType = user.UserType;
-                
+
             }
             return objUser;
         }
@@ -378,7 +381,7 @@ namespace DSMData
 
         }
         public List<Invoice> GetInvoiceDetailsToReprocess(string invno, string PO, string Part_no, string qty)
-        { 
+        {
             var invDet = dsmcontext.Invoices.Where(x => x.PONumber == PO && x.PartNumber == Part_no && x.InvQuantity == qty && x.InvNumber == invno).ToList();
             return invDet;
         }
@@ -438,18 +441,18 @@ namespace DSMData
             return invDet;
         }
 
-        public List<Invoice> GetInvoiceDetailsByInvoiceNumberFinYear(string InvoiceNumber,int Finyear)
+        public List<Invoice> GetInvoiceDetailsByInvoiceNumberFinYear(string InvoiceNumber, int Finyear)
         {
             //var invDet = dsmcontext.Invoices.Where(x => x.InvNumber == InvoiceNumber && x.Finyear == Finyear.Trim()).ToList();
             //var invDet = dsmcontext.Invoices.Where(x => x.InvNumber == InvoiceNumber).ToList();
-            var invDet = dsmcontext.Invoices.Where(x => x.InvNumber == InvoiceNumber && x.Finyear == Finyear && x.PDF_Generation!="Processed").ToList();
+            var invDet = dsmcontext.Invoices.Where(x => x.InvNumber == InvoiceNumber && x.Finyear == Finyear && x.PDF_Generation != "Processed").ToList();
             return invDet;
         }
 
         public Invoice GetInvoiceByInvoiceNumber(string InvoiceNumber)
         {
             var invDet = dsmcontext.Invoices.Where(x => x.InvNumber == InvoiceNumber).FirstOrDefault();
-            
+
             return invDet;
         }
 
@@ -539,7 +542,7 @@ namespace DSMData
 
                 return lstInv;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 List<InvoiceDisplayModel> lstInv = new List<InvoiceDisplayModel>();
                 MessageBox.Show("Server Disconnected");
@@ -725,7 +728,7 @@ namespace DSMData
                     ApiStatus = x.APIStatus,
                     ApiMsg = x.APIMessage,
                     IsEmailSend = x.IsEmailSend == null ? false : x.IsEmailSend.Value
-                    
+
                 }).ToList();
             }
             //return lstInv.OrderByDescending(x => x.CreatedDate).ToList();
@@ -795,10 +798,10 @@ namespace DSMData
         //    //var user = dsmcontext.Users.Where(x => x.Username == UserName && x.Password == Password && x.IsActive == true).FirstOrDefault();
         //    //var Apiuser;
         //    var Apiuser = dsmcontext.Users.Where(x => x.Username == UserName).FirstOrDefault();
-            
+
         //    return Apiuser;
 
-            
+
 
 
         //}
@@ -867,31 +870,60 @@ namespace DSMData
         //    }
         //    return lstInv;
         //}
+
+        //public List<InvoiceReportModel> FilterInvoiceData(string InvoiceNo, string FromDate, string ToDate)
+        //{
+        //    //string frmDate= Convert.ToDateTime(FromDate).ToString("yyyy-MM-dd 00:00:00:000", CultureInfo.InvariantCulture);
+        //    //string toDate = Convert.ToDateTime(ToDate).ToString("yyyy-MM-dd 00:00:00:000", CultureInfo.InvariantCulture);
+
+
+
+
+        //    List<InvoiceReportModel> lstInv = new List<InvoiceReportModel>();
+
+        //    using (var context = new DSMdbEntities())
+        //    {
+        //        List<SP_FILTER_INVOICE_Result> listObjects = (from obj in context.SP_FILTER_INVOICE(InvoiceNo, FromDate == null ? "" : FromDate, ToDate == null ? "" : ToDate)
+        //                                                      select obj).GroupBy(n => new { n.InvNumber })
+        //                                                   .Select(g => g.FirstOrDefault())
+        //                                                   .ToList();
+
+        //        lstInv = listObjects.Select(x => new InvoiceReportModel()
+        //        {
+        //            InvNumber = x.InvNumber,
+        //            InvDate = x.CreatedDate.Value,
+        //            ApiStatus = x.APIStatus,
+        //            ApiMsg = x.APIMessage
+        //        }).ToList();
+        //    }
+        //    return lstInv;
+        //}
+
+
         public List<InvoiceReportModel> FilterInvoiceData(string InvoiceNo, string FromDate, string ToDate)
         {
-            //string frmDate= Convert.ToDateTime(FromDate).ToString("yyyy-MM-dd 00:00:00:000", CultureInfo.InvariantCulture);
-            //string toDate = Convert.ToDateTime(ToDate).ToString("yyyy-MM-dd 00:00:00:000", CultureInfo.InvariantCulture);
-
-
-
-
             List<InvoiceReportModel> lstInv = new List<InvoiceReportModel>();
 
             using (var context = new DSMdbEntities())
             {
-                List<SP_FILTER_INVOICE_Result> listObjects = (from obj in context.SP_FILTER_INVOICE(InvoiceNo, FromDate == null ? "" : FromDate, ToDate == null ? "" : ToDate)
-                                                              select obj).GroupBy(n => new { n.InvNumber })
-                                                           .Select(g => g.FirstOrDefault())
-                                                           .ToList();
+                List<SP_FILTER_INVOICE_Result> listObjects = context.SP_FILTER_INVOICE(
+                    InvoiceNo, FromDate ?? "", ToDate ?? ""
+                )
+                .GroupBy(n => n.InvNumber)
+                .Select(g => g.FirstOrDefault())
+                .ToList();
 
-                lstInv = listObjects.Select(x => new InvoiceReportModel()
-                {
-                    InvNumber = x.InvNumber,
-                    InvDate = x.CreatedDate.Value,
-                    ApiStatus = x.APIStatus,
-                    ApiMsg = x.APIMessage
-                }).ToList();
+                lstInv = listObjects
+                    .Where(x => x.CreatedDate.HasValue)
+                    .Select(x => new InvoiceReportModel()
+                    {
+                        InvNumber = x.InvNumber,
+                        InvDate = x.CreatedDate.Value,
+                        ApiStatus = x.APIStatus,
+                        ApiMsg = x.APIMessage
+                    }).ToList();
             }
+
             return lstInv;
         }
 
@@ -990,7 +1022,7 @@ namespace DSMData
                     context.SaveChanges();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogErrors(ex);
             }
@@ -998,7 +1030,7 @@ namespace DSMData
 
         public void SaveInvoice(List<InvoiceDisplayModel> invDataList)
         {
-            
+
             try
             {
                 using (var context = new DSMdbEntities())
@@ -1021,6 +1053,7 @@ namespace DSMData
                                 foreach (var invData in invDataList)
                                 {
                                     Invoice entInvoice = new Invoice();
+                                    entInvoice.PartName = invData.PartName;
                                     entInvoice.ShopCode = invData.ShopCode;
                                     entInvoice.PONumber = invData.PONumber;
                                     entInvoice.PartNumber = invData.PartNumber;
@@ -1029,26 +1062,33 @@ namespace DSMData
                                     entInvoice.InvQuantity = invData.InvQuantity;
                                     entInvoice.InvValue = invData.InvValue;
                                     entInvoice.TarrifNumber = invData.TarrifNumber;
-                                    entInvoice.BedAmount = invData.BedAmount;
+                                    //entInvoice.BedAmount = invData.BedAmount;
+                                    entInvoice.BedAmount = "0.00";
                                     entInvoice.SGST = invData.SGST;
                                     entInvoice.IGST = invData.IGST;
-                                    entInvoice.VatAmount = invData.VatAmount;
+                                    //entInvoice.VatAmount = invData.VatAmount;
+                                    entInvoice.VatAmount = "0.00";
                                     entInvoice.UnitPrice = invData.UnitPrice;
                                     entInvoice.MaterialCost = invData.MaterialCost;
                                     entInvoice.CGST = invData.CGST;
-                                    entInvoice.ConsigneePartCost = invData.ConsigneePartCost;
-                                    entInvoice.ExciseDutyCost = invData.ExciseDutyCost;
+                                    //entInvoice.ConsigneePartCost = invData.ConsigneePartCost;
+                                    entInvoice.ConsigneePartCost = "0.00";
+                                    //entInvoice.ExciseDutyCost = invData.ExciseDutyCost;
+                                    entInvoice.ExciseDutyCost = "0.00";
                                     entInvoice.AssessableValue = invData.AssessableValue;
-                                    entInvoice.CSTAmount = invData.CSTAmount;
-                                    entInvoice.ToolCost = invData.ToolCost;
-                                    entInvoice.ConsigneeMatlCost = invData.ConsigneeMatlCost;
+                                    //entInvoice.CSTAmount = invData.CSTAmount;
+                                    entInvoice.CSTAmount = "0.00";
+                                    //entInvoice.ToolCost = invData.ToolCost;
+                                    entInvoice.ToolCost = "0.00";
+                                    //entInvoice.ConsigneeMatlCost = invData.ConsigneeMatlCost;
+                                    entInvoice.ConsigneeMatlCost = "0.00";
                                     entInvoice.GSTN = invData.GSTN;
                                     entInvoice.CustomerName = invData.CustomerName;
                                     entInvoice.VehicleNumber = invData.VehicleNumber;
                                     entInvoice.VendorCode = invData.VendorCode;
                                     //entInvoice.DSStatus = "FALSE";
                                     //entInvoice.PrintStatus = "FALSE";
-                                    entInvoice.DSStatus = "TRUE";
+                                    entInvoice.DSStatus = "FALSE";
                                     entInvoice.PrintStatus = "TRUE";
                                     entInvoice.APIStatus = "FALSE";
                                     //entInvoice.IsEmailSend = false;
@@ -1056,7 +1096,8 @@ namespace DSMData
                                     entInvoice.CreatedDate = DateTime.Now;
                                     entInvoice.TCS = invData.TCS;
                                     entInvoice.Ewaybill_no = invData.Ewaybill_no;
-                                    entInvoice.E_InvNo = invData.E_InvNo;
+                                    //entInvoice.E_InvNo = invData.E_InvNo;
+                                    entInvoice.E_InvNo = invData.IRN;
                                     entInvoice.Manfac_Date = invData.InvDate;
                                     entInvoice.Lot_Code = invData.Lot_Code;
                                     entInvoice.EXTRA_NUM_1 = invData.EXTRA_NUM_1;
@@ -1082,10 +1123,27 @@ namespace DSMData
                                     entInvoice.SystemName = invData.SystemName;
                                     entInvoice.CreatedDate = DateTime.Now;
                                     entInvoice.UpdatedDate = DateTime.Now;
+                                    entInvoice.IRN = invData.IRN;
+                                    entInvoice.AckNo = invData.AckNo;
+                                    entInvoice.AckDate = invData.AckDate;
+                                    entInvoice.EInvoiceQRCode = invData.EInvoiceQRCode;
+
+                                    entInvoice.SGSTper = string.IsNullOrWhiteSpace(invData.SGSTper) ? "0.00" : invData.SGSTper;
+                                    entInvoice.CGSTper = string.IsNullOrWhiteSpace(invData.CGSTper) ? "0.00" : invData.CGSTper;
+                                    entInvoice.IGSTper = string.IsNullOrWhiteSpace(invData.IGSTper) ? "0.00" : invData.IGSTper;
+                                    entInvoice.TCSper = "0.00";
+
+                                    entInvoice.UOM = invData.UOM;
+                                    entInvoice.Mode = invData.Mode;
+                                    entInvoice.Terms = invData.Terms;
+                                    entInvoice.Dispatched = invData.Dispatched;
+                                    entInvoice.AMORTCOST = string.IsNullOrWhiteSpace(invData.AMORTCOST) ? "0.00" : invData.AMORTCOST;
+
                                     lstInvoice.Add(entInvoice);
                                 }
                                 context.Invoices.AddRange(lstInvoice);
                                 context.SaveChanges();
+                                UpdateEInvoiceColumns(context, invDataList);
                             }
                         }
                     }
@@ -1095,6 +1153,7 @@ namespace DSMData
                         foreach (var invData in invDataList)
                         {
                             Invoice entInvoice = new Invoice();
+                            entInvoice.PartName = invData.PartName;
                             entInvoice.ShopCode = invData.ShopCode;
                             entInvoice.PONumber = invData.PONumber;
                             entInvoice.PartNumber = invData.PartNumber;
@@ -1103,105 +1162,26 @@ namespace DSMData
                             entInvoice.InvQuantity = invData.InvQuantity;
                             entInvoice.InvValue = invData.InvValue;
                             entInvoice.TarrifNumber = invData.TarrifNumber;
-                            entInvoice.BedAmount = invData.BedAmount;
+                            //entInvoice.BedAmount = invData.BedAmount;
+                            entInvoice.BedAmount = "0.00";
                             entInvoice.SGST = invData.SGST;
                             entInvoice.IGST = invData.IGST;
-                            entInvoice.VatAmount = invData.VatAmount;
+                            //entInvoice.VatAmount = invData.VatAmount;
+                            entInvoice.VatAmount = "0.00";
                             entInvoice.UnitPrice = invData.UnitPrice;
                             entInvoice.MaterialCost = invData.MaterialCost;
                             entInvoice.CGST = invData.CGST;
-                            entInvoice.ConsigneePartCost = invData.ConsigneePartCost;
-                            entInvoice.ExciseDutyCost = invData.ExciseDutyCost;
+                            //entInvoice.ConsigneePartCost = invData.ConsigneePartCost;
+                            entInvoice.ConsigneePartCost = "0.00";
+                            //entInvoice.ExciseDutyCost = invData.ExciseDutyCost;
+                            entInvoice.ExciseDutyCost = "0.00";
                             entInvoice.AssessableValue = invData.AssessableValue;
-                            entInvoice.CSTAmount = invData.CSTAmount;
-                            entInvoice.ToolCost = invData.ToolCost;
-                            entInvoice.ConsigneeMatlCost = invData.ConsigneeMatlCost;
-                            entInvoice.GSTN = invData.GSTN;
-                            entInvoice.CustomerName = invData.CustomerName;
-                            entInvoice.VehicleNumber = invData.VehicleNumber;
-                            entInvoice.VendorCode = invData.VendorCode;
-                            //entInvoice.DSStatus = "FALSE";
-                            //entInvoice.PrintStatus = "FALSE";
-                            entInvoice.DSStatus = "TRUE";
-
-                            entInvoice.PrintStatus = "TRUE";
-                            entInvoice.APIStatus = "FALSE";
-                            entInvoice.CreatedDate = DateTime.Now;
-                            entInvoice.UpdatedDate = DateTime.Now;
-                            //entInvoice.IsEmailSend = false;
-                            entInvoice.IsEmailSend = invData.isEmailSend;
-
-                            entInvoice.Finyear = invData.Finyear;
-                            entInvoice.SystemName = invData.SystemName;
-                            entInvoice.TCS = invData.TCS;
-                            entInvoice.Ewaybill_no = invData.Ewaybill_no;
-                            entInvoice.E_InvNo = invData.E_InvNo;
-                            entInvoice.Manfac_Date = invData.InvDate;
-                            entInvoice.Lot_Code = invData.Lot_Code;
-                            entInvoice.EXTRA_NUM_1 = invData.EXTRA_NUM_1;
-                            entInvoice.EXTRA_NUM_2 = invData.EXTRA_NUM_2;
-                            entInvoice.EXTRA_NUM_3 = invData.EXTRA_NUM_3;
-                            entInvoice.EXTRA_NUM_4 = invData.EXTRA_NUM_4;
-                            entInvoice.EXTRA_NUM_5 = invData.EXTRA_NUM_5;
-                            entInvoice.EXTRA_NUM_6 = invData.EXTRA_NUM_6;
-                            entInvoice.EXTRA_NUM_7 = invData.EXTRA_NUM_7;
-                            entInvoice.EXTRA_CHAR_1 = invData.EXTRA_CHAR_1;
-                            entInvoice.EXTRA_CHAR_2 = invData.EXTRA_CHAR_2;
-                            entInvoice.EXTRA_CHAR_3 = invData.EXTRA_CHAR_3;
-                            entInvoice.EXTRA_CHAR_4 = invData.EXTRA_CHAR_4;
-                            entInvoice.EXTRA_CHAR_5 = invData.EXTRA_CHAR_5;
-                            entInvoice.Date_1 = invData.InvDate;
-                            entInvoice.Date_2 = invData.InvDate;
-                            entInvoice.Date_3 = invData.InvDate;
-                            entInvoice.Date_4 = invData.InvDate;
-                            entInvoice.Date_5 = invData.InvDate;
-                            entInvoice.OriginalPDF = invData.OriginalPDF;
-                            entInvoice.PDF_Generation = invData.PdfGeneration;
-                            lstInvoice.Add(entInvoice);
-                        }
-                        context.Invoices.AddRange(lstInvoice);
-                        context.SaveChanges();
-                    }
-                }
-            }
-            catch (EntityException ex)
-            {
-
-            }
-        }
-        public void SaveQuarantineInvoice(List<InvoiceDisplayModel> invDataList)
-        {
-
-            try
-            {
-                using (var context = new DSMdbEntities())
-                {
-                
-                        List<Invoice> lstInvoice = new List<Invoice>();
-                        foreach (var invData in invDataList)
-                        {
-                            Invoice entInvoice = new Invoice();
-                            entInvoice.ShopCode = invData.ShopCode;
-                            entInvoice.PONumber = invData.PONumber;
-                            entInvoice.PartNumber = invData.PartNumber;
-                            entInvoice.InvNumber = invData.InvNumber;
-                            entInvoice.InvDate = invData.InvDate;
-                            entInvoice.InvQuantity = invData.InvQuantity;
-                            entInvoice.InvValue = invData.InvValue;
-                            entInvoice.TarrifNumber = invData.TarrifNumber;
-                            entInvoice.BedAmount = invData.BedAmount;
-                            entInvoice.SGST = invData.SGST;
-                            entInvoice.IGST = invData.IGST;
-                            entInvoice.VatAmount = invData.VatAmount;
-                            entInvoice.UnitPrice = invData.UnitPrice;
-                            entInvoice.MaterialCost = invData.MaterialCost;
-                            entInvoice.CGST = invData.CGST;
-                            entInvoice.ConsigneePartCost = invData.ConsigneePartCost;
-                            entInvoice.ExciseDutyCost = invData.ExciseDutyCost;
-                            entInvoice.AssessableValue = invData.AssessableValue;
-                            entInvoice.CSTAmount = invData.CSTAmount;
-                            entInvoice.ToolCost = invData.ToolCost;
-                            entInvoice.ConsigneeMatlCost = invData.ConsigneeMatlCost;
+                            //entInvoice.CSTAmount = invData.CSTAmount;
+                            entInvoice.CSTAmount = "0.00";
+                            //entInvoice.ToolCost = invData.ToolCost;
+                            entInvoice.ToolCost = "0.00";
+                            //entInvoice.ConsigneeMatlCost = invData.ConsigneeMatlCost;
+                            entInvoice.ConsigneeMatlCost = "0.00";
                             entInvoice.GSTN = invData.GSTN;
                             entInvoice.CustomerName = invData.CustomerName;
                             entInvoice.VehicleNumber = invData.VehicleNumber;
@@ -1221,7 +1201,8 @@ namespace DSMData
                             entInvoice.SystemName = invData.SystemName;
                             entInvoice.TCS = invData.TCS;
                             entInvoice.Ewaybill_no = invData.Ewaybill_no;
-                            entInvoice.E_InvNo = invData.E_InvNo;
+                            //entInvoice.E_InvNo = invData.E_InvNo;
+                            entInvoice.E_InvNo = invData.IRN;
                             entInvoice.Manfac_Date = invData.InvDate;
                             entInvoice.Lot_Code = invData.Lot_Code;
                             entInvoice.EXTRA_NUM_1 = invData.EXTRA_NUM_1;
@@ -1243,12 +1224,146 @@ namespace DSMData
                             entInvoice.Date_5 = invData.InvDate;
                             entInvoice.OriginalPDF = invData.OriginalPDF;
                             entInvoice.PDF_Generation = invData.PdfGeneration;
+                            entInvoice.IRN = invData.IRN;
+                            entInvoice.AckNo = invData.AckNo;
+                            entInvoice.AckDate = invData.AckDate;
+                            entInvoice.EInvoiceQRCode = invData.EInvoiceQRCode;
+
+                            entInvoice.SGSTper = string.IsNullOrWhiteSpace(invData.SGSTper) ? "0.00" : invData.SGSTper;
+                            entInvoice.CGSTper = string.IsNullOrWhiteSpace(invData.CGSTper) ? "0.00" : invData.CGSTper;
+                            entInvoice.IGSTper = string.IsNullOrWhiteSpace(invData.IGSTper) ? "0.00" : invData.IGSTper;
+                            entInvoice.TCSper = string.IsNullOrWhiteSpace(invData.IGSTper) ? "0.00" : invData.IGSTper;
+
+                            entInvoice.UOM = invData.UOM;
+                            entInvoice.Mode = invData.Mode;
+                            entInvoice.Terms = invData.Terms;
+                            entInvoice.Dispatched = invData.Dispatched;
+                            entInvoice.AMORTCOST = string.IsNullOrWhiteSpace(invData.AMORTCOST) ? "0.00" : invData.AMORTCOST;
+
                             lstInvoice.Add(entInvoice);
                         }
                         context.Invoices.AddRange(lstInvoice);
                         context.SaveChanges();
+                        UpdateEInvoiceColumns(context, invDataList);
                     }
-                
+                }
+            }
+            catch (EntityException ex)
+            {
+                LogErrors(ex);
+            }
+        }
+
+        private void UpdateEInvoiceColumns(DSMdbEntities context, List<InvoiceDisplayModel> invDataList)
+        {
+            var first = invDataList[0];
+
+            context.Database.ExecuteSqlCommand(
+                "UPDATE dbo.Invoice SET [PartNumber]=@PartNumber , [PartName]=@PartName , PODate = @PODate, Mode=@Mode, Terms=@Terms, Dispatched=@Dispatched, AMORTCOST=@AMORTCOST, UOM = @UOM, E_InvNo = @E_InvNo, IRN = @irn, AckNo = @ack, AckDate = @ackdate, " +   // NEW (PODate = @PODate)
+                "EInvoiceQRCode = @qr, CGSTper = @cgstper, SGSTper = @sgstper, IGSTper = @igstper, TCSper = @tcsper " +
+                "WHERE InvNumber = @inv",
+                new System.Data.SqlClient.SqlParameter("@PartNumber", (object)first.PartNumber ?? DBNull.Value),   // NEW
+                new System.Data.SqlClient.SqlParameter("@PartName", (object)first.PartName ?? DBNull.Value),   // NEW
+                new System.Data.SqlClient.SqlParameter("@PODate", (object)first.PODATE ?? DBNull.Value),   // NEW
+                new System.Data.SqlClient.SqlParameter("@Mode", (object)first.Mode ?? DBNull.Value),
+                new System.Data.SqlClient.SqlParameter("@Terms", (object)first.Terms ?? DBNull.Value),
+                new System.Data.SqlClient.SqlParameter("@Dispatched", (object)first.Dispatched ?? DBNull.Value),
+                new System.Data.SqlClient.SqlParameter("@UOM", (object)first.UOM ?? DBNull.Value),
+                new System.Data.SqlClient.SqlParameter("@E_InvNo", (object)first.IRN ?? DBNull.Value),
+                new System.Data.SqlClient.SqlParameter("@irn", (object)first.IRN ?? DBNull.Value),
+                new System.Data.SqlClient.SqlParameter("@ack", (object)first.AckNo ?? DBNull.Value),
+                new System.Data.SqlClient.SqlParameter("@ackdate", (object)first.AckDate ?? DBNull.Value),
+                new System.Data.SqlClient.SqlParameter("@qr", System.Data.SqlDbType.VarBinary, -1)
+                { Value = (object)first.EInvoiceQRCode ?? DBNull.Value },
+                new System.Data.SqlClient.SqlParameter("@cgstper", string.IsNullOrWhiteSpace(first.CGSTper) ? "0.00" : first.CGSTper),
+                new System.Data.SqlClient.SqlParameter("@sgstper", string.IsNullOrWhiteSpace(first.SGSTper) ? "0.00" : first.SGSTper),
+                new System.Data.SqlClient.SqlParameter("@igstper", string.IsNullOrWhiteSpace(first.IGSTper) ? "0.00" : first.IGSTper),
+                new System.Data.SqlClient.SqlParameter("@tcsper", string.IsNullOrWhiteSpace(first.TCSper) ? "0.00" : first.TCSper),
+                new System.Data.SqlClient.SqlParameter("@AMORTCOST", string.IsNullOrWhiteSpace(first.AMORTCOST) ? "0.00" : first.AMORTCOST),
+                new System.Data.SqlClient.SqlParameter("@inv", first.InvNumber));
+        }
+
+        public void SaveQuarantineInvoice(List<InvoiceDisplayModel> invDataList)
+        {
+
+            try
+            {
+                using (var context = new DSMdbEntities())
+                {
+
+                    List<Invoice> lstInvoice = new List<Invoice>();
+                    foreach (var invData in invDataList)
+                    {
+                        Invoice entInvoice = new Invoice();
+                        entInvoice.ShopCode = invData.ShopCode;
+                        entInvoice.PONumber = invData.PONumber;
+                        entInvoice.PartNumber = invData.PartNumber;
+                        entInvoice.InvNumber = invData.InvNumber;
+                        entInvoice.InvDate = invData.InvDate;
+                        entInvoice.InvQuantity = invData.InvQuantity;
+                        entInvoice.InvValue = invData.InvValue;
+                        entInvoice.TarrifNumber = invData.TarrifNumber;
+                        entInvoice.BedAmount = invData.BedAmount;
+                        entInvoice.SGST = invData.SGST;
+                        entInvoice.IGST = invData.IGST;
+                        entInvoice.VatAmount = invData.VatAmount;
+                        entInvoice.UnitPrice = invData.UnitPrice;
+                        entInvoice.MaterialCost = invData.MaterialCost;
+                        entInvoice.CGST = invData.CGST;
+                        entInvoice.ConsigneePartCost = invData.ConsigneePartCost;
+                        entInvoice.ExciseDutyCost = invData.ExciseDutyCost;
+                        entInvoice.AssessableValue = invData.AssessableValue;
+                        entInvoice.CSTAmount = invData.CSTAmount;
+                        entInvoice.ToolCost = invData.ToolCost;
+                        entInvoice.ConsigneeMatlCost = invData.ConsigneeMatlCost;
+                        entInvoice.GSTN = invData.GSTN;
+                        entInvoice.CustomerName = invData.CustomerName;
+                        entInvoice.VehicleNumber = invData.VehicleNumber;
+                        entInvoice.VendorCode = invData.VendorCode;
+                        //entInvoice.DSStatus = "FALSE";
+                        //entInvoice.PrintStatus = "FALSE";
+                        entInvoice.DSStatus = "FALSE";
+
+                        entInvoice.PrintStatus = "FALSE";
+                        entInvoice.APIStatus = "FALSE";
+                        entInvoice.CreatedDate = DateTime.Now;
+                        entInvoice.UpdatedDate = DateTime.Now;
+                        //entInvoice.IsEmailSend = false;
+                        entInvoice.IsEmailSend = invData.isEmailSend;
+
+                        entInvoice.Finyear = invData.Finyear;
+                        entInvoice.SystemName = invData.SystemName;
+                        entInvoice.TCS = invData.TCS;
+                        entInvoice.Ewaybill_no = invData.Ewaybill_no;
+                        //entInvoice.E_InvNo = invData.E_InvNo;
+                        entInvoice.E_InvNo = invData.IRN;
+                        entInvoice.Manfac_Date = invData.InvDate;
+                        entInvoice.Lot_Code = invData.Lot_Code;
+                        entInvoice.EXTRA_NUM_1 = invData.EXTRA_NUM_1;
+                        entInvoice.EXTRA_NUM_2 = invData.EXTRA_NUM_2;
+                        entInvoice.EXTRA_NUM_3 = invData.EXTRA_NUM_3;
+                        entInvoice.EXTRA_NUM_4 = invData.EXTRA_NUM_4;
+                        entInvoice.EXTRA_NUM_5 = invData.EXTRA_NUM_5;
+                        entInvoice.EXTRA_NUM_6 = invData.EXTRA_NUM_6;
+                        entInvoice.EXTRA_NUM_7 = invData.EXTRA_NUM_7;
+                        entInvoice.EXTRA_CHAR_1 = invData.EXTRA_CHAR_1;
+                        entInvoice.EXTRA_CHAR_2 = invData.EXTRA_CHAR_2;
+                        entInvoice.EXTRA_CHAR_3 = invData.EXTRA_CHAR_3;
+                        entInvoice.EXTRA_CHAR_4 = invData.EXTRA_CHAR_4;
+                        entInvoice.EXTRA_CHAR_5 = invData.EXTRA_CHAR_5;
+                        entInvoice.Date_1 = invData.InvDate;
+                        entInvoice.Date_2 = invData.InvDate;
+                        entInvoice.Date_3 = invData.InvDate;
+                        entInvoice.Date_4 = invData.InvDate;
+                        entInvoice.Date_5 = invData.InvDate;
+                        entInvoice.OriginalPDF = invData.OriginalPDF;
+                        entInvoice.PDF_Generation = invData.PdfGeneration;
+                        lstInvoice.Add(entInvoice);
+                    }
+                    context.Invoices.AddRange(lstInvoice);
+                    context.SaveChanges();
+                }
+
             }
             catch (EntityException ex)
             {
@@ -1340,7 +1455,82 @@ namespace DSMData
             }
         }
 
-        public void SaveCustomer(CustomerDisplayModel customer, List<DSMasterDisplayModel> lstDS)
+        //public void SaveCustomer(CustomerDisplayModel customer, List<DSMasterDisplayModel> lstDS)
+        //{
+        //    try
+        //    {
+        //        using (var context = new DSMdbEntities())
+        //        {
+        //            int ClientLineId;
+        //            var client = context.ClientMasters.Where(x => x.ClientId == customer.CustomerId && x.IsActive == true).FirstOrDefault();
+        //            if (client != null)
+        //            {
+        //                client.ClientName = customer.CustomerName;
+        //                client.VendorCode = customer.VendorCode;
+        //                client.IsActive = true;
+        //                client.IsDigitalSign = customer.IsDigitalSign;
+        //                client.IsAPIpost = customer.IsAPIpost;
+        //                client.APIUrl = customer.APIUrl;
+        //                client.APItype = customer.APItype;
+        //                client.PDFtype = customer.PDFtype;
+        //                client.PrintType = customer.PrintType;
+        //                client.PrintCopies = customer.PrintCopies;
+        //                client.CreatedDate = DateTime.Now;
+        //                client.TemplateName = customer.Tempname;
+        //                context.SaveChanges();
+        //                ClientLineId = client.ClientLineId;
+        //            }
+        //            else
+        //            {
+        //                ClientMaster entClientMaster = new ClientMaster();
+        //                entClientMaster.ClientId = customer.CustomerId;
+        //                entClientMaster.ClientName = customer.CustomerName;
+        //                entClientMaster.VendorCode = customer.VendorCode;
+        //                entClientMaster.TemplateName = customer.Tempname;
+        //                entClientMaster.IsActive = true;
+        //                entClientMaster.IsDigitalSign = customer.IsDigitalSign;
+        //                entClientMaster.IsAPIpost = customer.IsAPIpost;
+        //                entClientMaster.APIUrl = customer.APIUrl;
+        //                entClientMaster.APItype = customer.APItype;
+        //                entClientMaster.PDFtype = customer.PDFtype;
+        //                entClientMaster.PrintType = customer.PrintType;
+        //                entClientMaster.PrintCopies = customer.PrintCopies;
+        //                entClientMaster.CreatedDate = DateTime.Now;
+        //                context.ClientMasters.Add(entClientMaster);
+        //                context.SaveChanges();
+        //                ClientLineId = entClientMaster.ClientLineId;
+        //            }
+
+        //            if (customer.IsDigitalSign)
+        //            {
+        //                List<DigitalSignDetail> entlistDS = new List<DigitalSignDetail>();
+        //                foreach (var objDS in lstDS)
+        //                {
+        //                    var checkExist = context.DigitalSignDetails.Where(x => x.KeyName == objDS.KeyName && x.ClientId == customer.CustomerId && x.IsActive == true).FirstOrDefault();
+        //                    if (checkExist == null)
+        //                    {
+        //                        DigitalSignDetail entDSDet = new DigitalSignDetail();
+        //                        entDSDet.ClientLineId = ClientLineId;
+        //                        entDSDet.ClientId = customer.CustomerId;
+        //                        entDSDet.KeyName = objDS.KeyName;
+        //                        entDSDet.KeyPinNo = objDS.KeyPinNo;
+        //                        entDSDet.CreatedDate = DateTime.Now;
+        //                        entDSDet.IsActive = true;
+        //                        entlistDS.Add(entDSDet);
+        //                    }
+        //                }
+        //                context.DigitalSignDetails.AddRange(entlistDS);
+        //                context.SaveChanges();
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //    }
+        //}
+
+        public bool SaveCustomer(CustomerDisplayModel customer, List<DSMasterDisplayModel> lstDS)
         {
             try
             {
@@ -1348,6 +1538,7 @@ namespace DSMData
                 {
                     int ClientLineId;
                     var client = context.ClientMasters.Where(x => x.ClientId == customer.CustomerId && x.IsActive == true).FirstOrDefault();
+
                     if (client != null)
                     {
                         client.ClientName = customer.CustomerName;
@@ -1389,9 +1580,11 @@ namespace DSMData
                     if (customer.IsDigitalSign)
                     {
                         List<DigitalSignDetail> entlistDS = new List<DigitalSignDetail>();
+
                         foreach (var objDS in lstDS)
                         {
                             var checkExist = context.DigitalSignDetails.Where(x => x.KeyName == objDS.KeyName && x.ClientId == customer.CustomerId && x.IsActive == true).FirstOrDefault();
+
                             if (checkExist == null)
                             {
                                 DigitalSignDetail entDSDet = new DigitalSignDetail();
@@ -1404,16 +1597,22 @@ namespace DSMData
                                 entlistDS.Add(entDSDet);
                             }
                         }
+
                         context.DigitalSignDetails.AddRange(entlistDS);
                         context.SaveChanges();
                     }
                 }
+
+                return true;
             }
             catch (Exception ex)
             {
-
+                // Log the exception if your application has an error logging method.
+                MessageBox.Show("Error saving customer: " + ex.Message);
+                return false;
             }
         }
+
         //public void SaveCustomer(CustomerDisplayModel customer, List<DigitalSignDetailDisplayModel> lstDS)
         //{
         //    try
@@ -1568,9 +1767,9 @@ namespace DSMData
 
                 objCustomer = context.Invoices.Where(s => s.InvNumber == Invoice).Select(x => new CustomerDisplayModel()
                 {
-                     
+
                     CustomerName = x.CustomerName,
-                     
+
                 }).FirstOrDefault();
             }
             return objCustomer;
@@ -1582,7 +1781,7 @@ namespace DSMData
             using (var context = new DSMdbEntities())
             {
 
-                objCustomer = context.ClientMasters.Where(s => s.IsActive == true && s.ClientName==CustomerName).Select(x => new CustomerDisplayModel()
+                objCustomer = context.ClientMasters.Where(s => s.IsActive == true && s.ClientName == CustomerName).Select(x => new CustomerDisplayModel()
                 {
                     CustomerId = x.ClientId,
                     CustomerName = x.ClientName,
@@ -1622,8 +1821,8 @@ namespace DSMData
                     PrintType = x.PrintType == null ? false : x.PrintType.Value,
                     PrintCopies = x.PrintCopies,
                     APIUrl = x.APIUrl,
-                    Tempname=x.TemplateName
-                    
+                    Tempname = x.TemplateName
+
                 }).ToList();
             }
             return lstCustomer;
@@ -1679,7 +1878,7 @@ namespace DSMData
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
@@ -1736,50 +1935,50 @@ namespace DSMData
                 //var query = context.EDIConfigurations.Join(context.ClientMasters, r => r.ClientId, p => p.ClientId, (r, p) => new { p.ClientName });
                 //if (query != null)
                 //{
-                    //query.
+                //query.
 
-                    //            var UserInRole = db.UserProfiles.
-                    //Join(db.UsersInRoles, u => u.UserId, uir => uir.UserId,
-                    //(u, uir) => new { u, uir }).
-                    //Join(db.Roles, r => r.uir.RoleId, ro => ro.RoleId, (r, ro) => new { r, ro })
-                    //.Select(m => new AddUserToRole
-                    //{
-                    //    UserName = m.r.u.UserName,
-                    //    RoleName = m.ro.RoleName
-                    //});
+                //            var UserInRole = db.UserProfiles.
+                //Join(db.UsersInRoles, u => u.UserId, uir => uir.UserId,
+                //(u, uir) => new { u, uir }).
+                //Join(db.Roles, r => r.uir.RoleId, ro => ro.RoleId, (r, ro) => new { r, ro })
+                //.Select(m => new AddUserToRole
+                //{
+                //    UserName = m.r.u.UserName,
+                //    RoleName = m.ro.RoleName
+                //});
 
-                    lstEDI = context.EDIConfigurations.Join(context.ClientMasters, e => e.ClientId, c => c.ClientId, (e, c) => new { e, c }).Where(x => x.e.IsActive == true).Select(x => new EdiDisplayModel()
-                    {
-                        EdiId = x.e.EdiId,
-                        ClientLineId = x.e.ClientLineId == null ? 0 : x.e.ClientLineId.Value,
-                        CustomerId = x.e.ClientId,
-                        IsEdi = x.e.IsEdi == null ? true : x.e.IsEdi.Value,
-                        IsEmail = x.e.IsEmail == null ? false : x.e.IsEmail.Value,
-                        Email = x.e.Email,
-                        FromEmail = x.e.FromEmail,
-                        Host = x.e.Host,
-                        Port = x.e.Port,
-                        EdiLink = x.e.EdiLink,
-                        FromPwd = x.e.FromPwd,
-                        IsActive = x.e.IsActive == null ? false : x.e.IsActive.Value,
-                        CustomerName = x.c.ClientName
-                    }).ToList();
-                    //lstEDI = context.EDIConfigurations.Where(x => x.IsActive == true).Select(x => new EdiDisplayModel()
-                    //{
-                    //    EdiId = x.EdiId,
-                    //    ClientLineId = x.ClientLineId == null ? 0 : x.ClientLineId.Value,
-                    //    CustomerId = x.ClientId,
-                    //    IsEdi = x.IsEdi == null ? true : x.IsEdi.Value,
-                    //    IsEmail = x.IsEmail == null ? false : x.IsEmail.Value,
-                    //    Email = x.Email,
-                    //    FromEmail = x.FromEmail,
-                    //    Host = x.Host,
-                    //    Port = x.Port,
-                    //    EdiLink = x.EdiLink,
-                    //    FromPwd = x.FromPwd,
-                    //    IsActive = x.IsActive == null ? false : x.IsActive.Value
-                    //   // CustomerName = p.
-                    //}).ToList();
+                lstEDI = context.EDIConfigurations.Join(context.ClientMasters, e => e.ClientId, c => c.ClientId, (e, c) => new { e, c }).Where(x => x.e.IsActive == true).Select(x => new EdiDisplayModel()
+                {
+                    EdiId = x.e.EdiId,
+                    ClientLineId = x.e.ClientLineId == null ? 0 : x.e.ClientLineId.Value,
+                    CustomerId = x.e.ClientId,
+                    IsEdi = x.e.IsEdi == null ? true : x.e.IsEdi.Value,
+                    IsEmail = x.e.IsEmail == null ? false : x.e.IsEmail.Value,
+                    Email = x.e.Email,
+                    FromEmail = x.e.FromEmail,
+                    Host = x.e.Host,
+                    Port = x.e.Port,
+                    EdiLink = x.e.EdiLink,
+                    FromPwd = x.e.FromPwd,
+                    IsActive = x.e.IsActive == null ? false : x.e.IsActive.Value,
+                    CustomerName = x.c.ClientName
+                }).ToList();
+                //lstEDI = context.EDIConfigurations.Where(x => x.IsActive == true).Select(x => new EdiDisplayModel()
+                //{
+                //    EdiId = x.EdiId,
+                //    ClientLineId = x.ClientLineId == null ? 0 : x.ClientLineId.Value,
+                //    CustomerId = x.ClientId,
+                //    IsEdi = x.IsEdi == null ? true : x.IsEdi.Value,
+                //    IsEmail = x.IsEmail == null ? false : x.IsEmail.Value,
+                //    Email = x.Email,
+                //    FromEmail = x.FromEmail,
+                //    Host = x.Host,
+                //    Port = x.Port,
+                //    EdiLink = x.EdiLink,
+                //    FromPwd = x.FromPwd,
+                //    IsActive = x.IsActive == null ? false : x.IsActive.Value
+                //   // CustomerName = p.
+                //}).ToList();
                 //}
 
                 //var client = dsmcontext.ClientMasters.Where(x => x.ClientLineId == ClientLineId && x.IsActive == true).FirstOrDefault();
@@ -1975,7 +2174,7 @@ namespace DSMData
 
         public void SaveTemplateName(string Template)
         {
-            
+
             using (var context = new DSMdbEntities())
             {
                 var user = context.TemplateMasters.Where(x => x.Template_Name.ToLower() == Template.ToString().ToLower()).FirstOrDefault();
@@ -1985,10 +2184,10 @@ namespace DSMData
                     cust.Template_Name = Template.ToString();
                     context.TemplateMasters.Add(cust);
                     context.SaveChanges();
-                  
+
                 }
             }
-          
+
         }
         public List<CustomerDisplayModel> GetInputTemplates()
         {
@@ -2021,35 +2220,35 @@ namespace DSMData
                 //.Where(x => !string.IsNullOrEmpty(x.Inv_No_Cord))
                 lstTemplate = context.TemplateMasters.Select(x => new CustomerDisplayModel()
                 {
-                  Tempname = x.Template_Name,
+                    Tempname = x.Template_Name,
                 }).ToList();
             }
             return lstTemplate;
         }
-        public List<CustomerDisplayModel> GetTemplatesCord(string templatename,string CustId)
+        public List<CustomerDisplayModel> GetTemplatesCord(string templatename, string CustId)
         {
             List<CustomerDisplayModel> lstTemplate = new List<CustomerDisplayModel>();
             using (var context = new DSMdbEntities())
             {
                 //.Where(x => !string.IsNullOrEmpty(x.Inv_No_Cord))
                 //lstTemplate = context.TemplateMasters.Select(x => new CustomerDisplayModel()
-                 lstTemplate = context.TemplateMasters.Join(context.ClientMasters, t => t.Template_Name, c => c.TemplateName, 
-                     (t, c) => new { t, c }).Where(x => !string.IsNullOrEmpty(x.t.Inv_No_Cord) && !string.IsNullOrEmpty(x.t.Inv_Date_Cord) && 
-                     !string.IsNullOrEmpty(x.t.Vendor_Cord) && !string.IsNullOrEmpty(x.t.Truck_No_Cord) && !string.IsNullOrEmpty(x.t.Client_Name_Cord) && 
-                     !string.IsNullOrEmpty(x.t.DS_Cord) == true && x.c.TemplateName == templatename && x.c.ClientId==CustId ).Select(x => new CustomerDisplayModel()
-                 {
+                lstTemplate = context.TemplateMasters.Join(context.ClientMasters, t => t.Template_Name, c => c.TemplateName,
+                    (t, c) => new { t, c }).Where(x => !string.IsNullOrEmpty(x.t.Inv_No_Cord) && !string.IsNullOrEmpty(x.t.Inv_Date_Cord) &&
+                    !string.IsNullOrEmpty(x.t.Vendor_Cord) && !string.IsNullOrEmpty(x.t.Truck_No_Cord) && !string.IsNullOrEmpty(x.t.Client_Name_Cord) &&
+                    !string.IsNullOrEmpty(x.t.DS_Cord) == true && x.c.TemplateName == templatename && x.c.ClientId == CustId).Select(x => new CustomerDisplayModel()
+                    {
 
 
-                            //Tempname = x.Template_Name,
-                            Invnocoord = x.t.Inv_No_Cord,
-                            Invdatecoord = x.t.Inv_Date_Cord,
-                            Vendorcoord = x.t.Vendor_Cord,
-                            Trucknocoord = x.t.Truck_No_Cord,
-                            Clientnamecoord = x.t.Client_Name_Cord,
-                            Shopcdcoord = x.t.Shopcd_Cord,
-                             Dscoord = x.t.DS_Cord
+                        //Tempname = x.Template_Name,
+                        Invnocoord = x.t.Inv_No_Cord,
+                        Invdatecoord = x.t.Inv_Date_Cord,
+                        Vendorcoord = x.t.Vendor_Cord,
+                        Trucknocoord = x.t.Truck_No_Cord,
+                        Clientnamecoord = x.t.Client_Name_Cord,
+                        Shopcdcoord = x.t.Shopcd_Cord,
+                        Dscoord = x.t.DS_Cord
 
-                }).ToList();
+                    }).ToList();
             }
             return lstTemplate;
         }
@@ -2061,9 +2260,9 @@ namespace DSMData
                 //.Where(x => !string.IsNullOrEmpty(x.Inv_No_Cord))
                 //lstTemplate = context.TemplateMasters.Select(x => new CustomerDisplayModel()
                 lstTemplate = context.ClientMasters.Where(x => x.ClientId == CustId).Select(x => new CustomerDisplayModel()
-                    {
-                    Tempname=x.TemplateName
-                    }).ToList();
+                {
+                    Tempname = x.TemplateName
+                }).ToList();
             }
             return lstTemplate;
         }
@@ -2075,12 +2274,12 @@ namespace DSMData
                 //.Where(x => !string.IsNullOrEmpty(x.Inv_No_Cord))
                 //lstTemplate = context.TemplateMasters.Select(x => new CustomerDisplayModel()
                 lstTemplate = context.TemplateMasters.Join(context.ClientMasters, t => t.Template_Name, c => c.TemplateName,
-                    (t, c) => new { t, c }).Where(x =>  x.t.Template_Name == Tempname).Select(x => new CustomerDisplayModel()
+                    (t, c) => new { t, c }).Where(x => x.t.Template_Name == Tempname).Select(x => new CustomerDisplayModel()
                     {
 
 
-                         //Tempname = x.Template_Name,
-                         Invnocoord = x.t.Inv_No_Cord,
+                        //Tempname = x.Template_Name,
+                        Invnocoord = x.t.Inv_No_Cord,
                         Invdatecoord = x.t.Inv_Date_Cord,
                         Vendorcoord = x.t.Vendor_Cord,
                         Trucknocoord = x.t.Truck_No_Cord,
@@ -2100,7 +2299,7 @@ namespace DSMData
                 //.Where(x => !string.IsNullOrEmpty(x.Inv_No_Cord))
                 lstTemplate = context.TemplateMasters.Select(x => new CustomerDisplayModel()
                 {
-                    
+
                     Tempname = x.Template_Name,
                     //Invnocoord = x.Inv_No_Cord,
                     //Invdatecoord = x.Inv_Date_Cord,
@@ -2159,7 +2358,7 @@ namespace DSMData
 
             using (SqlConnection _objCon = new SqlConnection(conStr))
             {
-                string query = "UPDATE [Invoice] SET APIStatus ='"+ apistatus.ToString().Trim() + "' WHERE [InvNumber] = @InvoiceNo";
+                string query = "UPDATE [Invoice] SET APIStatus ='" + apistatus.ToString().Trim() + "' WHERE [InvNumber] = @InvoiceNo";
                 using (SqlCommand cmd = new SqlCommand(query, _objCon))
                 {
                     cmd.Parameters.AddWithValue("@InvoiceNo", invoiceNo);

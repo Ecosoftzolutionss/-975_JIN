@@ -31,16 +31,16 @@
                     <Border Background="WhiteSmoke" BorderBrush="Black" Margin="-7,0,-28,0"></Border>
                     <Button x:Name="DS_btn" Content="DS Master" Command="{Binding NavigationCommand}" CommandParameter="DSMasterView" Margin="25,45,9.6,667" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>
                     <Button x:Name="CS_btn" Content="Customer Master" Command="{Binding NavigationCommand}" CommandParameter="CustomerMasterView" Margin="25,106,9.6,606" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>
-                    <Button x:Name="IL_btn" Content="Input Layout" Command="{Binding NavigationCommand}" CommandParameter="Input_Layout" Margin="25,167,9.6,545" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>
-                    <Button x:Name="API_btn" Content="Manual API Post" Command="{Binding NavigationCommand}" CommandParameter="ManualApiView" Margin="25,228,9.6,484" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>
-                    <Button x:Name="QI_btn" Content="Quarantined Invoice" Command="{Binding NavigationCommand}" CommandParameter="ManualScanView" Margin="25,289,9.6,423" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>
-                    <Button x:Name="IR_btn" Content="Signed Report" Command="{Binding NavigationCommand}" CommandParameter="ReportView" Margin="25,350,9.6,362" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>
-                    <Button x:Name="Report_btn" Content="Report Reprints" Command="{Binding NavigationCommand}" CommandParameter="ReportReprintView" Margin="25,411,10,301" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>
+                    <!--<Button x:Name="IL_btn" Content="Input Layout" Command="{Binding NavigationCommand}" CommandParameter="Input_Layout" Margin="25,167,9.6,545" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>-->
+                    <Button x:Name="API_btn" Content="Manual API Post" Command="{Binding NavigationCommand}" CommandParameter="ManualApiView" Margin="25,177,10,535" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>
+                    <Button x:Name="QI_btn" Content="Quarantined Invoice" Command="{Binding NavigationCommand}" CommandParameter="ManualScanView" Margin="25,248,10,464" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>
+                    <!--<Button x:Name="IR_btn" Content="Signed Report" Command="{Binding NavigationCommand}" CommandParameter="ReportView" Margin="25,350,9.6,362" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>-->
+                    <Button x:Name="Report_btn" Content="Report Reprints" Command="{Binding NavigationCommand}" CommandParameter="ReportReprintView" Margin="25,319,10,393" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>
 
                     <!--<Button x:Name="IR_btn" Content="Invoice Reprocess" Command="{Binding NavigationCommand}" CommandParameter="ReprocessView" Margin="25,350,9.6,362" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>-->
                     
-                    <Button x:Name="EDI_btn" Content="EDI" Command="{Binding NavigationCommand}" CommandParameter="EDIView" Margin="25,472,10,240" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>
-                    <Button x:Name="S_btn" Content="Settings" Command="{Binding NavigationCommand}" CommandParameter="SettingsView" Margin="25,533,10,179" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>
+                    <!--<Button x:Name="EDI_btn" Content="EDI" Command="{Binding NavigationCommand}" CommandParameter="EDIView" Margin="25,472,10,240" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>-->
+                    <Button x:Name="S_btn" Content="Settings" Command="{Binding NavigationCommand}" CommandParameter="SettingsView" Margin="25,389,10,323" Background="#FF63686E" Foreground="White" FontWeight="Medium" FontSize="16px"/>
                     <Button x:Name="btnClose" Foreground="White" BorderBrush="Transparent" Height="40" Width="40" RenderTransformOrigin="0.5,8.6" HorizontalAlignment="Left" Click="btnClose_Click" Margin="10,622,0,0" VerticalAlignment="Top">
                         <Button.Background>
                             <ImageBrush ImageSource="power-button-off.png"/>

@@ -107,5 +107,23 @@ namespace DSMData
         public Nullable<System.DateTime> Date_3 { get; set; }
         public Nullable<System.DateTime> Date_4 { get; set; }
         public Nullable<System.DateTime> Date_5 { get; set; }
+
+        public string IRN { get; set; }
+        public string AckNo { get; set; }
+        public DateTime? AckDate { get; set; }
+        public byte[] EInvoiceQRCode { get; set; }
+
+        public string SGSTper { get; set; }
+        public string CGSTper { get; set; }
+        public string IGSTper { get; set; }
+        public string TCSper { get; set; }
+
+        public string Mode { get; set; }
+        public string Terms { get; set; }
+        public string Dispatched { get; set; }
+        public string AMORTCOST { get; set; }
+        public Nullable<System.DateTime> PODATE { get; set; }
+
+        public string PartName { get; set; }
     }
 }

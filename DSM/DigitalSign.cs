@@ -25,6 +25,7 @@ using Spire.Pdf;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using DocumentFormat.OpenXml.Office2013.Word;
 
 namespace DSM
 {
@@ -475,207 +476,405 @@ namespace DSM
             return pwd;
         }
 
+        private class TextLocationStrategy : iTextSharp.text.pdf.parser.LocationTextExtractionStrategy
+        {
+            public iTextSharp.text.Rectangle TextRectangle { get; private set; }
+
+            public override void RenderText(iTextSharp.text.pdf.parser.TextRenderInfo renderInfo)
+            {
+                string text = renderInfo.GetText();
+
+                if (!string.IsNullOrEmpty(text) && text.IndexOf("Authorised Signatory", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    var baseline = renderInfo.GetBaseline();
+                    var ascent = renderInfo.GetAscentLine();
+                    var descent = renderInfo.GetDescentLine();
+
+                    float left = Math.Min(baseline.GetStartPoint()[0], baseline.GetEndPoint()[0]);
+                    float right = Math.Max(baseline.GetStartPoint()[0], baseline.GetEndPoint()[0]);
+                    float bottom = Math.Min(descent.GetStartPoint()[1], descent.GetEndPoint()[1]);
+                    float top = Math.Max(ascent.GetStartPoint()[1], ascent.GetEndPoint()[1]);
+
+                    TextRectangle = new iTextSharp.text.Rectangle(left, bottom, right, top);
+                }
+
+                base.RenderText(renderInfo);
+            }
+        }
+
+
         private Boolean SignWithThisCert(X509Certificate2 cert, string DSSignName, string InvoiceType, string InvoiceNo, string t_inv_no, string DScoord)
         {
-            string outputFilepath;
             int nooffiles = 0;
+
             try
             {
                 string[] srcfilePaths = Directory.GetFiles(Global.InputPath, "*.pdf");
 
-                foreach (var src in srcfilePaths)
+                foreach (string src in srcfilePaths)
                 {
-                    // Get FileName
-                    if (src.Contains(InvoiceNo))
+                    if (!Path.GetFileName(src).Contains(InvoiceNo))
+                        continue;
+
+                    string outputFilepath = Path.Combine(Global.OutputPath, Path.GetFileName(src));
+                    if (File.Exists(outputFilepath))
+                        File.Delete(outputFilepath);
+
+                    int signaturePage = 0;
+                    iTextSharp.text.Rectangle textRect = null;
+
+                    // Find "Authorised Signatory" in the PDF
+                    using (PdfReader reader = new PdfReader(src))
                     {
-                        Org.BouncyCastle.X509.X509CertificateParser cp = new Org.BouncyCastle.X509.X509CertificateParser();
-                        Org.BouncyCastle.X509.X509Certificate[] chain = new Org.BouncyCastle.X509.X509Certificate[] { cp.ReadCertificate(cert.RawData) };
-                        IExternalSignature externalSignature = new X509Certificate2Signature(cert, "SHA-1");
+                        var parser = new iTextSharp.text.pdf.parser.PdfReaderContentParser(reader);
 
-                        outputFilepath = Global.OutputPath + @"\" + Path.GetFileName(src);
-
-                        string outputfileName = Global.OutputPath + @"\" + Path.GetFileName(src);
-                        if (outputfileName != null || outputfileName != string.Empty)
+                        for (int page = 1; page <= reader.NumberOfPages; page++)
                         {
-                            if ((System.IO.File.Exists(outputfileName)))
-                                System.IO.File.Delete(outputfileName);
-                        }
+                            var strategy = new TextLocationStrategy();
+                            parser.ProcessContent(page, strategy);
 
-                        FileStream os = new FileStream(outputFilepath, FileMode.Create);
-                        PdfReader reader = new PdfReader(src);
-                        PdfStamper stamper = PdfStamper.CreateSignature(reader, os, '\0');
-                        PdfSignatureAppearance appearance = stamper.SignatureAppearance;
-                        appearance.Contact = "Document Certified By P SANTHARAJ <Santharaj@hnsinfotech.com>";
-                        appearance.Acro6Layers = false;
-                        appearance.SignatureGraphic = iTextSharp.text.Image.GetInstance(Application.StartupPath + @"\login_top.png");
-                        //appearance.SetVisibleSignature(
-                        //   new iTextSharp.text.Rectangle(450, 215, 580, 265),
-                        //   reader.NumberOfPages,
-                        //   "Signature");
-
-                        var template = objDSMModelData.GetTemplates(Global.CustomerId);
-                        if(template.Count>0)
-                        {
-                            Global.Templatename = template[0].Tempname.ToString();
-                        }
-                        var dscoordinate = objDSMModelData.GetTemplatesCord(Global.Templatename, Global.CustomerId);
-                        string coord = "";
-
-                        for (int i = 0; i < dscoordinate.Count; i++)
-                        {
-                            coord = dscoordinate[i].Dscoord.ToString().Trim();
-                        }
-
-                        if (coord.Length > 0 && coord.ToString().Trim() != "")
-                        {
-                            string[] arrcoord1 = coord.Split(',');
-                            appearance.SetVisibleSignature(
-                              new iTextSharp.text.Rectangle(int.Parse(arrcoord1[0]), int.Parse(arrcoord1[1]), int.Parse(arrcoord1[2]), int.Parse(arrcoord1[3])),
-                              reader.NumberOfPages,
-                              "Signature");
-
-                            MakeSignature.SignDetached(appearance, externalSignature, chain, null, null, null, 0, CryptoStandard.CMS);
-
-                            // MakeSignature.si
-                            nooffiles++;
-
-                            string fileName = Global.InputPath + @"\" + Path.GetFileName(src);
-                            if (fileName != null || fileName != string.Empty)
+                            if (strategy.TextRectangle != null)
                             {
-                                if ((System.IO.File.Exists(fileName)))
-                                    System.IO.File.Delete(fileName);
-                            }
-
-                            byte[] file;
-                            string OutputfileName = outputFilepath;
-                            if (OutputfileName != null || OutputfileName != string.Empty)
-                            {
-                                if ((System.IO.File.Exists(OutputfileName)))
-                                {
-                                    using (var stream = new FileStream(OutputfileName, FileMode.Open, FileAccess.Read))
-                                    {
-                                        using (var DSreader = new BinaryReader(stream))
-                                        {
-                                            file = DSreader.ReadBytes((int)stream.Length);
-                                        }
-                                    }
-                                    string pdffilename = Path.GetFileName(OutputfileName);
-                                    if (pdffilename.ToString().Trim().Contains("ORIGINAL"))
-                                    {
-                                        Global.OriginalPDFFile = file;
-                                        objDSMModelData.UpdateHXValueByInvoiceNo("ORIGINAL", file, t_inv_no.ToString().Trim());
-                                    }
-                                    else if (pdffilename.ToString().Trim().Contains("DUPLICATE"))
-                                    {
-                                        // objDSMModelData.UpdateHXValueByInvoiceNo("DUPLICATE", file, t_inv_no.ToString().Trim());
-                                    }
-                                    else if (pdffilename.ToString().Trim().Contains("QUADRAPLICATE") || pdffilename.ToString().Trim().Contains("TRIPLICATE"))
-                                    {
-                                        //objDSMModelData.UpdateHXValueByInvoiceNo("TRIPLICATE", file, t_inv_no.ToString().Trim());
-                                    }
-                                    else if (pdffilename.ToString().Trim().Contains("EXTRA"))
-                                    {
-                                        // objDSMModelData.UpdateHXValueByInvoiceNo("EXTRA", file, t_inv_no.ToString().Trim());
-                                    }
-                                }
+                                signaturePage = page;
+                                textRect = strategy.TextRectangle;
+                                break;
                             }
                         }
-                        else
-                        {
-
-                            string[] invPath = Directory.GetFiles(Global.InputPath, "*.pdf");
-                            Check_coor(invPath[0], DScoord);
-
-                            string[] arrcoord1 = coord1.Split(',');
-                            appearance.SetVisibleSignature(
-                              new iTextSharp.text.Rectangle(int.Parse(arrcoord1[0]), int.Parse(arrcoord1[1]), int.Parse(arrcoord1[2]), int.Parse(arrcoord1[3])),
-                              reader.NumberOfPages,
-                              "Signature");
-
-                            MakeSignature.SignDetached(appearance, externalSignature, chain, null, null, null, 0, CryptoStandard.CMS);
-
-                            // MakeSignature.si
-                            nooffiles++;
-
-                            string fileName = Global.InputPath + @"\" + Path.GetFileName(src);
-                            if (fileName != null || fileName != string.Empty)
-                            {
-                                if ((System.IO.File.Exists(fileName)))
-                                    System.IO.File.Delete(fileName);
-                            }
-
-                            byte[] file;
-                            string OutputfileName = outputFilepath;
-                            if (OutputfileName != null || OutputfileName != string.Empty)
-                            {
-                                if ((System.IO.File.Exists(OutputfileName)))
-                                {
-                                    using (var stream = new FileStream(OutputfileName, FileMode.Open, FileAccess.Read))
-                                    {
-                                        using (var DSreader = new BinaryReader(stream))
-                                        {
-                                            file = DSreader.ReadBytes((int)stream.Length);
-                                        }
-                                    }
-                                    string pdffilename = Path.GetFileName(OutputfileName);
-                                    if (pdffilename.ToString().Trim().Contains("ORIGINAL"))
-                                    {
-                                        Global.OriginalPDFFile = file;
-                                        objDSMModelData.UpdateHXValueByInvoiceNo("ORIGINAL", file, t_inv_no.ToString().Trim());
-                                    }
-                                    else if (pdffilename.ToString().Trim().Contains("DUPLICATE"))
-                                    {
-                                        // objDSMModelData.UpdateHXValueByInvoiceNo("DUPLICATE", file, t_inv_no.ToString().Trim());
-                                    }
-                                    else if (pdffilename.ToString().Trim().Contains("QUADRAPLICATE") || pdffilename.ToString().Trim().Contains("TRIPLICATE"))
-                                    {
-                                        //objDSMModelData.UpdateHXValueByInvoiceNo("TRIPLICATE", file, t_inv_no.ToString().Trim());
-                                    }
-                                    else if (pdffilename.ToString().Trim().Contains("EXTRA"))
-                                    {
-                                        // objDSMModelData.UpdateHXValueByInvoiceNo("EXTRA", file, t_inv_no.ToString().Trim());
-                                    }
-                                }
-                            }
-                        }
-
                     }
+
+                    if (textRect == null)
+                        throw new Exception("'Authorised Signatory' was not found in PDF: " + Path.GetFileName(src));
+
+                    // Position the signature above the detected text
+                    iTextSharp.text.Rectangle signatureRect = new iTextSharp.text.Rectangle(
+                      textRect.Left,
+                      textRect.Top + 15,
+                      textRect.Left + 150,
+                      textRect.Top + 60);
+
+                    Org.BouncyCastle.X509.X509CertificateParser cp = new Org.BouncyCastle.X509.X509CertificateParser();
+                    Org.BouncyCastle.X509.X509Certificate[] chain = new Org.BouncyCastle.X509.X509Certificate[] { cp.ReadCertificate(cert.RawData) };
+
+                    bool signed = false;
+                    Exception sha256Error = null;
+
+                    // Attempt SHA-256 first
+                    try
+                    {
+                        using (PdfReader reader = new PdfReader(src))
+                        using (FileStream os = new FileStream(outputFilepath, FileMode.Create, FileAccess.Write))
+                        {
+                            PdfStamper stamper = PdfStamper.CreateSignature(reader, os, '\0');
+                            PdfSignatureAppearance appearance = stamper.SignatureAppearance;
+
+                            appearance.Contact = "Authorised Signatory";
+                            appearance.Acro6Layers = false;
+                            appearance.SignatureRenderingMode = PdfSignatureAppearance.RenderingMode.DESCRIPTION;
+                            appearance.SetVisibleSignature(signatureRect, signaturePage, "Signature");
+
+                            IExternalSignature externalSignature = new X509Certificate2Signature(cert, "SHA-256");
+                            MakeSignature.SignDetached(appearance, externalSignature, chain, null, null, null, 0, CryptoStandard.CMS);
+                        }
+
+                        signed = File.Exists(outputFilepath) && new FileInfo(outputFilepath).Length > 0;
+                    }
+                    catch (Exception ex)
+                    {
+                        sha256Error = ex;
+
+                        if (File.Exists(outputFilepath))
+                            File.Delete(outputFilepath);
+                    }
+
+                    // Retry SHA-1 with a fresh reader and stamper
+                    if (!signed)
+                    {
+                        try
+                        {
+                            using (PdfReader reader = new PdfReader(src))
+                            using (FileStream os = new FileStream(outputFilepath, FileMode.Create, FileAccess.Write))
+                            {
+                                PdfStamper stamper = PdfStamper.CreateSignature(reader, os, '\0');
+                                PdfSignatureAppearance appearance = stamper.SignatureAppearance;
+
+                                appearance.Contact = "Authorised Signatory";
+                                appearance.Acro6Layers = false;
+                                appearance.SignatureRenderingMode = PdfSignatureAppearance.RenderingMode.DESCRIPTION;
+                                appearance.SetVisibleSignature(signatureRect, signaturePage, "Signature");
+
+                                IExternalSignature externalSignature = new X509Certificate2Signature(cert, "SHA-1");
+                                MakeSignature.SignDetached(appearance, externalSignature, chain, null, null, null, 0, CryptoStandard.CMS);
+                            }
+
+                            signed = File.Exists(outputFilepath) && new FileInfo(outputFilepath).Length > 0;
+                        }
+                        catch (Exception sha1Error)
+                        {
+                            if (File.Exists(outputFilepath))
+                                File.Delete(outputFilepath);
+
+                            throw new Exception("Signing failed with SHA-256 and SHA-1. SHA-256: " + sha256Error?.Message + "; SHA-1: " + sha1Error.Message, sha1Error);
+                        }
+                    }
+
+                    if (!signed)
+                        throw new Exception("Signed PDF was not created.");
+
+                    byte[] file;
+
+                    using (var stream = new FileStream(outputFilepath, FileMode.Open, FileAccess.Read))
+                    using (var binaryReader = new BinaryReader(stream))
+                        file = binaryReader.ReadBytes((int)stream.Length);
+
+                    string pdfFileName = Path.GetFileName(outputFilepath);
+
+                    if (pdfFileName.IndexOf("ORIGINAL", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        Global.OriginalPDFFile = file;
+                        objDSMModelData.UpdateHXValueByInvoiceNo("ORIGINAL", file, t_inv_no.Trim());
+                    }
+                    else if (pdfFileName.IndexOf("DUPLICATE", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        // Add your existing DUPLICATE handling here.
+                    }
+                    else if (pdfFileName.IndexOf("QUADRAPLICATE", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                             pdfFileName.IndexOf("TRIPLICATE", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        // Add your existing TRIPLICATE / QUADRAPLICATE handling here.
+                    }
+                    else if (pdfFileName.IndexOf("EXTRA", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        // Add your existing EXTRA handling here.
+                    }
+
+                    // Delete original only after the output PDF is created.
+                    if (File.Exists(src))
+                        File.Delete(src);
+
+                    nooffiles++;
                 }
+
                 if (nooffiles > 0)
                 {
                     objPrint = new Print();
-                    objDSMModelData.UpdateInvoiceDSstatusByInvoiceNo(t_inv_no.ToString().Trim());
-                    //var printStatus = objPrint.PrintInvoicePDFs(Global.InvoiceNumber, "invoice");
-                    //objDSMModelData.UpdateInvoicePrintstatusByInvoiceNo(t_inv_no.ToString().Trim(),printStatus == true ? "TRUE" : "FALSE");
+                    objDSMModelData.UpdateInvoiceDSstatusByInvoiceNo(t_inv_no.Trim());
 
-                    //string Fordpdffilename = Global.OutputPath + @"\" + t_inv_no + "ORIGINALInvoice.pdf";
-                    //if (Global.CustomerName == "FORD")
-                    //{
-                    //    string vendorcode = "FA9NA";
-                    //    string newfilename = "E6_1_" + vendorcode.ToString().Trim() + "_" + t_inv_no.ToString().Trim() + ".pdf";
-                    //    if (Fordpdffilename.ToString().Trim().Contains("ORIGINAL"))
-                    //    {
-                    //        if (Fordpdffilename.ToString().Trim().Contains("ORIGINAL"))
-                    //        {
-                    //            if ((System.IO.File.Exists(Global.OutputPath + @"\\" + newfilename.ToString().Trim())))
-                    //                File.Delete(Global.OutputPath + @"\\" + newfilename.ToString().Trim());
-                    //            //System.IO.File.Move(pdffilename, SalesOrderManagementSystem.Utilities._sDSOutput_File_Path + @"\\" + newfilename.ToString().Trim());
-                    //            System.IO.File.Move(Global.OutputPath + @"\\" + System.IO.Path.GetFileName(Fordpdffilename.ToString().Trim()), Global.OutputPath + @"\\" + newfilename.ToString().Trim());
-
-                    //        }
-
-                    //    }
-                    //}
+                    // Keep your existing print code here if required.
                 }
             }
             catch (Exception ex)
             {
                 LogErrors(ex);
-                MessageBox.Show("Please Insert Digital Signature Token !");
+                MessageBox.Show("Digital signature failed. Please check the certificate/token and PDF. Details: " + ex.Message);
                 return false;
             }
+
             return true;
         }
+
+        //private Boolean SignWithThisCert(X509Certificate2 cert, string DSSignName, string InvoiceType, string InvoiceNo, string t_inv_no, string DScoord)
+        //{
+        //    string outputFilepath;
+        //    int nooffiles = 0;
+        //    try
+        //    {
+        //        string[] srcfilePaths = Directory.GetFiles(Global.InputPath, "*.pdf");
+
+        //        foreach (var src in srcfilePaths)
+        //        {
+        //            // Get FileName
+        //            if (src.Contains(InvoiceNo))
+        //            {
+        //                Org.BouncyCastle.X509.X509CertificateParser cp = new Org.BouncyCastle.X509.X509CertificateParser();
+        //                Org.BouncyCastle.X509.X509Certificate[] chain = new Org.BouncyCastle.X509.X509Certificate[] { cp.ReadCertificate(cert.RawData) };
+        //                //IExternalSignature externalSignature = new X509Certificate2Signature(cert, "SHA-1");
+        //                IExternalSignature externalSignature = new X509Certificate2Signature(cert, "SHA-256");
+
+        //                outputFilepath = Global.OutputPath + @"\" + Path.GetFileName(src);
+
+        //                string outputfileName = Global.OutputPath + @"\" + Path.GetFileName(src);
+        //                if (outputfileName != null || outputfileName != string.Empty)
+        //                {
+        //                    if ((System.IO.File.Exists(outputfileName)))
+        //                        System.IO.File.Delete(outputfileName);
+        //                }
+
+        //                FileStream os = new FileStream(outputFilepath, FileMode.Create);
+        //                PdfReader reader = new PdfReader(src);
+        //                PdfStamper stamper = PdfStamper.CreateSignature(reader, os, '\0');
+        //                PdfSignatureAppearance appearance = stamper.SignatureAppearance;
+        //                appearance.Contact = "Document Certified By P SANTHARAJ <Santharaj@hnsinfotech.com>";
+        //                appearance.Acro6Layers = false;
+        //                appearance.SignatureGraphic = iTextSharp.text.Image.GetInstance(Application.StartupPath + @"\login_top.png");
+        //                //appearance.SetVisibleSignature(
+        //                //   new iTextSharp.text.Rectangle(450, 215, 580, 265),
+        //                //   reader.NumberOfPages,
+        //                //   "Signature");
+
+        //                var template = objDSMModelData.GetTemplates(Global.CustomerId);
+        //                if(template.Count>0)
+        //                {
+        //                    Global.Templatename = template[0].Tempname.ToString();
+        //                }
+        //                var dscoordinate = objDSMModelData.GetTemplatesCord(Global.Templatename, Global.CustomerId);
+        //                string coord = "";
+
+        //                for (int i = 0; i < dscoordinate.Count; i++)
+        //                {
+        //                    coord = dscoordinate[i].Dscoord.ToString().Trim();
+        //                }
+
+        //                if (coord.Length > 0 && coord.ToString().Trim() != "")
+        //                {
+        //                    string[] arrcoord1 = coord.Split(',');
+        //                    appearance.SetVisibleSignature(
+        //                      new iTextSharp.text.Rectangle(int.Parse(arrcoord1[0]), int.Parse(arrcoord1[1]), int.Parse(arrcoord1[2]), int.Parse(arrcoord1[3])),
+        //                      reader.NumberOfPages,
+        //                      "Signature");
+
+        //                    MakeSignature.SignDetached(appearance, externalSignature, chain, null, null, null, 0, CryptoStandard.CMS);
+
+        //                    // MakeSignature.si
+        //                    nooffiles++;
+
+        //                    string fileName = Global.InputPath + @"\" + Path.GetFileName(src);
+        //                    if (fileName != null || fileName != string.Empty)
+        //                    {
+        //                        if ((System.IO.File.Exists(fileName)))
+        //                            System.IO.File.Delete(fileName);
+        //                    }
+
+        //                    byte[] file;
+        //                    string OutputfileName = outputFilepath;
+        //                    if (OutputfileName != null || OutputfileName != string.Empty)
+        //                    {
+        //                        if ((System.IO.File.Exists(OutputfileName)))
+        //                        {
+        //                            using (var stream = new FileStream(OutputfileName, FileMode.Open, FileAccess.Read))
+        //                            {
+        //                                using (var DSreader = new BinaryReader(stream))
+        //                                {
+        //                                    file = DSreader.ReadBytes((int)stream.Length);
+        //                                }
+        //                            }
+        //                            string pdffilename = Path.GetFileName(OutputfileName);
+        //                            if (pdffilename.ToString().Trim().Contains("ORIGINAL"))
+        //                            {
+        //                                Global.OriginalPDFFile = file;
+        //                                objDSMModelData.UpdateHXValueByInvoiceNo("ORIGINAL", file, t_inv_no.ToString().Trim());
+        //                            }
+        //                            else if (pdffilename.ToString().Trim().Contains("DUPLICATE"))
+        //                            {
+        //                                // objDSMModelData.UpdateHXValueByInvoiceNo("DUPLICATE", file, t_inv_no.ToString().Trim());
+        //                            }
+        //                            else if (pdffilename.ToString().Trim().Contains("QUADRAPLICATE") || pdffilename.ToString().Trim().Contains("TRIPLICATE"))
+        //                            {
+        //                                //objDSMModelData.UpdateHXValueByInvoiceNo("TRIPLICATE", file, t_inv_no.ToString().Trim());
+        //                            }
+        //                            else if (pdffilename.ToString().Trim().Contains("EXTRA"))
+        //                            {
+        //                                // objDSMModelData.UpdateHXValueByInvoiceNo("EXTRA", file, t_inv_no.ToString().Trim());
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //                else
+        //                {
+
+        //                    string[] invPath = Directory.GetFiles(Global.InputPath, "*.pdf");
+        //                    Check_coor(invPath[0], DScoord);
+
+        //                    string[] arrcoord1 = coord1.Split(',');
+        //                    appearance.SetVisibleSignature(
+        //                      new iTextSharp.text.Rectangle(int.Parse(arrcoord1[0]), int.Parse(arrcoord1[1]), int.Parse(arrcoord1[2]), int.Parse(arrcoord1[3])),
+        //                      reader.NumberOfPages,
+        //                      "Signature");
+
+        //                    MakeSignature.SignDetached(appearance, externalSignature, chain, null, null, null, 0, CryptoStandard.CMS);
+
+        //                    // MakeSignature.si
+        //                    nooffiles++;
+
+        //                    string fileName = Global.InputPath + @"\" + Path.GetFileName(src);
+        //                    if (fileName != null || fileName != string.Empty)
+        //                    {
+        //                        if ((System.IO.File.Exists(fileName)))
+        //                            System.IO.File.Delete(fileName);
+        //                    }
+
+        //                    byte[] file;
+        //                    string OutputfileName = outputFilepath;
+        //                    if (OutputfileName != null || OutputfileName != string.Empty)
+        //                    {
+        //                        if ((System.IO.File.Exists(OutputfileName)))
+        //                        {
+        //                            using (var stream = new FileStream(OutputfileName, FileMode.Open, FileAccess.Read))
+        //                            {
+        //                                using (var DSreader = new BinaryReader(stream))
+        //                                {
+        //                                    file = DSreader.ReadBytes((int)stream.Length);
+        //                                }
+        //                            }
+        //                            string pdffilename = Path.GetFileName(OutputfileName);
+        //                            if (pdffilename.ToString().Trim().Contains("ORIGINAL"))
+        //                            {
+        //                                Global.OriginalPDFFile = file;
+        //                                objDSMModelData.UpdateHXValueByInvoiceNo("ORIGINAL", file, t_inv_no.ToString().Trim());
+        //                            }
+        //                            else if (pdffilename.ToString().Trim().Contains("DUPLICATE"))
+        //                            {
+        //                                // objDSMModelData.UpdateHXValueByInvoiceNo("DUPLICATE", file, t_inv_no.ToString().Trim());
+        //                            }
+        //                            else if (pdffilename.ToString().Trim().Contains("QUADRAPLICATE") || pdffilename.ToString().Trim().Contains("TRIPLICATE"))
+        //                            {
+        //                                //objDSMModelData.UpdateHXValueByInvoiceNo("TRIPLICATE", file, t_inv_no.ToString().Trim());
+        //                            }
+        //                            else if (pdffilename.ToString().Trim().Contains("EXTRA"))
+        //                            {
+        //                                // objDSMModelData.UpdateHXValueByInvoiceNo("EXTRA", file, t_inv_no.ToString().Trim());
+        //                            }
+        //                        }
+        //                    }
+        //                }
+
+        //            }
+        //        }
+        //        if (nooffiles > 0)
+        //        {
+        //            objPrint = new Print();
+        //            objDSMModelData.UpdateInvoiceDSstatusByInvoiceNo(t_inv_no.ToString().Trim());
+        //            //var printStatus = objPrint.PrintInvoicePDFs(Global.InvoiceNumber, "invoice");
+        //            //objDSMModelData.UpdateInvoicePrintstatusByInvoiceNo(t_inv_no.ToString().Trim(),printStatus == true ? "TRUE" : "FALSE");
+
+        //            //string Fordpdffilename = Global.OutputPath + @"\" + t_inv_no + "ORIGINALInvoice.pdf";
+        //            //if (Global.CustomerName == "FORD")
+        //            //{
+        //            //    string vendorcode = "FA9NA";
+        //            //    string newfilename = "E6_1_" + vendorcode.ToString().Trim() + "_" + t_inv_no.ToString().Trim() + ".pdf";
+        //            //    if (Fordpdffilename.ToString().Trim().Contains("ORIGINAL"))
+        //            //    {
+        //            //        if (Fordpdffilename.ToString().Trim().Contains("ORIGINAL"))
+        //            //        {
+        //            //            if ((System.IO.File.Exists(Global.OutputPath + @"\\" + newfilename.ToString().Trim())))
+        //            //                File.Delete(Global.OutputPath + @"\\" + newfilename.ToString().Trim());
+        //            //            //System.IO.File.Move(pdffilename, SalesOrderManagementSystem.Utilities._sDSOutput_File_Path + @"\\" + newfilename.ToString().Trim());
+        //            //            System.IO.File.Move(Global.OutputPath + @"\\" + System.IO.Path.GetFileName(Fordpdffilename.ToString().Trim()), Global.OutputPath + @"\\" + newfilename.ToString().Trim());
+
+        //            //        }
+
+        //            //    }
+        //            //}
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LogErrors(ex);
+        //        MessageBox.Show("Please Insert Digital Signature Token !");
+        //        return false;
+        //    }
+        //    return true;
+        //}
+
         private void Check_coor(string path, string DScoord)
         {
             Spire.Pdf.PdfDocument doc = new Spire.Pdf.PdfDocument();
@@ -751,6 +950,7 @@ namespace DSM
         }
 
         string coord1 = "";
+
         //public bool SendEmail(string printInvNo)
         //{
         //    try

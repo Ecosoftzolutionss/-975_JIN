@@ -356,69 +356,120 @@ namespace DSM.ViewModels
             }
         }
 
+        //private void CreateClient()
+        //{
+        //    //if (Customer.CustomerId == "" || Customer.CustomerId.Length == 0 || Customer.CustomerId.ToString().Trim() == null)
+        //    //{
+        //    //    ErrorCustomerId = "Enter Nickname to browse key!";
+        //    //}
+        //    //else
+        //    //{
+
+        //    //}
+        //    if (Customer.CustomerId != null && Customer.CustomerName != null && (Customer.IsOriginalCopy == true || Customer.IsAllCopy == true) && Template.Tempname != null)
+        //    {
+        //        if (Customer.CustomerId != "" && Customer.CustomerId.Length > 0)
+        //        {
+        //            Customer.Tempname = Template.Tempname;
+        //            if (Customer.IsOriginalCopy == true)
+        //            {
+        //                Customer.PrintCopies = "ORIGINAL";
+        //            }
+        //            if (Customer.IsAllCopy == true)
+        //            {
+        //                Customer.PrintCopies = string.Empty;
+        //                Customer.PrintCopies += Customer.IsOriginal == true ? "ORIGINAL-" : "";
+        //                Customer.PrintCopies += Customer.IsDuplicate == true ? "DUPLICATE-" : "";
+        //                Customer.PrintCopies += Customer.IsTrplicate == true ? "TRIPLICATE-" : "";
+        //                Customer.PrintCopies += Customer.IsExtra == true ? "EXTRA-" : "";
+        //                Customer.PrintCopies = Customer.PrintCopies.Remove(Customer.PrintCopies.Length - 1, 1);
+        //            }
+        //            if (Customer.IsAPIpost)
+        //            {
+        //                Customer.APItype = Customer.APIAuto == true ? true : false;
+        //            }
+
+        //            if (Customer.IsAPIpost == true)
+        //            {
+        //                if (Customer.APIUrl != null && Customer.APIUrl != "" && Customer.APIUrl.ToString().Length > 0)
+        //                {
+        //                    objDSMModelData.SaveCustomer(Customer, ListDS.ToList());
+        //                }
+        //            }
+        //            else
+        //            {
+        //                objDSMModelData.SaveCustomer(Customer, ListDS.ToList());
+        //            }
+        //            Customer = new CustomerDisplayModel();
+        //            ListCustomer = new ObservableCollection<CustomerDisplayModel>(objDSMModelData.GetAllCustomers());
+        //            ListDS = new ObservableCollection<DSMasterDisplayModel>();
+        //            Template = new CustomerDisplayModel();
+        //            Templates = new ObservableCollection<CustomerDisplayModel>(objDSMModelData.GetInputTemplates());
+
+        //            //Template.Tempname = "";
+        //            //ListDS = new ObservableCollection<DigitalSignDetailDisplayModel>();
+        //        }
+        //        else
+        //        {
+        //            //ErrorCustomerId = "Enter Nickname to browse key!";
+        //            ListCustomer = new ObservableCollection<CustomerDisplayModel>(objDSMModelData.GetAllCustomers());
+        //        }
+        //    }
+        //    else
+        //    {
+        //        ListCustomer = new ObservableCollection<CustomerDisplayModel>(objDSMModelData.GetAllCustomers());
+        //        MessageBox.Show("Please Enter Mandatory Fields");
+        //    }
+        //}
+
         private void CreateClient()
         {
-            //if (Customer.CustomerId == "" || Customer.CustomerId.Length == 0 || Customer.CustomerId.ToString().Trim() == null)
-            //{
-            //    ErrorCustomerId = "Enter Nickname to browse key!";
-            //}
-            //else
-            //{
-
-            //}
-            if (Customer.CustomerId != null && Customer.CustomerName != null && (Customer.IsOriginalCopy == true || Customer.IsAllCopy == true) && Template.Tempname != null)
+            if (Customer.CustomerId != null && Customer.CustomerId.Trim() != "" &&
+                Customer.CustomerName != null && Customer.CustomerName.Trim() != "" &&
+                (Customer.IsOriginalCopy || Customer.IsAllCopy) && Template.Tempname != null)
             {
-                if (Customer.CustomerId != "" && Customer.CustomerId.Length > 0)
-                {
-                    Customer.Tempname = Template.Tempname;
-                    if (Customer.IsOriginalCopy == true)
-                    {
-                        Customer.PrintCopies = "ORIGINAL";
-                    }
-                    if (Customer.IsAllCopy == true)
-                    {
-                        Customer.PrintCopies = string.Empty;
-                        Customer.PrintCopies += Customer.IsOriginal == true ? "ORIGINAL-" : "";
-                        Customer.PrintCopies += Customer.IsDuplicate == true ? "DUPLICATE-" : "";
-                        Customer.PrintCopies += Customer.IsTrplicate == true ? "TRIPLICATE-" : "";
-                        Customer.PrintCopies += Customer.IsExtra == true ? "EXTRA-" : "";
-                        Customer.PrintCopies = Customer.PrintCopies.Remove(Customer.PrintCopies.Length - 1, 1);
-                    }
-                    if (Customer.IsAPIpost)
-                    {
-                        Customer.APItype = Customer.APIAuto == true ? true : false;
-                    }
+                Customer.Tempname = Template.Tempname;
 
-                    if (Customer.IsAPIpost == true)
-                    {
-                        if (Customer.APIUrl != null && Customer.APIUrl != "" && Customer.APIUrl.ToString().Length > 0)
-                        {
-                            objDSMModelData.SaveCustomer(Customer, ListDS.ToList());
-                        }
-                    }
-                    else
-                    {
-                        objDSMModelData.SaveCustomer(Customer, ListDS.ToList());
-                    }
+                if (Customer.IsOriginalCopy)
+                {
+                    Customer.PrintCopies = "ORIGINAL";
+                }
+                else if (Customer.IsAllCopy)
+                {
+                    Customer.PrintCopies = string.Empty;
+                    Customer.PrintCopies += Customer.IsOriginal ? "ORIGINAL-" : "";
+                    Customer.PrintCopies += Customer.IsDuplicate ? "DUPLICATE-" : "";
+                    Customer.PrintCopies += Customer.IsTrplicate ? "TRIPLICATE-" : "";
+                    Customer.PrintCopies += Customer.IsExtra ? "EXTRA-" : "";
+
+                    if (Customer.PrintCopies.Length > 0)
+                        Customer.PrintCopies = Customer.PrintCopies.TrimEnd('-');
+                }
+
+                if (Customer.IsAPIpost)
+                    Customer.APItype = Customer.APIAuto;
+
+                if (Customer.IsAPIpost && string.IsNullOrWhiteSpace(Customer.APIUrl))
+                {
+                    MessageBox.Show("Please enter API URL.");
+                    return;
+                }
+
+                if (objDSMModelData.SaveCustomer(Customer, ListDS.ToList()))
+                {
+                    MessageBox.Show("Saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
                     Customer = new CustomerDisplayModel();
                     ListCustomer = new ObservableCollection<CustomerDisplayModel>(objDSMModelData.GetAllCustomers());
                     ListDS = new ObservableCollection<DSMasterDisplayModel>();
                     Template = new CustomerDisplayModel();
                     Templates = new ObservableCollection<CustomerDisplayModel>(objDSMModelData.GetInputTemplates());
-
-                    //Template.Tempname = "";
-                    //ListDS = new ObservableCollection<DigitalSignDetailDisplayModel>();
-                }
-                else
-                {
-                    //ErrorCustomerId = "Enter Nickname to browse key!";
-                    ListCustomer = new ObservableCollection<CustomerDisplayModel>(objDSMModelData.GetAllCustomers());
                 }
             }
             else
             {
+                MessageBox.Show("Please enter all mandatory fields.");
                 ListCustomer = new ObservableCollection<CustomerDisplayModel>(objDSMModelData.GetAllCustomers());
-                MessageBox.Show("Please Enter Mandatory Fields");
             }
         }
 

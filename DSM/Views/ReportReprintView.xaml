@@ -26,7 +26,7 @@
             <TextBlock  HorizontalAlignment="Left"  Text="Reports Reprint" Foreground="#33331a" FontSize="25" ></TextBlock>
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" Orientation="Vertical">
-            <TextBlock  HorizontalAlignment="Left"  Text="Reports" Foreground="#33331a" FontSize="16" ></TextBlock>
+            <TextBlock  HorizontalAlignment="Left"  Text="Invoice No" Foreground="#33331a" FontSize="16" ></TextBlock>
             <TextBox x:Name="txtInvoiceNo" Text="{Binding InvNumber, Mode=TwoWay}" Height="25" Margin="0,5,0,0" Width="250" />
         </StackPanel>
         <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Orientation="Vertical">

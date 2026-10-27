@@ -68,13 +68,54 @@ namespace DSM.ViewModels
             ReprintCommand = new DelegateCommand(Reprint);
         }
 
-        public void SearchInvoice()
+        //public void SearchInvoice()
+        //{
+        //    InvoiceList = null;
+        //    DateTime frmdt = Convert.ToDateTime(FromDate);
+        //    DateTime todt = Convert.ToDateTime(ToDate);
+        //    InvoiceList = new ObservableCollection<InvoiceReportModel>(objDSMModelData.FilterInvoiceData(InvNumber == null ? "" : InvNumber, frmdt.ToString("yyyy-MM-dd 00:00:00:000", CultureInfo.InvariantCulture), todt.ToString("yyyy-MM-dd 00:00:00:000", CultureInfo.InvariantCulture)));
+        //}
+
+
+        private void SearchInvoice()
         {
-            InvoiceList = null;
-            DateTime frmdt = Convert.ToDateTime(FromDate);
-            DateTime todt = Convert.ToDateTime(ToDate);
-            InvoiceList = new ObservableCollection<InvoiceReportModel>(objDSMModelData.FilterInvoiceData(InvNumber == null ? "" : InvNumber, frmdt.ToString("yyyy-MM-dd 00:00:00:000", CultureInfo.InvariantCulture), todt.ToString("yyyy-MM-dd 00:00:00:000", CultureInfo.InvariantCulture)));
+            if (string.IsNullOrWhiteSpace(InvNumber))
+            {
+                MessageBox.Show("Please enter Invoice No.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(FromDate) || string.IsNullOrWhiteSpace(ToDate))
+            {
+                MessageBox.Show("Please select both From Date and To Date.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            DateTime frmdt, todt;
+
+            if (!DateTime.TryParse(FromDate, CultureInfo.CurrentCulture, DateTimeStyles.None, out frmdt) ||
+                !DateTime.TryParse(ToDate, CultureInfo.CurrentCulture, DateTimeStyles.None, out todt))
+            {
+                MessageBox.Show("Please select valid dates.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (frmdt.Date > todt.Date)
+            {
+                MessageBox.Show("Invoice Date From cannot be greater than Invoice Date To.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string fromDate = frmdt.ToString("yyyy-MM-dd 00:00:00:000", CultureInfo.InvariantCulture);
+            string toDate = todt.ToString("yyyy-MM-dd 00:00:00:000", CultureInfo.InvariantCulture);
+
+            var result = objDSMModelData.FilterInvoiceData(InvNumber.Trim(), fromDate, toDate);
+            InvoiceList = new ObservableCollection<InvoiceReportModel>(result);
+
+            if (InvoiceList.Count == 0)
+                MessageBox.Show("No records found.", "Search", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
 
         public void ExportExcel()
         {

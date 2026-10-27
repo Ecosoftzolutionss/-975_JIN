@@ -81,17 +81,17 @@
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Row="0" Grid.Column="0" Margin="5,5">
                 <TextBlock Text="Client Name" Foreground="Black" FontSize="16"/>
-                
+
             </StackPanel>
             <StackPanel Grid.Row="0" HorizontalAlignment="Left" Grid.Column="1" Margin="5,5">
                 <TextBox x:Name="txtClientName" Text="{Binding Customer.CustomerName, Mode=TwoWay}" Height="25" Width="300"/>
-                
+
             </StackPanel>
             <StackPanel Grid.Row="0" Grid.Column="2" Margin="-15,7,0,0">
                 <TextBlock Text="*" Foreground="Red" FontSize="14" Visibility="Visible" Width="5" Margin="-15,0,180,0"/>
                 <TextBlock Text="Client Name required" Foreground="Red" FontSize="14" Visibility="Hidden"/>
             </StackPanel>
-            
+
             <StackPanel Grid.Row="1" Grid.Column="0" Margin="5,5">
                 <TextBlock Text="Customer Id" Foreground="Black" FontSize="16" />
             </StackPanel>
@@ -101,7 +101,7 @@
             <StackPanel Grid.Row="1" Grid.Column="2" Margin="-15,7,0,0">
                 <TextBlock Text="*" Foreground="Red" FontSize="14" Visibility="Visible" Width="5" Margin="-15,0,180,0"/>
                 <TextBlock Text="Required" Foreground="White" FontSize="14" Visibility="Hidden" />
-                
+
             </StackPanel>
             <StackPanel Grid.Row="2" Grid.Column="0" Margin="5,5">
                 <TextBlock Text="Vendor Code" Foreground="Black" FontSize="16"  Margin="0,5" />
@@ -119,12 +119,6 @@
             <StackPanel Grid.Row="3" Grid.Column="1" Margin="5,5" HorizontalAlignment="Left">
                 <!--<ComboBox x:Name="txtTemplate" ItemsSource="{Binding Path=Tempname}"    
                   SelectedItem="{Binding Tempname, Mode=TwoWay}" SelectedValuePath="{Binding Tempname, Mode=TwoWay}" DisplayMemberPath="Tempname" Height="25" Width="300" />-->
-                <ComboBox x:Name="cbCustomers" VerticalAlignment="Center" Width="300"
-                      ItemsSource="{Binding Path=Templates}"  
-                      SelectedItem="{Binding Template, Mode=TwoWay}"
-                      SelectedValuePath="{Binding Template, Mode=TwoWay}"
-                      DisplayMemberPath="Tempname" Text="{Binding Template.Tempname,Mode=TwoWay}"
-              />
             </StackPanel>
             <StackPanel Grid.Row="3" Grid.Column="2" Margin="-15,7,0,0">
                 <TextBlock Text="*" Foreground="Red" FontSize="14" Visibility="Visible" Width="5" Margin="-15,0,180,0"/>
@@ -220,6 +214,16 @@
         <StackPanel Grid.Row="11" Grid.Column="1" Margin="5,5">
             <Button x:Name="btnCreateClient" Content="Save" FontSize="14" Width="100" Command="{Binding CreateClientCommand}" />
         </StackPanel>
-
+        <TextBox x:Name="cbCustomers"
+         Text="{Binding Customer.Tempname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+         MaxLength="10"
+         Grid.Row="1"
+         Grid.Column="1"
+         Margin="0,130,0,0"
+         Height="25"
+         Width="300"
+         HorizontalAlignment="Center"
+         VerticalAlignment="Top"
+         Panel.ZIndex="10"/>
     </Grid>
 </UserControl>
